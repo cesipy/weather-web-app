@@ -1,6 +1,6 @@
 package at.qe.skeleton.internal.ui.beans;
 
-import at.qe.skeleton.external.model.location.LocationListDTO;
+import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 @Component
 @Scope("view")
 public class LocationApiTestBean {
@@ -22,14 +24,17 @@ public class LocationApiTestBean {
     @Autowired
     private LocationApiRequestService locationApiRequestService;
 
-    private String location;
-    private String name = "Innsbruck";
+    private String currentLocation;
+    private final String QUERY_NAME = "Innsbruck";            // hard coded name for query test
+    private final int LIMIT = 1;
 
 
     @PostConstruct
     public void init() {
         try {
-            LocationListDTO answer = this.locationApiRequestService.retrieveLocations(getName());
+            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(getQUERY_NAME(), getLIMIT());
+
+            // TODO: handle each element of list using for loop
             ObjectMapper mapper = new ObjectMapper()
                     .findAndRegisterModules()
                     .enable(SerializationFeature.INDENT_OUTPUT);
@@ -40,19 +45,27 @@ public class LocationApiTestBean {
                     .replace(" ", "&nbsp;");
             this.setLocation(escapedHtmlAnswerWithLineBreaks);
 
-            LOGGER.info("current location: " + location);
+            LOGGER.info("current location: " + currentLocation);
         } catch (JsonProcessingException e) {
             LOGGER.error("error in request in locationApi", e);
             throw new RuntimeException(e);
         }
     }
 
-    public String getName() {
-        return name;
+    public String getQUERY_NAME() {
+        return QUERY_NAME;
+    }
+
+    public int getLIMIT() {
+        return LIMIT;
     }
 
     public void setLocation(String location) {
-        this.location = location;
+        this.currentLocation = location;
+    }
+
+    public String getCurrentLocation() {
+        return currentLocation;
     }
 }
 
