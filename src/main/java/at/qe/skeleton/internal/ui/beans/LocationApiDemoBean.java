@@ -25,7 +25,7 @@ public class LocationApiDemoBean {
     private LocationApiRequestService locationApiRequestService;
 
     private String currentLocation;
-    private final String QUERY_NAME = "Innsbruck";            // hard coded name for query test
+    private final String QUERY_NAME = "Wien";            // hard coded name for query test
     private final int LIMIT = 1;
 
 
@@ -34,23 +34,34 @@ public class LocationApiDemoBean {
         try {
             List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(getQUERY_NAME(), getLIMIT());
 
-            // TODO: handle each element of list using for loop
-            ObjectMapper mapper = new ObjectMapper()
-                    .findAndRegisterModules()
-                    .enable(SerializationFeature.INDENT_OUTPUT);
+            // Check if the list is not empty
+            if (!answer.isEmpty()) {
+                // only process first entry in List of LocationDTOs
+                LocationDTO firstLocation = answer.get(0);
 
-            String plainTextAnswer = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(answer);
-            String escapedHtmlAnswer = StringEscapeUtils.escapeHtml4(plainTextAnswer);
-            String escapedHtmlAnswerWithLineBreaks = escapedHtmlAnswer.replace("\n", "<br>")
-                    .replace(" ", "&nbsp;");
-            this.setLocation(escapedHtmlAnswerWithLineBreaks);
+                //LOGGER.info("location name: "+firstLocation.name());
+                //LOGGER.info("location lat&lon: " + firstLocation.latitude() + ", " + firstLocation.longitude());
 
-            LOGGER.info("current location: " + currentLocation);
+                ObjectMapper mapper = new ObjectMapper()
+                        .findAndRegisterModules()
+                        .enable(SerializationFeature.INDENT_OUTPUT);
+
+                String plainTextAnswer = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(firstLocation);
+                String escapedHtmlAnswer = StringEscapeUtils.escapeHtml4(plainTextAnswer);
+                String escapedHtmlAnswerWithLineBreaks = escapedHtmlAnswer.replace("\n", "<br>")
+                        .replace(" ", "&nbsp;");
+                this.setLocation(escapedHtmlAnswerWithLineBreaks);
+
+                LOGGER.info("current location: " + currentLocation);
+            } else {
+                LOGGER.warn("The list of locations is empty.");
+            }
         } catch (JsonProcessingException e) {
             LOGGER.error("error in request in locationApi", e);
             throw new RuntimeException(e);
         }
     }
+
 
     public String getQUERY_NAME() {
         return QUERY_NAME;
