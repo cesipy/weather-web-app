@@ -17,9 +17,9 @@ import java.util.List;
 
 @Component
 @Scope("view")
-public class LocationApiTestBean {
+public class LocationApiDemoBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationApiTestBean.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationApiDemoBean.class);
 
     @Autowired
     private LocationApiRequestService locationApiRequestService;
