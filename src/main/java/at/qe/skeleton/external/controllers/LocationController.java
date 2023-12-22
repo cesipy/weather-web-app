@@ -11,23 +11,21 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 
 import java.util.List;
 
 @Controller // @Controller is a specification of @Component
+@Scope("view")
 public class LocationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationController.class);
-
     private final int LIMIT = 1;        // we want to get only one result for a location
-
     private String locationName;
     private String currentLocation;
-
-    private LocationDTO currentLocationDTO = null;
-
+    private LocationDTO currentLocationDTO;
     @Autowired
     private LocationApiRequestService locationApiRequestService;
 
@@ -61,9 +59,6 @@ public class LocationController {
                 // only process the first entry in the List of LocationDTOs
                 LocationDTO firstLocation = answer.get(0);
 
-                //LOGGER.info("location name: " + firstLocation.name());
-                //LOGGER.info("location lat&lon: " + firstLocation.latitude() + ", " + firstLocation.longitude());
-
                 ObjectMapper mapper = new ObjectMapper()
                         .findAndRegisterModules()
                         .enable(SerializationFeature.INDENT_OUTPUT);
@@ -79,6 +74,7 @@ public class LocationController {
 
             } else {
                 LOGGER.warn("The list of locations is empty.");
+                // TODO: Error message when no location is found
             }
         } catch (JsonProcessingException e) {
             LOGGER.error("Error in request in locationApi", e);
