@@ -35,18 +35,12 @@ public class LocationController {
 
             LocationDTO foundLocation = currentLocationDTO;
 
-            FacesMessage message;
-            if (foundLocation != null) {
-                message = new FacesMessage("Location found!", "Name: " + foundLocation.name() +
-                        ", Lat&Lon: " + foundLocation.latitude() + ", " + foundLocation.longitude());
-            } else {
-                message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Location not found!", null);
-            }
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            //TODO: handling for no location found
+            //TODO: handle other errors
+
         } catch (Exception e) {
             LOGGER.error("Error in location search", e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error in location search", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+
         }
     }
 
