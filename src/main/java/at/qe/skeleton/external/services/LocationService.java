@@ -54,6 +54,9 @@ public class LocationService {
 
     }
 
+    public List<Location> getAllLocations(){
+        return locationRepository.findAll();
+    }
     /**
      * Loads location data from .json file with path `path` and populates repository.
      *

@@ -15,9 +15,7 @@
                                 maxResults="5"
                                 minQueryLength="3"
                 />
-                <p:commandButton value="Search" action="#{locationControllerDb.getFirstMatch}"/>
-               <!-- <p:inputText value="#{locationControllerDb.locationName}"/>
-                <p:commandButton value="Search" action="#{locationControllerDb.autocomplete}" /> -->
+                <p:commandButton value="Search" action="#{locationControllerDb.requestFirstMatch}"/>
             </p:panel>
         </h:form>
     </ui:define>
