@@ -2,16 +2,17 @@ package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
-import at.qe.skeleton.internal.ui.beans.WeatherApiDemoBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-@Controller
+@Controller         // @Controller is a specification of @Component
+@Scope("view")
 public class WeatherController {
     private double latitude;
 
@@ -19,7 +20,7 @@ public class WeatherController {
 
     private String currentWeather;
 
-    private CurrentAndForecastAnswerDTO currentWeatherDTO = null;
+    private CurrentAndForecastAnswerDTO currentWeatherDTO;
 
     @Autowired
     private WeatherApiRequestService weatherApiRequestService;
@@ -40,7 +41,6 @@ public class WeatherController {
                     .replace(" ", "&nbsp;");
             this.setCurrentWeather(escapedHtmlAnswerWithLineBreaks);
 
-            LOGGER.info("weather in weather controller: " + currentWeather);
         } catch (final Exception e) {
             LOGGER.error("error in request", e);
         }
