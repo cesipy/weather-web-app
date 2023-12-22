@@ -3,8 +3,10 @@ package at.qe.skeleton.external.controllers;
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import org.apache.commons.text.StringEscapeUtils;
@@ -15,6 +17,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Controller // @Controller is a specification of @Component
