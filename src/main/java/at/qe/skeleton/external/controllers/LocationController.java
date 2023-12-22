@@ -1,4 +1,4 @@
-package at.qe.skeleton.internal.ui.controllers;
+package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.LocationApiRequestService;
@@ -33,7 +33,7 @@ public class LocationController {
 
     public void search() {
         try {
-            searchLocation(locationName);
+            searchLocation(locationName);           // perform searching for location
 
             LocationDTO foundLocation = currentLocationDTO;
 
@@ -61,8 +61,8 @@ public class LocationController {
                 // only process the first entry in the List of LocationDTOs
                 LocationDTO firstLocation = answer.get(0);
 
-                LOGGER.info("location name: " + firstLocation.name());
-                LOGGER.info("location lat&lon: " + firstLocation.latitude() + ", " + firstLocation.longitude());
+                //LOGGER.info("location name: " + firstLocation.name());
+                //LOGGER.info("location lat&lon: " + firstLocation.latitude() + ", " + firstLocation.longitude());
 
                 ObjectMapper mapper = new ObjectMapper()
                         .findAndRegisterModules()
