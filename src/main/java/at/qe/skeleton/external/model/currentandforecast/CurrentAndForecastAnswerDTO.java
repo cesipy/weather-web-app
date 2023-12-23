@@ -38,6 +38,7 @@ public record CurrentAndForecastAnswerDTO(
         @JsonProperty("hourly") List<HourlyWeatherDTO> hourlyWeather,
         @JsonProperty("daily") List<DailyWeatherDTO> dailyWeather,
         List<AlertDTO> alerts
+
 ) implements Serializable {
 
     @Serial

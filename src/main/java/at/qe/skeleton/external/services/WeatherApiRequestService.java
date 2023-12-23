@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -22,10 +27,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class WeatherApiRequestService {
 
     private static final String CURRENT_AND_FORECAST_URI = "/data/3.0/onecall";
-
+    private static final String REVERSE_GEOCODING_URI = "/geo/1.0/reverse";
     private static final String LONGITUDE_PARAMETER = "lon";
-
     private static final String LATITUDE_PARAMETER = "lat";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherApiRequestService.class);
 
     @Autowired
     private RestClient restClient;
@@ -48,9 +54,44 @@ public class WeatherApiRequestService {
                         .build().toUriString())
                 .retrieve()
                 .toEntity(CurrentAndForecastAnswerDTO.class);
-
         // todo introduce error handling using responseEntity.getStatusCode.isXXXError
         return responseEntity.getBody();
     }
+
+    public String getLocationName(@Min(-90) @Max(90) double latitude,
+                                  @Min(-180) @Max(180) double longitude) {
+
+        ResponseEntity<String> responseEntity = this.restClient.get()
+                .uri(UriComponentsBuilder.fromPath(REVERSE_GEOCODING_URI)
+                        .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
+                        .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
+                        .build().toUriString())
+                .retrieve()
+                .toEntity(String.class);
+
+        String url = UriComponentsBuilder.fromPath(REVERSE_GEOCODING_URI)
+                .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
+                .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
+                .build().toUriString();
+
+        System.out.println(url + "HELLO!");
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode root = mapper.readTree(responseEntity.getBody());
+            JsonNode firstElement = root.get(0); // Get the first element of the array
+            if (firstElement != null) {
+                return firstElement.get("name").asText();
+            } else {
+                LOGGER.error("No elements in the JSON array");
+                return null;
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error parsing JSON response", e);
+            return null;
+        }
+
+    }
+
+
 
 }
