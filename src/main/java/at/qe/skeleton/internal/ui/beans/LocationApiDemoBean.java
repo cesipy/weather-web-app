@@ -1,7 +1,10 @@
 package at.qe.skeleton.internal.ui.beans;
 
+import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.CurrentWeatherDTO;
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.LocationApiRequestService;
+import at.qe.skeleton.external.services.WeatherApiRequestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -24,7 +28,11 @@ public class LocationApiDemoBean {
     @Autowired
     private LocationApiRequestService locationApiRequestService;
 
-    private String currentLocation;
+    @Autowired
+    private WeatherApiRequestService weatherApiRequestService;
+
+    private LocationDTO currentLocation;
+    private CurrentWeatherDTO currentWeather;
     private String query_name;
     private final int LIMIT = 1;
 
@@ -39,28 +47,25 @@ public class LocationApiDemoBean {
                 // only process first entry in List of LocationDTOs
                 LocationDTO firstLocation = answer.get(0);
 
-                //LOGGER.info("location name: "+firstLocation.name());
-                //LOGGER.info("location lat&lon: " + firstLocation.latitude() + ", " + firstLocation.longitude());
+                this.setLocation(firstLocation);
+                LOGGER.info("using coordinates: " + firstLocation.latitude() + " " + firstLocation.longitude());
 
-                ObjectMapper mapper = new ObjectMapper()
-                        .findAndRegisterModules()
-                        .enable(SerializationFeature.INDENT_OUTPUT);
+                CurrentAndForecastAnswerDTO forecastAnswer = this.weatherApiRequestService.retrieveCurrentAndForecastWeather(firstLocation.latitude(), firstLocation.longitude());
+                this.setCurrentWeather(forecastAnswer.currentWeather());
+                System.out.println(firstLocation.latitude() + " " + firstLocation.longitude() + "Hello!");
 
-                String plainTextAnswer = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(firstLocation);
-                String escapedHtmlAnswer = StringEscapeUtils.escapeHtml4(plainTextAnswer);
-                String escapedHtmlAnswerWithLineBreaks = escapedHtmlAnswer.replace("\n", "<br>")
-                        .replace(" ", "&nbsp;");
-                this.setLocation(escapedHtmlAnswerWithLineBreaks);
+                LOGGER.info("got this current weather " + currentWeather);
 
-                LOGGER.info("current location: " + currentLocation);
+                //LOGGER.info("current location: " + currentLocation);
             } else {
                 LOGGER.warn("The list of locations is empty.");
             }
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             LOGGER.error("error in request in locationApi", e);
             throw new RuntimeException(e);
         }
     }
+
 
 
     public String getQuery_name() {
@@ -75,12 +80,30 @@ public class LocationApiDemoBean {
         return LIMIT;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(LocationDTO location) {
         this.currentLocation = location;
     }
 
-    public String getCurrentLocation() {
+    public LocationDTO getCurrentLocation() {
         return currentLocation;
     }
+
+    public CurrentWeatherDTO getCurrentWeather() {
+        return currentWeather;
+    }
+
+    public void setCurrentWeather(CurrentWeatherDTO currentWeather) {
+        this.currentWeather = currentWeather;
+    }
+
+    public List<CurrentWeatherDTO> getCurrentWeatherAsList() {
+        if (currentWeather != null) {
+            return Collections.singletonList(currentWeather);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+
 }
 

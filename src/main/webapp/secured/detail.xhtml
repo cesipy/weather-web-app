@@ -14,8 +14,23 @@
             <f:viewParam name="location" value="#{locationApiDemoBean.query_name}" />
             <f:event type="preRenderView" listener="#{locationApiDemoBean.init}" />
         </f:metadata>
-        <h:outputText value="Detail" />
-        <h:outputText value="#{locationApiDemoBean.currentLocation}" escape="false" />
+        <h:outputText value="Current Weather" escape="false" />
+        <p:dataTable value="#{locationApiDemoBean.currentWeatherAsList}">
+            <p:column headerText="Temperature">
+                <h:outputText value="#{locationApiDemoBean.currentWeather.temperature()} °C"/>
+            </p:column>
+            <p:column headerText="Feels like">
+                <h:outputText value="#{locationApiDemoBean.currentWeather.feelsLikeTemperature()} °C"/>
+            </p:column>
+            <p:column headerText="Humidity">
+                <h:outputText value="#{locationApiDemoBean.currentWeather.humidity()} %"/>
+            </p:column>
+            <p:column headerText="Wind speed">
+                <h:outputText value="#{locationApiDemoBean.currentWeather.windSpeed()} m/s"/>
+            </p:column>
+        </p:dataTable>
+
+
     </h:form>
 </h:body>
 </html>

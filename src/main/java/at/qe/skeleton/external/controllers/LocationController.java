@@ -81,7 +81,7 @@ public class LocationController {
     }
 
     @GetMapping("/location")
-    public String getLocation(@RequestParam String location) {
+    public LocationDTO getLocation(@RequestParam String location) {
         locationApiDemoBean.setQuery_name(location);
         locationApiDemoBean.init();
         return locationApiDemoBean.getCurrentLocation();
