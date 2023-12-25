@@ -9,28 +9,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+
 import java.util.List;
 
 @Component
 @Scope("view")
-public class LocationAutocompleteDemo {
+public class LocationAutocompleteDemoBean {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(LocationAutocompleteDemo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationAutocompleteDemoBean.class);
 
     @Autowired
     private LocationEntityService locationEntityService;
 
     private final String PATH_NAME = "src/main/resources/owm_city_list.json";
 
+    public String locationName;
+
     List<LocationEntity> locations;
 
-    @PostConstruct
-    public void init() {
-        locationEntityService.loadDataFromJson(PATH_NAME);
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
     public void demo() {
-        locations = locationEntityService.autocomplete("innsb");
+        if (locationName == null) {
+            LOGGER.info("query is null!");
+        }
+        locations = locationEntityService.autocomplete(locationName);
         LOGGER.info("successfully autocomplete");
 
         for (LocationEntity location : locations) {
