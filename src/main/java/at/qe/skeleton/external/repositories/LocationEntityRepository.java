@@ -12,10 +12,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 
-public interface LocationEntityRepository extends JpaRepository<LocationEntity, Integer> {
+public interface LocationEntityRepository extends JpaRepository<LocationEntity, Long> {
 
 
-    @Query("SELECT name FROM LocationEntity WHERE name like %:keyword%")
-    public List<String> search(@Param("keyword") String keyword);
+    List<LocationEntity> findByNameStartingWithIgnoreCase(String name);
+
+
+    // custom query not needed, as JPA implements queries automatically when naming is correctly done
+    @Query("SELECT location FROM LocationEntity location WHERE name like %:keyword%")
+    List<LocationEntity> search(@Param("keyword") String keyword);
 
 }
