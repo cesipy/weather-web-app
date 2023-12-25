@@ -2,6 +2,7 @@ package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.LocationApiRequestService;
+import at.qe.skeleton.internal.ui.beans.LocationApiDemoBean;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -28,6 +30,8 @@ public class LocationController {
     private LocationDTO currentLocationDTO;
     @Autowired
     private LocationApiRequestService locationApiRequestService;
+    @Autowired
+    private LocationApiDemoBean locationApiDemoBean;
 
     public void search() {
         try {
@@ -74,6 +78,13 @@ public class LocationController {
             LOGGER.error("Error in request in locationApi", e);
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/location")
+    public String getLocation(@RequestParam String location) {
+        locationApiDemoBean.setQuery_name(location);
+        locationApiDemoBean.init();
+        return locationApiDemoBean.getCurrentLocation();
     }
 
     public String getLocationName() {

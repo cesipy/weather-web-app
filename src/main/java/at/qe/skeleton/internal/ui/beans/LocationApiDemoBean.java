@@ -25,14 +25,14 @@ public class LocationApiDemoBean {
     private LocationApiRequestService locationApiRequestService;
 
     private String currentLocation;
-    private final String QUERY_NAME = "Wien";            // hard coded name for query test
+    private String query_name;
     private final int LIMIT = 1;
 
 
     @PostConstruct
     public void init() {
         try {
-            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(getQUERY_NAME(), getLIMIT());
+            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(getQuery_name(), getLIMIT());
 
             // Check if the list is not empty
             if (!answer.isEmpty()) {
@@ -63,8 +63,12 @@ public class LocationApiDemoBean {
     }
 
 
-    public String getQUERY_NAME() {
-        return QUERY_NAME;
+    public String getQuery_name() {
+        return query_name;
+    }
+
+    public void setQuery_name(String query_name) {
+        this.query_name = query_name;
     }
 
     public int getLIMIT() {

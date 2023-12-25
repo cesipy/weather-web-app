@@ -11,8 +11,11 @@
 <h:body>
     <h:form>
         <f:metadata>
+            <f:viewParam name="location" value="#{locationApiDemoBean.query_name}" />
+            <f:event type="preRenderView" listener="#{locationApiDemoBean.init}" />
         </f:metadata>
         <h:outputText value="Detail" />
+        <h:outputText value="#{locationApiDemoBean.currentLocation}" escape="false" />
     </h:form>
 </h:body>
 </html>
