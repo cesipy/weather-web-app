@@ -25,6 +25,11 @@
                 <p:column headerText="Wind speed">
                     <h:outputText value="#{weatherApiDemoBean.locationWeatherMap[location].windSpeed()} m/s"/>
                 </p:column>
+                <p:column headerText="Detail">
+                    <h:outputLink value="detail.xhtml?location=#{location}">
+                        View Details
+                    </h:outputLink>
+                </p:column>
             </p:dataTable>
         </h:form>
     </ui:define>

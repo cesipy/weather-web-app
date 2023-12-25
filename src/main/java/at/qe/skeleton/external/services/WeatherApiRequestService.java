@@ -58,6 +58,13 @@ public class WeatherApiRequestService {
         return responseEntity.getBody();
     }
 
+    /**
+     * Makes an API call to get a Location name for the corresponding latitude and longitude
+     * <br><br>
+     * @param latitude of the location
+     * @param longitude of the location
+     * @return A string containing the name of the location
+     */
     public String getLocationName(@Min(-90) @Max(90) double latitude,
                                   @Min(-180) @Max(180) double longitude) {
 
@@ -69,12 +76,6 @@ public class WeatherApiRequestService {
                 .retrieve()
                 .toEntity(String.class);
 
-        String url = UriComponentsBuilder.fromPath(REVERSE_GEOCODING_URI)
-                .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
-                .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
-                .build().toUriString();
-
-        System.out.println(url + "HELLO!");
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode root = mapper.readTree(responseEntity.getBody());
