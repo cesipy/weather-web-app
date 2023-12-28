@@ -10,8 +10,14 @@
     <ui:define name="content">
         <h:form>
             <p:panel header="Searching Request">
-                <p:inputText value="#{locationControllerDb.locationName}"/>
-                <p:commandButton value="Search" action="#{locationControllerDb.autocomplete}" />
+                <p:autoComplete value="#{locationControllerDb.locationName}"
+                                completeMethod="#{locationControllerDb.autocomplete}"
+                                maxResults="5"
+                                minQueryLength="3"
+                />
+                <p:commandButton value="Search" action="#{locationControllerDb.getFirstMatch(locationControllerDb.locationName)}"/>
+               <!-- <p:inputText value="#{locationControllerDb.locationName}"/>
+                <p:commandButton value="Search" action="#{locationControllerDb.autocomplete}" /> -->
             </p:panel>
         </h:form>
     </ui:define>

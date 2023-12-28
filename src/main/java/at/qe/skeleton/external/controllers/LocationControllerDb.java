@@ -22,29 +22,32 @@ public class LocationControllerDb {
     private double longitude;
     private double latitude;
 
-    public void autocomplete() {
+    public List<Location> autocomplete(String query) {
         if (locationName == null) {
             LOGGER.info("Query is null!");
         }
 
-        locations = locationService.autocomplete(locationName);
+        locations = locationService.autocomplete(query);
         if (!locations.isEmpty()) {
             LOGGER.info("Autocomplete successful");
         }
 
         for (Location location : locations) {
-            LOGGER.info(String.valueOf(location));
+            LOGGER.info(location.toDebugString());
         }
+
+        return locations;
     }
 
-    public void getFirstMatch() {
-        autocomplete();
+    public void getFirstMatch(String query) {
+        autocomplete(query);
         LOGGER.info("in getFirstMatch:");
 
         if (!locations.isEmpty()) {
             singleLocation = locations.get(0);
             setCoordinates();
         }
+        LOGGER.info(singleLocation.toDebugString());
     }
 
     public void setCoordinates() {

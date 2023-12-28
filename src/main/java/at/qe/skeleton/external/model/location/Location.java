@@ -88,8 +88,7 @@ public class Location implements Serializable {
 
         @JsonProperty("postal_code") String postalCode;
 
-        @Override
-        public String toString() {
+        public String toDebugString() {
                 return "Location{" +
                         "id=" + id +
                         ", name='" + name + '\'' +
@@ -99,6 +98,11 @@ public class Location implements Serializable {
                         ", country='" + country + '\'' +
                         ", postalCode='" + postalCode + '\'' +
                         '}';
+        }
+
+        @Override
+        public String toString() {
+                return name;
         }
 }
 
