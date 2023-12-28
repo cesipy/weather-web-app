@@ -10,12 +10,12 @@
     <ui:define name="content">
         <h:form>
             <p:panel header="Location Request">
-                <p:inputText value="#{locationController.locationName}" />
-                <p:commandButton value="Search" action="#{locationController.search}" update="locationResponsePanel"/>
+                <p:inputText value="#{locationControllerDb.locationName}" />
+                <p:commandButton value="Search" action="#{locationControllerDb.getFirstMatch}" update="locationResponsePanel"/>
             </p:panel>
             <p:panel header="Location Response" id="locationResponsePanel">
                 <div>
-                    <h:outputText escape="false" value="#{locationController.getCurrentLocation()}"/>
+                    <h:outputText escape="false" value="#{locationControllerDb.getLocationResponse()}"/>
                 </div>
             </p:panel>
         </h:form>
