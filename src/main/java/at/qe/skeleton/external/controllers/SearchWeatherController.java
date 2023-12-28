@@ -1,7 +1,7 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
-import at.qe.skeleton.external.model.location.LocationDTO;
+import at.qe.skeleton.external.model.location.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +16,31 @@ public class SearchWeatherController {
     @Autowired
     private WeatherController weatherController;
     @Autowired
-    private LocationControllerApi locationController;
+    private LocationControllerDb locationControllerDb;
     private CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO;
     // all values are initialized as null
     private String currentWeather;
-    private LocationDTO currentLocationDTO;
-    private String currentLocation;
+    private Location currentLocation;
+    private String currentLocationString;
     private String locationToSearch;
 
     public void searchWeatherByLocation() {
-        locationController.setLocationName(locationToSearch);
+        locationControllerDb.setLocationName(locationToSearch);
 
-        locationController.search();
-        setCurrentLocationDTO(locationController.getCurrentLocationDTO());
-        setCurrentLocation(locationController.getCurrentLocation());
+        // currently all locations are processed by database and not the geocoding api. this makes autocompletion much
+        // easier. however, there are cities missing. example:
+        // query in database= "inns" result: only innsbruck
+        // query in appi    = "inns" result: Inns quay B, Inns quay A, Inns quay C, Inns
 
-        weatherController.setLatitude(currentLocationDTO.latitude());
-        weatherController.setLongitude(currentLocationDTO.longitude());
+        Location singleLocation = locationControllerDb.getSingleLocation();
+
+        locationControllerDb.getFirstMatch();
+        setCurrentLocation(singleLocation);
+        setCurrentLocationString(locationControllerDb.getSingleLocation().toDebugString());
+
+        weatherController.setLatitude(locationControllerDb.getLatitude());
+        weatherController.setLongitude(locationControllerDb.getLongitude());
+
         weatherController.requestWeather();
         setCurrentAndForecastAnswerDTO(weatherController.getCurrentWeatherDTO());
         setCurrentWeather(weatherController.getCurrentWeather());
@@ -56,20 +64,20 @@ public class SearchWeatherController {
         this.currentWeather = currentWeatherString;
     }
 
-    public LocationDTO getCurrentLocationDTO() {
-        return currentLocationDTO;
-    }
-
-    public void setCurrentLocationDTO(LocationDTO currentlLocationDTO) {
-        this.currentLocationDTO = currentlLocationDTO;
-    }
-
-    public String getCurrentLocation() {
+    public Location getCurrentLocation() {
         return currentLocation;
     }
 
-    public void setCurrentLocation(String currentLocation) {
+    public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
+    }
+
+    public String getCurrentLocationString() {
+        return (currentLocationString == null) ? "no location found" : currentLocationString;
+    }
+
+    public void setCurrentLocationString(String currentLocationString) {
+        this.currentLocationString = currentLocationString;
     }
 
     public String getLocationToSearch() {
