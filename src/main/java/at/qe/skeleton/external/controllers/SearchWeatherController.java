@@ -16,7 +16,7 @@ public class SearchWeatherController {
     @Autowired
     private WeatherController weatherController;
     @Autowired
-    private LocationController locationController;
+    private LocationControllerApi locationController;
     private CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO;
     // all values are initialized as null
     private String currentWeather;
