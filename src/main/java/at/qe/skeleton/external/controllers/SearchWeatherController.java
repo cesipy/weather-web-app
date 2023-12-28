@@ -31,21 +31,28 @@ public class SearchWeatherController {
         // easier. however, there are cities missing. example:
         // query in database= "inns" result: only innsbruck
         // query in appi    = "inns" result: Inns quay B, Inns quay A, Inns quay C, Inns
-
+        locationControllerDb.getFirstMatch();
         Location singleLocation = locationControllerDb.getSingleLocation();
 
-        locationControllerDb.getFirstMatch();
-        setCurrentLocation(singleLocation);
-        setCurrentLocationString(locationControllerDb.getSingleLocation().toDebugString());
+        if (singleLocation != null) {
 
-        weatherController.setLatitude(locationControllerDb.getLatitude());
-        weatherController.setLongitude(locationControllerDb.getLongitude());
+            setCurrentLocation(singleLocation);
+            setCurrentLocationString(locationControllerDb.getSingleLocation().toDebugString());
 
-        weatherController.requestWeather();
-        setCurrentAndForecastAnswerDTO(weatherController.getCurrentWeatherDTO());
-        setCurrentWeather(weatherController.getCurrentWeather());
+            weatherController.setLatitude(locationControllerDb.getLatitude());
+            weatherController.setLongitude(locationControllerDb.getLongitude());
 
-        // LOGGER.info("weather string in searchWeatherController: " + currentWeather);
+            weatherController.requestWeather();
+            setCurrentAndForecastAnswerDTO(weatherController.getCurrentWeatherDTO());
+            setCurrentWeather(weatherController.getCurrentWeather());
+
+            // LOGGER.info("weather string in searchWeatherController: " + currentWeather);
+        }
+        else {
+            // TODO: improve error handling
+            LOGGER.info("in searchWeatherByLocation: no location found");
+            setCurrentWeather("No location found.");
+        }
     }
 
     public CurrentAndForecastAnswerDTO getCurrentAndForecastAnswerDTO() {

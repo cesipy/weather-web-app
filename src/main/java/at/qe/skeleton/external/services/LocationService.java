@@ -1,5 +1,6 @@
 package at.qe.skeleton.external.services;
 
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.repositories.LocationRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Scope("application")
@@ -25,8 +27,15 @@ public class LocationService {
 
     private final String PATH_NAME = "src/main/resources/owm_city_list.json";
 
-    public List<Location> autocomplete(String name){
-        return locationRepository.findByNameStartingWithIgnoreCase(name);
+    public List<Location> autocomplete(String name) throws EmptyLocationException {
+        if (Objects.equals(name, "")) {
+            LOGGER.info("throwing exception in LocationService");
+            throw new EmptyLocationException();
+        }
+        else {
+            return locationRepository.findByNameStartingWithIgnoreCase(name);
+        }
+
     }
 
     /**

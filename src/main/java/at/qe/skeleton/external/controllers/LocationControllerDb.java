@@ -23,42 +23,50 @@ public class LocationControllerDb {
     private double longitude;
     private double latitude;
 
-    public List<Location> autocomplete(String query) {
-        if (Objects.equals(locationName, "")) {
-            LOGGER.info("Query is null!");
-            return null;
+    public List<Location> autocomplete(String query)  {
+        try {
+            if (Objects.equals(locationName, "")) {
+                LOGGER.info("Query is null!");
+            }
+
+            locations = locationService.autocomplete(query);
+            if (!locations.isEmpty()) {
+                LOGGER.info("Autocomplete successful");
+            }
+
+            for (Location location : locations) {
+                LOGGER.info(location.toDebugString());
+            }
+
+            return locations;
+        }
+        catch (EmptyLocationException e) {
+            LOGGER.info("empty location list in autocomplete!");
         }
 
-        locations = locationService.autocomplete(query);
-        if (!locations.isEmpty()) {
-            LOGGER.info("Autocomplete successful");
-        }
-
-        for (Location location : locations) {
-            LOGGER.info(location.toDebugString());
-        }
-
-        return locations;
+        return null;
     }
 
     public void getFirstMatch() {
-        LOGGER.info("location_name: " + locationName);
+        try {
+            // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
+            // only locationName has to be extracted
+            String extractedLocationName = locationName.split(",")[0];
 
-        // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
-        // only locationName has to be extracted
-        String extractedLocationName = locationName.split(",")[0];
-        LOGGER.info("extractedLocationName: " + extractedLocationName);
+            locations = locationService.autocomplete(extractedLocationName);
 
-        locations = autocomplete(extractedLocationName);
-        LOGGER.info("in getFirstMatch:");
-
-        if (!locations.isEmpty()) {
-            singleLocation = locations.get(0);
-            setCoordinates();
-            LOGGER.info(singleLocation.toDebugString());
+            if (!locations.isEmpty()) {
+                singleLocation = locations.get(0);
+                setCoordinates();
+                LOGGER.info(singleLocation.toDebugString());
+            } else {
+                LOGGER.info("location is empty!");
+            }
         }
-        else {
-            LOGGER.info("location is empty!");
+        catch (EmptyLocationException e) {
+            LOGGER.info("no location found");
+            singleLocation = null;
+            locations = null;
         }
 
     }
@@ -72,6 +80,10 @@ public class LocationControllerDb {
     }
 
     //TODO: convert LocationEntity to .json string
+
+    public void clearParameter() {
+
+    }
 
     public Location getSingleLocation() {
         return singleLocation;
@@ -98,9 +110,6 @@ public class LocationControllerDb {
     }
 
     public void setLocationName(String locationName) {
-        if (Objects.equals(locationName, "")) {
-            LOGGER.info("location name is empty!");
-        }
         this.locationName = locationName;
     }
 

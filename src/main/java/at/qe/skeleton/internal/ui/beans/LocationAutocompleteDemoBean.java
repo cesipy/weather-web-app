@@ -1,5 +1,6 @@
 package at.qe.skeleton.internal.ui.beans;
 
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.LocationService;
 import org.slf4j.Logger;
@@ -29,14 +30,19 @@ public class LocationAutocompleteDemoBean {
     }
 
     public void demo() {
-        if (locationName == null) {
-            LOGGER.info("query is null!");
-        }
-        locations = locationService.autocomplete(locationName);
-        LOGGER.info("successfully autocomplete");
+        try {
+            if (locationName == null) {
+                LOGGER.info("query is null!");
+            }
+            locations = locationService.autocomplete(locationName);
+            LOGGER.info("successfully autocomplete");
 
-        for (Location location : locations) {
-            LOGGER.info(String.valueOf(location));
+            for (Location location : locations) {
+                LOGGER.info(String.valueOf(location));
+            }
+        }
+        catch (EmptyLocationException e) {
+            LOGGER.info("no location found!");
         }
     }
 }
