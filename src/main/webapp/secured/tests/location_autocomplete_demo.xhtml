@@ -10,10 +10,9 @@
     <ui:define name="content">
         <h:form>
             <p:panel header="Searching Request">
-                <p:inputText value="#{locationAutocompleteDemoBean.locationName}"/>
-                <p:commandButton value="Search" action="#{locationAutocompleteDemoBean.demo}"/>
+                <p:inputText value="#{locationControllerDb.locationName}"/>
+                <p:commandButton value="Search" action="#{locationControllerDb.autocomplete}" />
             </p:panel>
         </h:form>
     </ui:define>
-
 </ui:composition>

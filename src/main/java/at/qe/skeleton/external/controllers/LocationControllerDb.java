@@ -13,32 +13,33 @@ import java.util.List;
 @Controller
 @Scope("view")
 public class LocationControllerDb {
-
     private static Logger LOGGER = LoggerFactory.getLogger(LocationControllerDb.class);
-
     @Autowired
-    private LocationService locationEntityService;
-
-    private String locationToSearch;
-
+    private LocationService locationService;
+    private String locationName;
     private List<Location> locations;
-
     private Location singleLocation;
     private double longitude;
     private double latitude;
 
+    public void autocomplete() {
+        if (locationName == null) {
+            LOGGER.info("Query is null!");
+        }
 
-    public List<Location> autocomplete() {
-        // TODO: handle errors - empty/unsuccessful search
+        locations = locationService.autocomplete(locationName);
+        if (!locations.isEmpty()) {
+            LOGGER.info("Autocomplete successful");
+        }
 
-        locations = locationEntityService.autocomplete(locationToSearch);
-        LOGGER.debug("autocomplete successful");
-        return locations;
+        for (Location location : locations) {
+            LOGGER.info(String.valueOf(location));
+        }
     }
 
     public void getFirstMatch() {
-        locations = autocomplete();
-        LOGGER.debug("in getFirstMatch:");
+        autocomplete();
+        LOGGER.info("in getFirstMatch:");
 
         if (!locations.isEmpty()) {
             singleLocation = locations.get(0);
@@ -54,9 +55,7 @@ public class LocationControllerDb {
         //TODO: error handling
     }
 
-
     //TODO: convert LocationEntity to .json string
-
 
     public Location getSingleLocation() {
         return singleLocation;
@@ -82,11 +81,11 @@ public class LocationControllerDb {
         this.latitude = latitude;
     }
 
-    public void setLocationToSearch(String locationToSearch) {
-        this.locationToSearch = locationToSearch;
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
-    public String getLocationToSearch() {
-        return this.locationToSearch;
+    public String getLocationName() {
+        return this.locationName;
     }
 }

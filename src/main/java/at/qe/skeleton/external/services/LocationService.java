@@ -21,12 +21,12 @@ public class LocationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
 
     @Autowired
-    private LocationRepository locationEntityRepository;
+    private LocationRepository locationRepository;
 
     private final String PATH_NAME = "src/main/resources/owm_city_list.json";
 
     public List<Location> autocomplete(String name){
-        return locationEntityRepository.findByNameStartingWithIgnoreCase(name);
+        return locationRepository.findByNameStartingWithIgnoreCase(name);
     }
 
     /**
@@ -39,7 +39,7 @@ public class LocationService {
             File file = new File(path);
             List<Location> locationEntityList = objectMapper.readValue(file, new TypeReference<List<Location>>() {});
 
-            locationEntityRepository.saveAll(locationEntityList);
+            locationRepository.saveAll(locationEntityList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
