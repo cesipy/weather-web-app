@@ -8,6 +8,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+
+/**
+ * Repository interface for managing {@link Location} entities in the database.
+ * This interface extends the Spring JPA, so it provides basic CRUD operations.
+ *
+ * @see JpaRepository
+ */
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
 

@@ -7,6 +7,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 
+
+/**
+ * Represents a geographical location with associated details such as name, latitude, longitude, and country.
+ * This class is used for mapping location information retrieved from a JSON data source to Java objects.
+ *
+ */
 @Entity
 @Table(name = "location")
 @JsonIgnoreProperties(ignoreUnknown = true) // ignores other attributes in .json (like adminLevel1Short)
@@ -88,6 +94,11 @@ public class Location implements Serializable {
 
         @JsonProperty("postal_code") String postalCode;
 
+        /**
+         * Generates a debug-friendly string representation of the {@code Location} object.
+         *
+         * @return A string containing key details of the location.
+         */
         public String toDebugString() {
                 return "Location{" +
                         "id=" + id +
