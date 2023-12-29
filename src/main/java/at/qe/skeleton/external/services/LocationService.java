@@ -80,4 +80,9 @@ public class LocationService {
         loadDataFromJson(filePath);
         LOGGER.info("populated database");
     }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
 }
