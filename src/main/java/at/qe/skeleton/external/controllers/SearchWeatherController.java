@@ -31,16 +31,18 @@ public class SearchWeatherController {
         // easier. however, there are cities missing. example:
         // query in database= "inns" result: only innsbruck
         // query in appi    = "inns" result: Inns quay B, Inns quay A, Inns quay C, Inns
-        locationControllerDb.getFirstMatch();
-        Location singleLocation = locationControllerDb.getSingleLocation();
+
+        //locationControllerDb.getFirstMatch();
+        //Location singleLocation = locationControllerDb.getSingleLocation();
+        Location singleLocation = locationControllerDb.requestFirstMatch();
 
         if (singleLocation != null) {
 
             setCurrentLocation(singleLocation);
-            setCurrentLocationString(locationControllerDb.getSingleLocation().toDebugString());
+            setCurrentLocationString(singleLocation.toDebugString());       // for debugging
 
-            weatherController.setLatitude(locationControllerDb.getLatitude());
-            weatherController.setLongitude(locationControllerDb.getLongitude());
+            weatherController.setLatitude(singleLocation.getLatitude());
+            weatherController.setLongitude(singleLocation.getLongitude());
 
             weatherController.requestWeather();
             setCurrentAndForecastAnswerDTO(weatherController.getCurrentWeatherDTO());

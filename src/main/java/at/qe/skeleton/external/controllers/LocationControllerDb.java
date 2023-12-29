@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,10 +19,7 @@ public class LocationControllerDb {
     @Autowired
     private LocationService locationService;
     private String locationName;
-    private List<Location> locations;
-    private Location singleLocation;
-    private double longitude;
-    private double latitude;
+    private Location currentLocation;
 
     public List<Location> autocomplete(String query)  {
         try {
@@ -29,7 +27,7 @@ public class LocationControllerDb {
                 LOGGER.info("Query is null!");
             }
 
-            locations = locationService.autocomplete(query);
+            List <Location> locations = locationService.autocomplete(query);
             if (!locations.isEmpty()) {
                 LOGGER.info("Autocomplete successful");
             }
@@ -44,70 +42,35 @@ public class LocationControllerDb {
             LOGGER.info("empty location list in autocomplete!");
         }
 
-        return null;
+        return Collections.emptyList();
     }
 
-    public void getFirstMatch() {
+    public Location requestFirstMatch() {
         try {
             // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
             // only locationName has to be extracted
             String extractedLocationName = locationName.split(",")[0];
 
-            locations = locationService.autocomplete(extractedLocationName);
+            List<Location> locations = locationService.autocomplete(extractedLocationName);
 
             if (!locations.isEmpty()) {
-                singleLocation = locations.get(0);
-                setCoordinates();
-                LOGGER.info(singleLocation.toDebugString());
+                Location firstLocation = locations.get(0);
+                currentLocation = firstLocation;
+                LOGGER.info(firstLocation.toDebugString());
+                return firstLocation;
             } else {
                 LOGGER.info("location is empty!");
             }
         }
         catch (EmptyLocationException e) {
             LOGGER.info("no location found");
-            singleLocation = null;
-            locations = null;
+            currentLocation = null;
         }
+        return null;
 
-    }
-
-    public void setCoordinates() {
-        if (singleLocation != null) {
-            longitude = singleLocation.getLongitude();
-            latitude  = singleLocation.getLatitude();
-        }
-        //TODO: error handling
     }
 
     //TODO: convert LocationEntity to .json string
-
-    public void clearParameter() {
-
-    }
-
-    public Location getSingleLocation() {
-        return singleLocation;
-    }
-
-    public void setSingleLocation(Location singleLocation) {
-        this.singleLocation = singleLocation;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
 
     public void setLocationName(String locationName) {
         this.locationName = locationName;
@@ -117,14 +80,19 @@ public class LocationControllerDb {
         return this.locationName;
     }
 
-    //only temporary
-    public String getLocationResponse() {
-        if (singleLocation == null) {
-            LOGGER.info("singleLocation is empty");
-            return null;
+    public void setCurrentLocation(Location currentLocation) {
+        this.currentLocation = currentLocation;
+    }
+
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
+
+    // only temporary
+    public String currentLocationToString() {
+        if (currentLocation == null) {
+            return "";
         }
-        else {
-            return singleLocation.toDebugString();
-        }
+        return currentLocation.toDebugString();
     }
 }
