@@ -12,6 +12,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Controller class for managing locations retrieved from the database.
+ */
 @Controller
 @Scope("view")
 public class LocationControllerDb {
@@ -21,6 +24,13 @@ public class LocationControllerDb {
     private String locationName;
     private Location currentLocation;
 
+
+    /**
+     * Provides a list of locations based on the given query for autocomplete functionality.
+     *
+     * @param query The query for autocompletion.
+     * @return A list of locations matching the provided query.
+     */
     public List<Location> autocomplete(String query)  {
         try {
             if (Objects.equals(locationName, "")) {
@@ -28,13 +38,8 @@ public class LocationControllerDb {
             }
 
             List <Location> locations = locationService.autocomplete(query);
-            if (!locations.isEmpty()) {
-                LOGGER.info("Autocomplete successful");
-            }
 
-            for (Location location : locations) {
-                LOGGER.info(location.toDebugString());
-            }
+            logLocations(locations);
 
             return locations;
         }
@@ -45,6 +50,13 @@ public class LocationControllerDb {
         return Collections.emptyList();
     }
 
+
+    /**
+     * Retrieves the first matching location based on the provided query.
+     * This is used to search a specific location from the database.
+     *
+     * @return The first matching location.
+     */
     public Location requestFirstMatch() {
         try {
             // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
@@ -52,22 +64,17 @@ public class LocationControllerDb {
             String extractedLocationName = locationName.split(",")[0];
 
             List<Location> locations = locationService.autocomplete(extractedLocationName);
+            Location firstLocation = locations.get(0);
+            currentLocation = firstLocation;
+            LOGGER.info(firstLocation.toDebugString());
+            return firstLocation;
 
-            if (!locations.isEmpty()) {
-                Location firstLocation = locations.get(0);
-                currentLocation = firstLocation;
-                LOGGER.info(firstLocation.toDebugString());
-                return firstLocation;
-            } else {
-                LOGGER.info("location is empty!");
-            }
         }
         catch (EmptyLocationException e) {
             LOGGER.info("no location found");
             currentLocation = null;
         }
         return null;
-
     }
 
     //TODO: convert LocationEntity to .json string
@@ -89,10 +96,26 @@ public class LocationControllerDb {
     }
 
     // only temporary
+    /**
+     * Provides a string representation of the current location for temporary use.
+     *
+     * @return A string representation of the current location.
+     */
     public String currentLocationToString() {
         if (currentLocation == null) {
             return "";
         }
         return currentLocation.toDebugString();
+    }
+
+    /**
+     * Logs the provided list of locations.
+     *
+     * @param locations The list of locations to be logged.
+     */
+    private void logLocations(List<Location> locations) {
+        for (Location location : locations) {
+            LOGGER.info(location.toDebugString());
+        }
     }
 }
