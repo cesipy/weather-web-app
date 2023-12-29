@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+
+/**
+ * Service class for managing locations retrieved from the database.
+ */
 @Service
 @Scope("application")
 public class LocationService {
@@ -25,8 +30,19 @@ public class LocationService {
     @Autowired
     private LocationRepository locationRepository;
 
-    private final String PATH_NAME = "src/main/resources/owm_city_list.json";
+    // points to "src/main/resources/owm_city_list.json"
+    // json file with cities is from: https://github.com/manifestinteractive/openweathermap-cities
+    @Value("${location.data.file.path:src/main/resources/owm_city_list.json}")
+    private String filePath;
 
+
+    /**
+     * Provides a list of locations based on the given query for autocomplete functionality.
+     *
+     * @param name query for autocompletion.
+     * @return list of locations matching the provided query.
+     * @throws EmptyLocationException If the provided name is empty.
+     */
     public List<Location> autocomplete(String name) throws EmptyLocationException {
         if (Objects.equals(name, "")) {
             LOGGER.info("throwing exception in LocationService");
@@ -40,7 +56,8 @@ public class LocationService {
 
     /**
      * Loads location data from .json file with path `path` and populates repository.
-     * @param path path of .json file
+     *
+     * @param path path of .json file.
      */
     public void loadDataFromJson(String path) {
         try {
@@ -54,9 +71,13 @@ public class LocationService {
         }
     }
 
+
+    /**
+     * Initializes the service by populating the database with location data.
+     */
     public void init() {
         LOGGER.info("starting population of database");
-        loadDataFromJson(PATH_NAME);
+        loadDataFromJson(filePath);
         LOGGER.info("populated database");
     }
 }

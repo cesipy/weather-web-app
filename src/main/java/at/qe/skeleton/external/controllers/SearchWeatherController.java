@@ -18,43 +18,56 @@ public class SearchWeatherController {
     @Autowired
     private LocationControllerDb locationControllerDb;
     private CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO;
-    // all values are initialized as null
     private String currentWeather;
     private Location currentLocation;
     private String currentLocationString;
     private String locationToSearch;
 
+    /**
+     * Starts a weather search based on the specified location.
+     * The location is set in the {@link LocationControllerDb} to facilitate autocompletion.
+     * The search is performed using the database, and if a location is found, weather information is retrieved
+     * and stored in the controller's fields.
+     * If no location is found, the current weather is set to "No location found."
+     */
     public void searchWeatherByLocation() {
         locationControllerDb.setLocationName(locationToSearch);
 
         // currently all locations are processed by database and not the geocoding api. this makes autocompletion much
         // easier. however, there are cities missing. example:
         // query in database= "inns" result: only innsbruck
-        // query in appi    = "inns" result: Inns quay B, Inns quay A, Inns quay C, Inns
+        // query in api    = "inns" result: Inns quay B, Inns quay A, Inns quay C, Inns
 
         //locationControllerDb.getFirstMatch();
         //Location singleLocation = locationControllerDb.getSingleLocation();
         Location singleLocation = locationControllerDb.requestFirstMatch();
 
         if (singleLocation != null) {
-
-            setCurrentLocation(singleLocation);
-            setCurrentLocationString(singleLocation.toDebugString());       // for debugging
-
-            weatherController.setLatitude(singleLocation.getLatitude());
-            weatherController.setLongitude(singleLocation.getLongitude());
-
-            weatherController.requestWeather();
-            setCurrentAndForecastAnswerDTO(weatherController.getCurrentWeatherDTO());
-            setCurrentWeather(weatherController.getCurrentWeather());
-
-            // LOGGER.info("weather string in searchWeatherController: " + currentWeather);
+            processWeatherForLocation(singleLocation);
         }
         else {
             // TODO: improve error handling
             LOGGER.info("in searchWeatherByLocation: no location found");
             setCurrentWeather("No location found.");
         }
+    }
+
+    /**
+     * Processes weather information for a given location.
+     * The location details are set in the controller, and the weather is retrieved using the {@link WeatherController}.
+     *
+     * @param singleLocation location for which weather information is to be retrieved
+     */
+    private void processWeatherForLocation(Location singleLocation) {
+        setCurrentLocation(singleLocation);
+        setCurrentLocationString(singleLocation.toDebugString());
+
+        weatherController.setLatitude(singleLocation.getLatitude());
+        weatherController.setLongitude(singleLocation.getLongitude());
+
+        weatherController.requestWeather();
+        setCurrentAndForecastAnswerDTO(weatherController.getCurrentWeatherDTO());
+        setCurrentWeather(weatherController.getCurrentWeather());
     }
 
     public CurrentAndForecastAnswerDTO getCurrentAndForecastAnswerDTO() {
