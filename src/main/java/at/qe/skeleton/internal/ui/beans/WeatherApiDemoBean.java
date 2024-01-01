@@ -51,7 +51,6 @@ public class WeatherApiDemoBean {
 
                 CurrentWeatherDTO currentWeather = answer.currentWeather();
 
-
                 locationWeatherMap.put(locationName, currentWeather);
             } catch (final Exception e) {
                 LOGGER.error("error in request", e);

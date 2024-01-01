@@ -23,6 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -57,6 +64,10 @@ public class LocationApiDemoBean {
 
     @PostConstruct
     public void init() {
+        if(getQuery_name() != null){
+            String location = getQuery_name();
+            setQuery_name(location.replace(" ", "_"));
+        }
         try {
             List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(getQuery_name(), getLIMIT());
 
@@ -116,9 +127,11 @@ public class LocationApiDemoBean {
         return query_name;
     }
 
-    public void setQuery_name(String query_name) {
-        this.query_name = query_name;
+    @RequestMapping(value = "/secured/detail.xhtml", method = RequestMethod.GET)
+    public void setQuery_name(@RequestParam("location") String location) {
+        this.query_name = location;
     }
+
 
     public int getLIMIT() {
         return LIMIT;
