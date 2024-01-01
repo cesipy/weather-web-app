@@ -65,19 +65,23 @@ public class LocationApiDemoBean {
                 // only process first entry in List of LocationDTOs
 
                 LocationDTO firstLocation = answer.get(0);
-                Pageable topOne = PageRequest.of(0, 1);
-                List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.name(), topOne);
+                Pageable last_four_entries = PageRequest.of(0, 4);
+                List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_four_entries);
 
                 if (!latestData.isEmpty()) {
                     DailyWeatherData latestRecord = latestData.get(0);
                     Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
 
                     if (latestRecord.getAdditionTime().isAfter(oneHourAgo)) {
-                        LOGGER.warn("Record is younger than an hour");
+                        //Lacking the current and weather in hour, thus data below is not displayed correctly.
+
+                        this.setDailyWeatherToday(weatherDataService.convertDailyDataToDTO(latestData.get(3)));
+                        this.setDailyWeatherTomorrow(weatherDataService.convertDailyDataToDTO(latestData.get(2)));
+                        this.setDailyWeatherDAT(weatherDataService.convertDailyDataToDTO(latestData.get(1)));
+                        this.setDailyWeatherInThreeDays(weatherDataService.convertDailyDataToDTO(latestData.get(0)));
                         return;
                     }
                 }
-
                 this.setLocation(firstLocation);
 
                 CurrentAndForecastAnswerDTO forecastAnswer = this.weatherApiRequestService.retrieveCurrentAndForecastWeather(firstLocation.latitude(), firstLocation.longitude());
@@ -184,6 +188,41 @@ public class LocationApiDemoBean {
         }
     }
 
+    public List<HourlyWeatherDTO> getWeatherInOneHourAsList() {
+        if (weatherInOneHour != null) {
+            return Collections.singletonList(weatherInOneHour);
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
+    public List<DailyWeatherDTO> getdailyWeatherTodayAsList() {
+        if (dailyWeatherToday != null) {
+            return Collections.singletonList(dailyWeatherToday);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    public List<DailyWeatherDTO> getdailyWeatherTomorrowAsList() {
+        if (dailyWeatherTomorrow != null) {
+            return Collections.singletonList(dailyWeatherTomorrow);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    public List<DailyWeatherDTO> getdailyWeatherDATAsList() {
+        if (dailyWeatherDAT != null) {
+            return Collections.singletonList(dailyWeatherDAT);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    public List<DailyWeatherDTO> getdailyWeatherInThreeDaysAsList() {
+        if (dailyWeatherInThreeDays != null) {
+            return Collections.singletonList(dailyWeatherInThreeDays);
+        } else {
+            return Collections.emptyList();
+        }
+    }
 }
 

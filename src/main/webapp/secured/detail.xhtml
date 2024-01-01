@@ -37,7 +37,7 @@
 
         <!-- Weather in One Hour-->
         <h:outputText value="Weather in One Hour for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.currentWeatherAsList}">
+        <p:dataTable value="#{locationApiDemoBean.weatherInOneHourAsList}">
             <p:column headerText="Temperature">
                 <h:outputText value="#{locationApiDemoBean.weatherInOneHour.temperature()} °C"/>
             </p:column>
@@ -57,7 +57,7 @@
 
         <!-- Daily forecast today-->
         <h:outputText value="Todays Daily forecast for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.currentWeatherAsList}">
+        <p:dataTable value="#{locationApiDemoBean.dailyWeatherTodayAsList}">
             <p:column headerText="Sunrise and Sunset">
                 <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.sunrise()} °C"/>
                 <br />
@@ -101,7 +101,7 @@
 
         <!-- Daily forecast tomorrow-->
         <h:outputText value="Tomorrows Daily forecast for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.currentWeatherAsList}">
+        <p:dataTable value="#{locationApiDemoBean.dailyWeatherTomorrowAsList}">
             <p:column headerText="Sunrise and Sunset">
                 <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.sunrise()} °C"/>
                 <br />
@@ -145,7 +145,7 @@
 
         <!-- Daily forecast DAT-->
         <h:outputText value="DATs Daily forecast for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.currentWeatherAsList}">
+        <p:dataTable value="#{locationApiDemoBean.dailyWeatherDATAsList}">
             <p:column headerText="Sunrise and Sunset">
                 <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.sunrise()} °C"/>
                 <br />
@@ -188,7 +188,7 @@
         </p:dataTable>
         <!-- Daily forecast in three days-->
         <h:outputText value="in Three Days Daily forecast for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.currentWeatherAsList}">
+        <p:dataTable value="#{locationApiDemoBean.dailyWeatherInThreeDaysAsList}">
             <p:column headerText="Sunrise and Sunset">
                 <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.sunrise()} °C"/>
                 <br />
