@@ -1,3 +1,10 @@
+.classpath
+.project
+.settings/
+target/
+
+
+
 ##############################
 ## Visual Studio Code
 ##############################
@@ -18,4 +25,5 @@ out/
 *.iml
 *.ipr
 *.iws
+/logs
 

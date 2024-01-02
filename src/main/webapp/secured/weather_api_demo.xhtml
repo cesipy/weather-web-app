@@ -9,15 +9,28 @@
 
     <ui:define name="content">
         <h:form>
-            <p:panel header="Request">
-                <div style="height: 50px">
-                    https://api.openweathermap.org/data/3.0/onecall?lat=#{weatherApiDemoBean.latitude}&amp;lon=#{weatherApiDemoBean.longitude}&amp;appid=value</div>
-            </p:panel>
-            <p:panel header="Response">
-                <div>
-                    <h:outputText escape="false" value="#{weatherApiDemoBean.currentWeather}"/>
-                </div>
-            </p:panel>
+            <p:dataTable var="location" value="#{weatherApiDemoBean.locationWeatherMap.keySet()}">
+                <p:column headerText="Location">
+                    <h:outputText value="#{location}"/>
+                </p:column>
+                <p:column headerText="Temperature">
+                    <h:outputText value="#{weatherApiDemoBean.locationWeatherMap[location].temperature()} °C"/>
+                </p:column>
+                <p:column headerText="Feels like">
+                    <h:outputText value="#{weatherApiDemoBean.locationWeatherMap[location].feelsLikeTemperature()} °C"/>
+                </p:column>
+                <p:column headerText="Humidity">
+                    <h:outputText value="#{weatherApiDemoBean.locationWeatherMap[location].humidity()} %"/>
+                </p:column>
+                <p:column headerText="Wind speed">
+                    <h:outputText value="#{weatherApiDemoBean.locationWeatherMap[location].windSpeed()} m/s"/>
+                </p:column>
+                <p:column headerText="Detail">
+                    <h:outputLink value="detail.xhtml?location=#{location}">
+                        View Details
+                    </h:outputLink>
+                </p:column>
+            </p:dataTable>
         </h:form>
     </ui:define>
 
