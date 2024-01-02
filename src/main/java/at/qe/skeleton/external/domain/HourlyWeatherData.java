@@ -1,0 +1,171 @@
+package at.qe.skeleton.external.domain;
+
+import at.qe.skeleton.external.domain.DailyAggregationData;
+import at.qe.skeleton.external.domain.TemperatureAggregationData;
+import at.qe.skeleton.external.model.deserialisation.PrecipitationDeserializer;
+import jakarta.persistence.*;
+import java.time.Instant;
+
+@Entity
+@Table(name = "hourly_weather_data")
+public class HourlyWeatherData {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long hourlyweather_id;
+    private Instant timestamp;
+    private double temperature;
+    private double feelsLikeTemperature;
+    private int pressure;
+    private double humidity;
+    private double dewPoint;
+    private int uvi;
+    private int clouds;
+    private int visibility;
+    private double windSpeed;
+    private double windGust;
+    private double windDirection;
+    private int probabilityOfPrecipitation;
+    private Double rain;
+    private Double snow;
+    private Instant additionTime;
+    private String location;
+    public HourlyWeatherData() {
+    }
+
+    public Instant getAdditionTime() {
+        return additionTime;
+    }
+
+    public void setAdditionTime(Instant additionTime) {
+        this.additionTime = additionTime;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Double getSnow() {
+        return snow;
+    }
+
+    public void setSnow(Double snow) {
+        this.snow = snow;
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
+    }
+
+    public double getFeelsLikeTemperature() {
+        return feelsLikeTemperature;
+    }
+
+    public void setFeelsLikeTemperature(double feelsLikeTemperature) {
+        this.feelsLikeTemperature = feelsLikeTemperature;
+    }
+
+    public int getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(int pressure) {
+        this.pressure = pressure;
+    }
+
+    public double getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(double humidity) {
+        this.humidity = humidity;
+    }
+
+    public double getDewPoint() {
+        return dewPoint;
+    }
+
+    public void setDewPoint(double dewPoint) {
+        this.dewPoint = dewPoint;
+    }
+
+    public int getUvi() {
+        return uvi;
+    }
+
+    public void setUvi(int uvi) {
+        this.uvi = uvi;
+    }
+
+    public int getClouds() {
+        return clouds;
+    }
+
+    public void setClouds(int clouds) {
+        this.clouds = clouds;
+    }
+
+    public int getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(int visibility) {
+        this.visibility = visibility;
+    }
+
+    public double getWindSpeed() {
+        return windSpeed;
+    }
+
+    public void setWindSpeed(double windSpeed) {
+        this.windSpeed = windSpeed;
+    }
+
+    public double getWindGust() {
+        return windGust;
+    }
+
+    public void setWindGust(double windGust) {
+        this.windGust = windGust;
+    }
+
+    public double getWindDirection() {
+        return windDirection;
+    }
+
+    public void setWindDirection(double windDirection) {
+        this.windDirection = windDirection;
+    }
+
+    public int getProbabilityOfPrecipitation() {
+        return probabilityOfPrecipitation;
+    }
+
+    public void setProbabilityOfPrecipitation(int probabilityOfPrecipitation) {
+        this.probabilityOfPrecipitation = probabilityOfPrecipitation;
+    }
+
+    public Double getRain() {
+        return rain;
+    }
+
+    public void setRain(Double rain) {
+        this.rain = rain;
+    }
+}

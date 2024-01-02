@@ -1,6 +1,7 @@
 package at.qe.skeleton.internal.ui.beans;
 
 import at.qe.skeleton.external.domain.DailyWeatherData;
+import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.CurrentWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
@@ -10,6 +11,7 @@ import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.services.WeatherDataService;
 import at.qe.skeleton.internal.repositories.DailyWeatherDataRepository;
+import at.qe.skeleton.internal.repositories.HourlyWeatherDataRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -47,6 +49,8 @@ public class LocationApiDemoBean {
     @Autowired
     private DailyWeatherDataRepository dailyWeatherDataRepository;
     @Autowired
+    private HourlyWeatherDataRepository hourlyWeatherDataRepository;
+    @Autowired
     private WeatherApiRequestService weatherApiRequestService;
     @Autowired
     private WeatherDataService weatherDataService;
@@ -77,19 +81,23 @@ public class LocationApiDemoBean {
 
                 LocationDTO firstLocation = answer.get(0);
                 Pageable last_four_entries = PageRequest.of(0, 4);
+                Pageable last_two_entries = PageRequest.of(0, 2);
                 List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_four_entries);
+                List<HourlyWeatherData> latestDataHourly = hourlyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_two_entries);
 
-                if (!latestData.isEmpty()) {
+                if (!latestData.isEmpty() && !latestDataHourly.isEmpty()) {
                     DailyWeatherData latestRecord = latestData.get(0);
+                    HourlyWeatherData latestRecordHourly = latestDataHourly.get(0);
                     Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
 
-                    if (latestRecord.getAdditionTime().isAfter(oneHourAgo)) {
-                        //Lacking the current and weather in hour, thus data below is not displayed correctly.
+                    if (latestRecord.getAdditionTime().isAfter(oneHourAgo) && latestRecordHourly.getAdditionTime().isAfter(oneHourAgo)) {
+                        this.setCurrentWeather(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(0)));
+                        this.setWeatherInOneHour(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(1)));
 
-                        this.setDailyWeatherToday(weatherDataService.convertDailyDataToDTO(latestData.get(3)));
-                        this.setDailyWeatherTomorrow(weatherDataService.convertDailyDataToDTO(latestData.get(2)));
-                        this.setDailyWeatherDAT(weatherDataService.convertDailyDataToDTO(latestData.get(1)));
-                        this.setDailyWeatherInThreeDays(weatherDataService.convertDailyDataToDTO(latestData.get(0)));
+                        this.setDailyWeatherToday(weatherDataService.convertDailyDataToDTO(latestData.get(0)));
+                        this.setDailyWeatherTomorrow(weatherDataService.convertDailyDataToDTO(latestData.get(1)));
+                        this.setDailyWeatherDAT(weatherDataService.convertDailyDataToDTO(latestData.get(2)));
+                        this.setDailyWeatherInThreeDays(weatherDataService.convertDailyDataToDTO(latestData.get(3)));
                         return;
                     }
                 }
@@ -99,7 +107,9 @@ public class LocationApiDemoBean {
                 List<HourlyWeatherDTO> hourlyWeatherList = forecastAnswer.hourlyWeather();
 
                 this.setCurrentWeather(hourlyWeatherList.get(0));
+                weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(0), firstLocation.name());
                 this.setWeatherInOneHour(hourlyWeatherList.get(1));
+                weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(1), firstLocation.name());
 
                 List<DailyWeatherDTO> dailyWeatherList = forecastAnswer.dailyWeather();
                 this.setDailyWeatherToday(dailyWeatherList.get(0));

@@ -2,12 +2,15 @@ package at.qe.skeleton.external.services;
 
 import at.qe.skeleton.external.domain.DailyAggregationData;
 import at.qe.skeleton.external.domain.DailyWeatherData;
+import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.domain.TemperatureAggregationData;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyTemperatureAggregationDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.TemperatureAggregationDTO;
 import at.qe.skeleton.internal.repositories.DailyAggregationDataRepository;
 import at.qe.skeleton.internal.repositories.DailyWeatherDataRepository;
+import at.qe.skeleton.internal.repositories.HourlyWeatherDataRepository;
 import at.qe.skeleton.internal.repositories.TemperatureAggregationDataRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
@@ -26,6 +29,8 @@ public class WeatherDataService {
     private DailyAggregationDataRepository dailyAggregationDataRepository;
     @Autowired
     private TemperatureAggregationDataRepository temperatureAggregationDataRepository;
+    @Autowired
+    private HourlyWeatherDataRepository hourlyWeatherDataRepository;
 
     public void saveDailyWeatherFromDTO(DailyWeatherDTO dailyWeatherDTO, String location) {
         DailyWeatherData dailyWeatherData = new DailyWeatherData();
@@ -120,5 +125,46 @@ public class WeatherDataService {
                 data.getEveningTemperature(),
                 data.getNightTemperature()
                 );
+    }
+
+    public HourlyWeatherDTO convertHourlyDataToDTO(HourlyWeatherData data){
+        return new HourlyWeatherDTO(
+          data.getTimestamp(),
+          data.getTemperature(),
+          data.getFeelsLikeTemperature(),
+          data.getPressure(),
+          data.getHumidity(),
+          data.getDewPoint(),
+          data.getUvi(),
+          data.getClouds(),
+          data.getVisibility(),
+          data.getWindSpeed(),
+          data.getWindGust(),
+          data.getWindDirection(),
+          data.getProbabilityOfPrecipitation(),
+          data.getRain(), data.getSnow(),
+                null
+        );
+    }
+
+    public void saveHourlyWeatherFromDTO(HourlyWeatherDTO hourlyWeatherDTO, String location) {
+        HourlyWeatherData hourlyWeatherData = new HourlyWeatherData();
+        hourlyWeatherData.setTemperature(hourlyWeatherDTO.temperature());
+        hourlyWeatherData.setFeelsLikeTemperature(hourlyWeatherDTO.feelsLikeTemperature());
+        hourlyWeatherData.setPressure(hourlyWeatherDTO.pressure());
+        hourlyWeatherData.setHumidity(hourlyWeatherDTO.humidity());
+        hourlyWeatherData.setDewPoint(hourlyWeatherDTO.dewPoint());
+        hourlyWeatherData.setWindSpeed(hourlyWeatherDTO.windSpeed());
+        hourlyWeatherData.setWindGust(hourlyWeatherDTO.windGust());
+        hourlyWeatherData.setWindDirection(hourlyWeatherDTO.windDirection());
+        hourlyWeatherData.setClouds(hourlyWeatherDTO.clouds());
+        hourlyWeatherData.setUvi(hourlyWeatherDTO.uvi());
+        hourlyWeatherData.setProbabilityOfPrecipitation(hourlyWeatherDTO.probabilityOfPrecipitation());
+        hourlyWeatherData.setRain(hourlyWeatherDTO.rain());
+        hourlyWeatherData.setSnow(hourlyWeatherDTO.snow());
+        hourlyWeatherData.setAdditionTime(Instant.now());
+        hourlyWeatherData.setLocation(location);
+
+        hourlyWeatherDataRepository.save(hourlyWeatherData);
     }
 }
