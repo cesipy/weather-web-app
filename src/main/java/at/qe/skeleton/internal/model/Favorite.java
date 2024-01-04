@@ -11,7 +11,7 @@ public class Favorite {
     private Long id;
 
     @ManyToOne
-    // @JoinColumn(name = "username")
+    @JoinColumn(name = "username")
     private Userx user;
 
     @ManyToOne
@@ -49,5 +49,15 @@ public class Favorite {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    @Override
+    public String toString() {
+        return "Favorite{" +
+                "id=" + id +
+                ", user=" + user +
+                ", location=" + location +
+                ", priority=" + priority +
+                '}';
     }
 }
