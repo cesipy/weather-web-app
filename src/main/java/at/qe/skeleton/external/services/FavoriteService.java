@@ -40,15 +40,19 @@ public class FavoriteService {
         LOGGER.info("username: " + userx);
 
         return favoriteRepository.findByUser(userx);
+    }
 
+    public List<Location> autocomplete(String query) {
+        return locationService.autocomplete(query);
     }
 
     // maybe with Favorite instance, instead of creation
-    public void saveFavorite( String locationName, int priority) {
+    public void saveFavorite( String locationName) {
 
         Userx userx = userxService.getCurrentUser();
         LOGGER.info(String.valueOf(userx));
         Location location = locationService.retrieveLocation(locationName);
+        int priority = calculatePriority(userx);
 
         Favorite favorite = new Favorite();
         favorite.setUser(userx);
@@ -59,7 +63,6 @@ public class FavoriteService {
     }
 
 
-
     public void deleteFavorite(Favorite favorite)
     {
         favoriteRepository.delete(favorite);
@@ -67,6 +70,13 @@ public class FavoriteService {
 
     public void deleteFavoriteById(Long id) {
         favoriteRepository.deleteById(id);
+    }
+
+    private int calculatePriority(Userx userx) {
+        List<Favorite> favorites =  favoriteRepository.findByUser(userx);
+
+        LOGGER.info("priority: " + favorites.size());
+        return favorites.size();
     }
 
     // TODO: implement updateFavorite method

@@ -1,5 +1,6 @@
 package at.qe.skeleton.external.controllers;
 
+import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.internal.model.Favorite;
 import at.qe.skeleton.external.services.FavoriteService;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class FavoriteController {
     private List<Favorite> favorites;
 
     public void saveFavorite() {
-        favoriteService.saveFavorite(locationName, priority);
+        favoriteService.saveFavorite(locationName);
         LOGGER.info("successfully saved favorite: " + locationName + ", priority: " +priority);
     }
 
@@ -51,6 +52,10 @@ public class FavoriteController {
         // update favorite list
         retrieveFavorites();
 
+    }
+
+    public List<Location> autocomplete(String query) {
+        return favoriteService.autocomplete(query);
     }
 
     public List<Favorite> getFavorites() {

@@ -115,7 +115,7 @@ public class Location implements Serializable {
 
         @Override
         public String toString() {
-                return name + ", " + country;
+                return name; //+ ", " + country;
         }
 }
 
