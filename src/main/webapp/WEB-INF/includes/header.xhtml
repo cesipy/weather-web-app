@@ -26,9 +26,10 @@
                     </p:submenu>
                     <p:submenu label="Test Submenu" rendered="#{sessionInfoBean.loggedIn}">
                         <p:menuitem value="Security Test" url="/secured/test.xhtml"/>
-                        <p:menuitem value="Weather API Demo" url="/secured/weather_api_demo.xhtml"/>
-                        <p:menuitem value="Location API Demo" url="/secured/location_api_demo.xhtml"/>
-                        <p:menuitem value="Location Searching Demo" url="/secured/location_searching_demo.xhtml"/>
+                        <p:menuitem value="Weather API Demo" url="/secured/demos/weather_api_demo.xhtml"/>
+                        <p:menuitem value="Location API Demo" url="/secured/demos/location_api_demo.xhtml"/>
+                        <p:menuitem value="Location Searching Demo" url="/secured/demos/location_searching_demo.xhtml"/>
+                        <p:menuitem value="AutocompleteDemo" url="/secured/demos/location_autocomplete_demo.xhtml"/>
                     </p:submenu>
                     <p:submenu label="Weather" rendered="#{sessionInfoBean.loggedIn}">
                         <p:menuitem value="Weather Searching" url="/common/searching.xhtml"/>

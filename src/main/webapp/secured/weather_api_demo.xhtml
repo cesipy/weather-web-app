@@ -9,28 +9,29 @@
 
     <ui:define name="content">
         <h:form>
-            <p:dataTable var="location" value="#{weatherApiDemoBean.locationWeatherMap.keySet()}">
-                <p:column headerText="Location">
-                    <h:outputText value="#{location}"/>
-                </p:column>
-                <p:column headerText="Temperature">
-                    <h:outputText value="#{weatherApiDemoBean.locationWeatherMap[location].temperature()} °C"/>
-                </p:column>
-                <p:column headerText="Feels like">
-                    <h:outputText value="#{weatherApiDemoBean.locationWeatherMap[location].feelsLikeTemperature()} °C"/>
-                </p:column>
-                <p:column headerText="Humidity">
-                    <h:outputText value="#{weatherApiDemoBean.locationWeatherMap[location].humidity()} %"/>
-                </p:column>
-                <p:column headerText="Wind speed">
-                    <h:outputText value="#{weatherApiDemoBean.locationWeatherMap[location].windSpeed()} m/s"/>
-                </p:column>
-                <p:column headerText="Detail">
-                    <h:outputLink value="detail.xhtml?location=#{location}">
-                        View Details
-                    </h:outputLink>
-                </p:column>
-            </p:dataTable>
+            <h:dataTable value="#{weatherApiDemoBean.locations}" var="location">
+                <h:column headerText="ID">
+                    <h:outputText value="#{location.id}" />
+                </h:column>
+                <h:column headerText="Name">
+                    <h:outputText value="#{location.name}" />
+                </h:column>
+                <h:column headerText="LAT">
+                    <h:outputText value="#{location.latitude}" />
+                </h:column>
+                <h:column headerText="LON">
+                    <h:outputText value="#{location.longitude}" />
+                </h:column>
+                <h:column headerText="ABR">
+                    <h:outputText value="#{location.abbreviatedCountry}" />
+                </h:column>
+                <h:column headerText="COU">
+                    <h:outputText value="#{location.country}" />
+                </h:column>
+                <h:column headerText="POSTAL">
+                    <h:outputText value="#{location.postalCode}" />
+                </h:column>
+            </h:dataTable>
         </h:form>
     </ui:define>
 
