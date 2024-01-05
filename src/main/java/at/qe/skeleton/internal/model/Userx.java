@@ -4,15 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
@@ -48,6 +41,9 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     private String lastName;
     private String email;
     private String phone;
+
+    @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+    private CreditCard creditCard;
 
     boolean enabled;
 

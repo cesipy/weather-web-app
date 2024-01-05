@@ -4,7 +4,7 @@ import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 /**
  * Tests to ensure that each entity's implementation of equals conforms to the
