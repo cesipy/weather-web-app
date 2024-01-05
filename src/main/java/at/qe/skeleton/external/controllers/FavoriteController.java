@@ -1,10 +1,7 @@
-package at.qe.skeleton.internal.ui.controllers;
+package at.qe.skeleton.external.controllers;
 
-import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.internal.model.Favorite;
-import at.qe.skeleton.internal.services.FavoriteService;
-import at.qe.skeleton.internal.services.UserxService;
-import jakarta.annotation.PostConstruct;
+import at.qe.skeleton.external.services.FavoriteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +26,8 @@ public class FavoriteController {
     @Autowired
     private FavoriteService favoriteService;
 
-    ResponseEntity<List<Favorite>> responseEntity;
 
+    private List<Favorite> favorites;
 
 
     public void saveFavorite() {
@@ -38,34 +35,20 @@ public class FavoriteController {
         LOGGER.info("successfully saved favorite: " + locationName + ", priority: " +priority);
     }
 
-    public ResponseEntity<List<Favorite>> retrieveFavorites() {
-        // get favorites for the user that
-        List<Favorite> favorites = favoriteService.getFavoritesForUser();
+    public void retrieveFavorites() {
+        // Get favorites for the user
+        favorites = favoriteService.getFavoritesForUser();
 
-        // TODO: handle user not found
-        if (favorites.isEmpty()) {
-            responseEntity = ResponseEntity.notFound().build();
-            LOGGER.info("favorites is null!");
-            return ResponseEntity.notFound().build();
-        }
-
-        for (Favorite favorite: favorites) {
+        // Log favorites
+        for (Favorite favorite : favorites) {
             LOGGER.info(String.valueOf(favorite));
         }
-
-        ResponseEntity<List<Favorite>> response = ResponseEntity.ok(favorites);
-        responseEntity = response;
-        return response;
     }
 
-
-    public ResponseEntity<List<Favorite>> getResponseEntity() {
-        return responseEntity;
+    public List<Favorite> getFavorites() {
+        return favorites;
     }
 
-    public void setResponseEntity(ResponseEntity<List<Favorite>> responseEntity) {
-        this.responseEntity = responseEntity;
-    }
 
     public String getLocationName() {
         return locationName;

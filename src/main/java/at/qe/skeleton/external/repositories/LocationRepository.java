@@ -21,6 +21,10 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     List<Location> findByNameStartingWithIgnoreCase(String name);
 
+    Location findFirstByNameStartingWithIgnoreCase(String name);
+
+    Location findFirstByName(String name);
+
 
     // custom query not needed, as JPA implements queries automatically when naming is correctly done
     @Query("SELECT location FROM Location location WHERE name like %:keyword%")

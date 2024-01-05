@@ -1,10 +1,11 @@
-package at.qe.skeleton.internal.services;
+package at.qe.skeleton.external.services;
 
 import at.qe.skeleton.external.controllers.LocationControllerDb;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.internal.model.Favorite;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.repositories.FavoriteRepository;
+import at.qe.skeleton.internal.services.UserxService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class FavoriteService {
     private UserxService userxService;
 
     @Autowired
-    private LocationControllerDb locationController;
+    private LocationService locationService;
 
     private List<Favorite> favorites;
 
@@ -47,7 +48,7 @@ public class FavoriteService {
 
         Userx userx = userxService.getCurrentUser();
         LOGGER.info(String.valueOf(userx));
-        Location location = getLocation(locationName);
+        Location location = locationService.retrieveLocation(locationName);
 
         Favorite favorite = new Favorite();
         favorite.setUser(userx);
@@ -57,16 +58,7 @@ public class FavoriteService {
         favoriteRepository.save(favorite);
     }
 
-    public Location getLocation(String locationName) {
-        locationController.setLocationName(locationName);
-        Location location = locationController.requestFirstMatch();
 
-        if (location != null) {
-            return location;
-        }
-        LOGGER.info("location not found!");
-        return null;
-    }
 
     public void deleteFavorite(Favorite favorite)
     {
