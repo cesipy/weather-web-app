@@ -53,7 +53,8 @@ public class UserxService {
      * @param user the user to save
      * @return the updated user
      */
-    @PreAuthorize("hasAuthority('ADMIN')")
+
+
     public Userx saveUser(Userx user) {
         if (user.isNew()) {
             user.setCreateUser(getAuthenticatedUser());
@@ -71,7 +72,6 @@ public class UserxService {
     @PreAuthorize("hasAuthority('ADMIN')")
     public void deleteUser(Userx user) {
         userRepository.delete(user);
-        // :TODO: write some audit log stating who and when this user was permanently deleted.
     }
 
     private Userx getAuthenticatedUser() {

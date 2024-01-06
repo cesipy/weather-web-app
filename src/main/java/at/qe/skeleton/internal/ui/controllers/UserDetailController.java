@@ -17,6 +17,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -81,6 +82,8 @@ public class UserDetailController implements Serializable {
         Set<UserxRole> roles = new HashSet<>();
         roles.add(UserxRole.EMPLOYEE);
         user.setRoles(roles);
+        String encodedPassword = doEncodePassword(user.getPassword());
+        user.setPassword(encodedPassword);
         user = this.userService.saveUser(user);
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -90,6 +93,11 @@ public class UserDetailController implements Serializable {
         } catch (ValidationException ve) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ve.getMessage(), null));
         }
+    }
+
+    private String doEncodePassword(String password){
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.encode(password);
     }
 
     /**

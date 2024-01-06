@@ -69,13 +69,6 @@ public class WebSecurityConfig {
                     )
 
 
-                    .formLogin(form -> form
-                            .loginPage(LOGIN)
-                            .permitAll()
-                            .defaultSuccessUrl("/secured/welcome.xhtml")
-                            .loginProcessingUrl("/login")
-                            .successForwardUrl("/secured/welcome.xhtml")
-                    )
                     .logout(logout -> logout
                             .logoutSuccessUrl(LOGIN)
                             .deleteCookies("JSESSIONID")
