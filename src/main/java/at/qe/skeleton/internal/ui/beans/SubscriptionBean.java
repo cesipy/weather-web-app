@@ -1,5 +1,6 @@
 package at.qe.skeleton.internal.ui.beans;
 
+import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.services.UserxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,18 @@ public class SubscriptionBean implements Serializable {
         return false;
     }
 
+    public boolean hasCreditCard(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication != null){
+            Userx user = userxService.loadUser(authentication.getName());
+            if(user.getCreditCard() != null){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void toggleSubscription() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -41,6 +54,7 @@ public class SubscriptionBean implements Serializable {
             }
         }
     }
+
 }
 
 

@@ -1,14 +1,14 @@
 package at.qe.skeleton.internal.model;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Set;
-
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Entity representing users.
@@ -44,6 +44,10 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
 
     @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
     private CreditCard creditCard;
+
+    public CreditCard getCreditCard() {
+        return creditCard;
+    }
 
     boolean enabled;
 

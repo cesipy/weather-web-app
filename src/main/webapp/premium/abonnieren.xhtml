@@ -10,7 +10,7 @@
         <h:form>
             <button type="submit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
         <span class="ui-button-text">
-            #{subscriptionBean.isPremium() ? 'Deabonnieren' : 'Abonnieren'}
+            #{subscriptionBean.isPremium() ? 'Deabonnieren' : subscriptionBean.hasCreditCard() ? 'Abonnieren' : 'Bitte Zahlungsinformation hinterlegen'}
         </span>
             </button>
             <h:commandButton style="display: none;" action="#{subscriptionBean.toggleSubscription}" />
