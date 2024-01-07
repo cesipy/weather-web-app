@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="content">
+        <h:form>
+            <p:panel header="Request">
+                <div style="height: 50px">
+                    Favorite Locations.
+                </div>
+            </p:panel>
+
+
+            <p:panel header="Response">
+                <div>
+                    <p:dataTable var="weather" value="#{favoriteOverviewController.weatherOverviewList}" rendered="#{not empty favoriteOverviewController.weatherOverviewList}">
+                        <p:column headerText="location">
+                            <h:outputText value="#{weather.location.name}" />
+                        </p:column>
+
+                        <p:column headerText="temp">
+                            <h:outputText value="#{weather.temperature}"/>
+                        </p:column>
+
+                        <p:column headerText="feels like">
+                            <h:outputText value="#{weather.feelsLikeTemperature}"/>
+                        </p:column>
+
+                        <p:column headerText="weather">
+                            <h:outputText value="#{weather.weather}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+
+                    <p:button value="Manage Favorites" outcome="/common/favorites.xhtml" />
+                </div>
+            </p:panel>
+
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>
