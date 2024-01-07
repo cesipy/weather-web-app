@@ -1,14 +1,9 @@
 package at.qe.skeleton.internal.model;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Set;
-
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.domain.Persistable;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Entity representing CreditCards.
@@ -25,25 +20,42 @@ public class CreditCard implements Serializable, Comparable<CreditCard> {
     @Column(length = 100)
     private String creditCard;
 
-    private LocalDateTime validFrom;
+    //private LocalDateTime validFrom;
 
-    private LocalDateTime validTo;
+    //private LocalDateTime validTo;
+
+
+    public void setCreditCard(String creditCard) {
+        this.creditCard = creditCard;
+    }
+
+    //public void setValidFrom(LocalDateTime validFrom) {
+        //this.validFrom = validFrom;
+    //}
+
+    //public void setValidTo(LocalDateTime validTo) {
+        //this.validTo = validTo;
+    //}
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "username")
     private Userx userx;
 
+    public void setUserx(Userx userx) {
+        this.userx = userx;
+    }
+
     public String getCreditCard() {
         return creditCard;
     }
 
-    public LocalDateTime getValidFrom() {
-        return validFrom;
-    }
+    //public LocalDateTime getValidFrom() {
+        //return validFrom;
+    //}
 
-    public LocalDateTime getValidTo() {
-        return validTo;
-    }
+    //public LocalDateTime getValidTo() {
+        //return validTo;
+    //}
 
     @Override
     public int hashCode() {

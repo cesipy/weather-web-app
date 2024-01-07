@@ -2,6 +2,7 @@ package at.qe.skeleton.internal.ui.controllers;
 
 import at.qe.skeleton.internal.model.CreditCard;
 import at.qe.skeleton.internal.services.CreditCardService;
+import at.qe.skeleton.internal.services.UserxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,12 +20,15 @@ import java.io.Serializable;
 public class CreditCardController implements Serializable {
 
     @Autowired
+    private UserxService userxService;
+
+    @Autowired
     private CreditCardService creditCardService;
 
     /**
      * Attribute to cache the CreditCard
      */
-    private CreditCard creditCard;
+    private CreditCard creditCard =  new CreditCard();;
 
     /**
      * Sets the current CreditCard and reloads it form db. This CreditCard is
@@ -51,6 +55,7 @@ public class CreditCardController implements Serializable {
      * Action to save the current CreditCard.
      */
     public void doSaveCreditCard() {
+        creditCard.setUserx(userxService.getAuthenticatedUser());
         creditCard = this.creditCardService.saveCreditCard(creditCard);
     }
 

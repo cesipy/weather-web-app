@@ -47,7 +47,7 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     private String email;
     private String phone;
 
-    @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+    @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
     private CreditCard creditCard;
 
     @OneToMany(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -77,7 +77,7 @@ public class UserxService {
         // :TODO: write some audit log stating who and when this user was permanently deleted.
     }
 
-    private Userx getAuthenticatedUser() {
+    public Userx getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findFirstByUsername(auth.getName());
     }
@@ -88,7 +88,9 @@ public class UserxService {
 
         if (oldRoles.remove(userxRole)) {
             userx.setRoles(oldRoles);
+            saveUser(userx);
         }
+
     }
 
     public void addUserRole(String username, UserxRole userxRole) {
@@ -97,7 +99,9 @@ public class UserxService {
 
         if (oldRoles.add(userxRole)) {
             userx.setRoles(oldRoles);
+            saveUser(userx);
         }
+
     }
 
 

@@ -2,19 +2,14 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/templates/main.xhtml">
 
     <ui:define name="content">
-        <h:form>
-            <button type="submit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-        <span class="ui-button-text">
-            #{subscriptionBean.isPremium() ? 'Deabonnieren' : subscriptionBean.hasCreditCard() ? 'Abonnieren' : 'Bitte Zahlungsinformation hinterlegen'}
-        </span>
-            </button>
-            <h:commandButton style="display: none;" action="#{subscriptionBean.toggleSubscription}" />
+        <h:form id="subscriptionForm">
+            <h:commandButton value="#{subscriptionBean.buttonText}" action="#{subscriptionBean.toggleSubscription}">
+                <f:ajax render="subscriptionForm" />
+            </h:commandButton>
         </h:form>
-
     </ui:define>
 </ui:composition>
