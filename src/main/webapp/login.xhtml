@@ -1,10 +1,11 @@
-<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/templates/main.xhtml">
+
     <ui:define name ="content">
         <form id="login_form" action="#{request.contextPath}/login" method="post">
             <h:panelGrid columns="2">
@@ -17,7 +18,13 @@
                 <button type="submit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
                     <span class="ui-button-text">Login</span>
                 </button>
+
+                <button type="button" onclick="window.location.href='#{request.contextPath}/register.xhtml'" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                    <span class="ui-button-text">Register</span>
+                </button>
+
             </h:panelGrid>
         </form>
+
     </ui:define>
 </ui:composition>

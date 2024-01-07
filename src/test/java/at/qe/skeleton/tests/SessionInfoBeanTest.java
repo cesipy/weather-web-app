@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.data.domain.Persistable;
 
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.services.UserxService;

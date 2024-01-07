@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="content">
+        <h:form>
+            <div style="margin-bottom: 10px;">
+                <h:outputLabel for="cardNumber" value="Card Number:" />
+                <h:inputText id="cardNumber" value="#{creditCardController.creditCard.creditCard}" required="true" />
+            </div>
+<!--
+            <div style="margin-bottom: 10px;">
+                <h:outputLabel for="validFrom" value="Valid from:" />
+                <h:inputText id="validFrom" value="#{creditCardController.creditCard.validFrom}" required="true">
+                    <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
+                </h:inputText>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <h:outputLabel for="validTo" value="Valid to:" />
+                <h:inputText id="validTo" value="#{creditCardController.creditCard.validTo}" required="true">
+                    <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
+                </h:inputText>
+            </div>
+-->
+            <div>
+                <p:commandButton value="Save" action="#{creditCardController.doSaveCreditCard}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" />
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
