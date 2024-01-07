@@ -11,7 +11,6 @@
     <ui:define name="content">
         <h:form>
             <p:panel header="Add Favorites" >
-                <!-- <p:inputText value="#{favoriteController.locationName}" /> -->
                 <p:autoComplete value="#{favoriteController.locationName}"
                                 completeMethod="#{favoriteController.autocomplete}"
                                 maxResults="5"
@@ -36,26 +35,26 @@
             <p:panel header="Favorites Response" id="favoriteSearchPanel">
                 <div>
                     <p:dataTable var="favorite" value="#{favoriteController.favorites}" rendered="#{not empty favoriteController.favorites}">
+                        <p:column headerText="#">
+                            <h:outputText value="#{favorite.priority}" />
+                        </p:column>
+
                         <p:column headerText="Location">
                             <h:outputText value="#{favorite.location}" />
                         </p:column>
 
-                        <p:column headerText="Priority">
-                            <h:outputText value="#{favorite.priority}" />
-                        </p:column>
-
                         <p:column headerText="Actions">
                             <p:commandButton value="Delete" action="#{favoriteController.deleteFavorite(favorite)}"/>
-
                         </p:column>
+
+
                     </p:dataTable>
+
                     <h:panelGroup rendered="#{empty favoriteController.favorites}">
                         <h:outputText value="No favorites found."/>
                     </h:panelGroup>
                 </div>
             </p:panel>
-
         </h:form>
-
     </ui:define>
 </ui:composition>

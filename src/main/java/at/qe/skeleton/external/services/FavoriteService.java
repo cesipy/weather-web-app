@@ -1,6 +1,6 @@
 package at.qe.skeleton.external.services;
 
-import at.qe.skeleton.external.controllers.LocationControllerDb;
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.internal.model.Favorite;
 import at.qe.skeleton.internal.model.Userx;
@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Scope("application")
@@ -21,19 +22,27 @@ public class FavoriteService {
     private static Logger LOGGER = LoggerFactory.getLogger(FavoriteService.class);
     @Autowired
     private FavoriteRepository favoriteRepository;
-
     @Autowired
     private UserxService userxService;
-
     @Autowired
     private LocationService locationService;
-
     private List<Favorite> favorites;
-
     public List<Favorite> getFavorites(Userx userx) {
         return favoriteRepository.findByUser(userx);
     }
 
+    public void updateFavoritePriority(Long id, int priority) {
+        Optional<Favorite> favoriteQuery = favoriteRepository.findById(id);
+
+        if (favoriteQuery.isPresent()) {
+            Favorite favorite = favoriteQuery.get();
+            favorite.setPriority(priority);
+            favoriteRepository.save(favorite);
+        }
+        else {
+            LOGGER.info("favorite with id " + id + " not found!");
+        }
+    }
 
     public List<Favorite> getFavoritesForUser() {
         Userx userx = userxService.getCurrentUser();
@@ -47,11 +56,16 @@ public class FavoriteService {
     }
 
     // maybe with Favorite instance, instead of creation
-    public void saveFavorite( String locationName) {
+    public void saveFavorite( String locationName) throws EmptyLocationException {
 
         Userx userx = userxService.getCurrentUser();
         LOGGER.info(String.valueOf(userx));
         Location location = locationService.retrieveLocation(locationName);
+
+        if (location == null) {
+            // TODO: proper handling
+            return;
+        }
         int priority = calculatePriority(userx);
 
         Favorite favorite = new Favorite();
