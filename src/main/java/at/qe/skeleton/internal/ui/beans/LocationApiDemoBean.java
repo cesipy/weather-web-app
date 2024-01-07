@@ -101,6 +101,7 @@ public class LocationApiDemoBean {
                         Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
 
                         if (latestRecord.getAdditionTime().isAfter(oneHourAgo) && latestRecordHourly.getAdditionTime().isAfter(oneHourAgo)) {
+                            this.setLocation(firstLocation);
                             this.setCurrentWeather(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(0)));
                             this.setWeatherInOneHour(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(1)));
 
@@ -111,8 +112,6 @@ public class LocationApiDemoBean {
                             return;
                         }
                     }
-                    LOGGER.info(firstLocation.name());
-                    LOGGER.info(firstLocation.latitude() + " " + firstLocation.longitude());
                     this.setLocation(firstLocation);
 
                     CurrentAndForecastAnswerDTO forecastAnswer = this.weatherApiRequestService.retrieveCurrentAndForecastWeather(firstLocation.latitude(), firstLocation.longitude());
