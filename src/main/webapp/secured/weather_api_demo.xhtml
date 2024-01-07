@@ -9,15 +9,29 @@
 
     <ui:define name="content">
         <h:form>
-            <p:panel header="Request">
-                <div style="height: 50px">
-                    https://api.openweathermap.org/data/3.0/onecall?lat=#{weatherApiDemoBean.latitude}&amp;lon=#{weatherApiDemoBean.longitude}&amp;appid=value</div>
-            </p:panel>
-            <p:panel header="Response">
-                <div>
-                    <h:outputText escape="false" value="#{weatherApiDemoBean.currentWeather}"/>
-                </div>
-            </p:panel>
+            <h:dataTable value="#{weatherApiDemoBean.locations}" var="location">
+                <h:column headerText="ID">
+                    <h:outputText value="#{location.id}" />
+                </h:column>
+                <h:column headerText="Name">
+                    <h:outputText value="#{location.name}" />
+                </h:column>
+                <h:column headerText="LAT">
+                    <h:outputText value="#{location.latitude}" />
+                </h:column>
+                <h:column headerText="LON">
+                    <h:outputText value="#{location.longitude}" />
+                </h:column>
+                <h:column headerText="ABR">
+                    <h:outputText value="#{location.abbreviatedCountry}" />
+                </h:column>
+                <h:column headerText="COU">
+                    <h:outputText value="#{location.country}" />
+                </h:column>
+                <h:column headerText="POSTAL">
+                    <h:outputText value="#{location.postalCode}" />
+                </h:column>
+            </h:dataTable>
         </h:form>
     </ui:define>
 

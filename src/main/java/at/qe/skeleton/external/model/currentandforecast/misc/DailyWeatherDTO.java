@@ -4,7 +4,8 @@ import at.qe.skeleton.external.model.shared.WeatherDTO;
 import at.qe.skeleton.external.model.deserialisation.WeatherDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
