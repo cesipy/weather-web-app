@@ -5,6 +5,13 @@ import at.qe.skeleton.external.domain.TemperatureAggregationData;
 import jakarta.persistence.*;
 import java.time.Instant;
 
+/**
+ * Represents the daily weather data.
+ * <p>
+ *     This class is used to store and retrieve the daily weather data
+ *     in and from the database.
+ * </p>
+ */
 @Entity
 @Table(name = "weather_data")
 public class DailyWeatherData {
@@ -42,6 +49,31 @@ public class DailyWeatherData {
 
 
     public DailyWeatherData() {
+    }
+
+    public DailyWeatherData(Instant timestamp, Instant sunrise, Instant sunset, Instant moonrise, Instant moonset, double moonPhase, String summary, DailyAggregationData dailyTemperatureAggregation, TemperatureAggregationData feelsLikeTemperatureAggregation, int pressure, int humidity, double dewPoint, double windSpeed, double windGust, double windDirection, int clouds, int uvi, int probabilityOfPrecipitation, Double rain, Double snow, Instant additionTime, String location) {
+        this.timestamp = timestamp;
+        this.sunrise = sunrise;
+        this.sunset = sunset;
+        this.moonrise = moonrise;
+        this.moonset = moonset;
+        this.moonPhase = moonPhase;
+        this.summary = summary;
+        this.dailyTemperatureAggregation = dailyTemperatureAggregation;
+        this.feelsLikeTemperatureAggregation = feelsLikeTemperatureAggregation;
+        this.pressure = pressure;
+        this.humidity = humidity;
+        this.dewPoint = dewPoint;
+        this.windSpeed = windSpeed;
+        this.windGust = windGust;
+        this.windDirection = windDirection;
+        this.clouds = clouds;
+        this.uvi = uvi;
+        this.probabilityOfPrecipitation = probabilityOfPrecipitation;
+        this.rain = rain;
+        this.snow = snow;
+        this.additionTime = additionTime;
+        this.location = location;
     }
 
     public Instant getAdditionTime() {

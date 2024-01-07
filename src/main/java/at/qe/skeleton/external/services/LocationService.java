@@ -76,9 +76,11 @@ public class LocationService {
      * Initializes the service by populating the database with location data.
      */
     public void init() {
+        /*
         LOGGER.info("starting population of database");
         loadDataFromJson(filePath);
         LOGGER.info("populated database");
+        */
     }
 
     public List<Location> getAllLocations() {

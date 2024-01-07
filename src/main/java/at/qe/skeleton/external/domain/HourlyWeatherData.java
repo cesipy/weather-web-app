@@ -5,7 +5,13 @@ import at.qe.skeleton.external.domain.TemperatureAggregationData;
 import at.qe.skeleton.external.model.deserialisation.PrecipitationDeserializer;
 import jakarta.persistence.*;
 import java.time.Instant;
-
+/**
+ * Represents the hourly weather data.
+ * <p>
+ *     This class is used to store and retrieve the hourly weather data
+ *     in and from the database.
+ * </p>
+ */
 @Entity
 @Table(name = "hourly_weather_data")
 public class HourlyWeatherData {
@@ -31,6 +37,26 @@ public class HourlyWeatherData {
     private Instant additionTime;
     private String location;
     public HourlyWeatherData() {
+    }
+
+    public HourlyWeatherData(Instant timestamp, double temperature, double feelsLikeTemperature, int pressure, double humidity, double dewPoint, int uvi, int clouds, int visibility, double windSpeed, double windGust, double windDirection, int probabilityOfPrecipitation, Double rain, Double snow, Instant additionTime, String location) {
+        this.timestamp = timestamp;
+        this.temperature = temperature;
+        this.feelsLikeTemperature = feelsLikeTemperature;
+        this.pressure = pressure;
+        this.humidity = humidity;
+        this.dewPoint = dewPoint;
+        this.uvi = uvi;
+        this.clouds = clouds;
+        this.visibility = visibility;
+        this.windSpeed = windSpeed;
+        this.windGust = windGust;
+        this.windDirection = windDirection;
+        this.probabilityOfPrecipitation = probabilityOfPrecipitation;
+        this.rain = rain;
+        this.snow = snow;
+        this.additionTime = additionTime;
+        this.location = location;
     }
 
     public Instant getAdditionTime() {

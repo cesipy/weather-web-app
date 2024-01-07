@@ -20,10 +20,8 @@ import java.util.List;
 
 
 /**
- * Demonstrates the working api and what the raw request data would look like
- * <br><br>
- * This class is part of the skeleton project provided for students of the
- * course "Software Architecture" offered by Innsbruck University.
+ * Bean serving as the overview.
+ * Retrieves all locations from the database for the purpose of displaying them on the website.
  */
 
 @Component

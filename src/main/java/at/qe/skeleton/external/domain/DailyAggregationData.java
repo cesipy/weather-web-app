@@ -6,6 +6,13 @@ import at.qe.skeleton.external.model.currentandforecast.misc.TemperatureAggregat
 import jakarta.persistence.*;
 import java.time.Instant;
 
+/**
+ * Represents the daily temperature aggregation data.
+ * <p>
+ *     This class is used to store and retrieve the daily temperature aggregation data
+ *     in and from the database.
+ * </p>
+ */
 @Entity
 @Table(name = "daily_aggregation")
 public class DailyAggregationData {
@@ -20,6 +27,15 @@ public class DailyAggregationData {
     private double maximumDailyTemperature;
 
     public DailyAggregationData() {
+    }
+
+    public DailyAggregationData(double morningTemperature, double dayTemperature, double eveningTemperature, double nightTemperature, double minimumDailyTemperature, double maximumDailyTemperature) {
+        this.morningTemperature = morningTemperature;
+        this.dayTemperature = dayTemperature;
+        this.eveningTemperature = eveningTemperature;
+        this.nightTemperature = nightTemperature;
+        this.minimumDailyTemperature = minimumDailyTemperature;
+        this.maximumDailyTemperature = maximumDailyTemperature;
     }
 
     public Long getDaily_aggregation_id() {

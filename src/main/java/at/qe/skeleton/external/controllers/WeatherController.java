@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+/**
+Weather Controller for managing the weather forecast retrieved from the api.
+ */
 @Controller         // @Controller is a specification of @Component
 @Scope("view")
 public class WeatherController {
@@ -27,6 +30,10 @@ public class WeatherController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WeatherController.class);
 
+    /**
+     * Retrieves the current and forecast weather for the specified location,
+     * creates a String out of the answer and sets it as the current Weather.
+     */
     public void requestWeather() {
         try {
             CurrentAndForecastAnswerDTO answer = this.weatherApiRequestService.retrieveCurrentAndForecastWeather(getLatitude(), getLongitude());

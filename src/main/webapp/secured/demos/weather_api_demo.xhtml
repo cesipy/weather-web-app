@@ -13,7 +13,7 @@
                 <p:column headerText="ID">
                     <h:outputText value="#{location.id}" />
                 </p:column>
-                <p:column headerText="Name">
+                <p:column headerText="Name" sortBy="#{location.name}" filterBy="#{location.name}" filterMatchMode="contains">
                     <h:outputText value="#{location.name}" />
                 </p:column>
                 <p:column headerText="LAT">

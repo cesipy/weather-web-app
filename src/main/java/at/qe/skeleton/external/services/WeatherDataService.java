@@ -1,5 +1,6 @@
 package at.qe.skeleton.external.services;
 
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.domain.DailyAggregationData;
 import at.qe.skeleton.external.domain.DailyWeatherData;
 import at.qe.skeleton.external.domain.HourlyWeatherData;
@@ -18,6 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
 import java.time.Instant;
+
+/**
+ * Service class for managing and manipulating weather data.
+ */
 @Scope("application")
 @Component
 @Validated
@@ -32,6 +37,12 @@ public class WeatherDataService {
     @Autowired
     private HourlyWeatherDataRepository hourlyWeatherDataRepository;
 
+    /**
+     * Converts a DailyWeatherDTO to a dailyWeatherData entity and saves it into the database.
+     *
+     * @param dailyWeatherDTO dailyWeather record, holding the weather data retrieved from the api.
+     * @param location name of the location corresponding to the weather data.
+     */
     public void saveDailyWeatherFromDTO(DailyWeatherDTO dailyWeatherDTO, String location) {
         DailyWeatherData dailyWeatherData = new DailyWeatherData();
         dailyWeatherData.setSunrise(dailyWeatherDTO.sunrise());
@@ -59,6 +70,12 @@ public class WeatherDataService {
         dailyWeatherDataRepository.save(dailyWeatherData);
     }
 
+    /**
+     * Converts a dailyWeatherData entity to a DailyWeatherDTO record.
+     *
+     * @param data dailyWeatherData entity, holding the weather data retrieved from the database.
+     * @return DailyWeatherDTO for the purpose of displaying the weather data on the website.
+     */
     public DailyWeatherDTO convertDailyDataToDTO(DailyWeatherData data){
         return new DailyWeatherDTO(
                 data.getTimestamp(),
@@ -84,7 +101,12 @@ public class WeatherDataService {
                 null
         );
     }
-
+    /**
+     * Converts a DailyTemperatureAggregationDTO to a DailyAggregationData entity and saves it into the database.
+     *
+     * @param dailyAggregationDTO dailyAggregation record, holding the daily aggregation data retrieved from the api.
+     * @return DailyAggregationData entity for the purpose of being used in saveDailyWeatherFromDTO method
+     */
     public DailyAggregationData getDailyAggregationFromDTO(DailyTemperatureAggregationDTO dailyAggregationDTO) {
         DailyAggregationData dailyAggregationData = new DailyAggregationData();
         dailyAggregationData.setMorningTemperature(dailyAggregationDTO.morningTemperature());
@@ -97,7 +119,12 @@ public class WeatherDataService {
         dailyAggregationDataRepository.save(dailyAggregationData);
         return dailyAggregationData;
     }
-
+    /**
+     * Converts a dailyAggregationData entity to a DailyTemperatureAggregationDTO record.
+     *
+     * @param data DailyAggregationData entity, holding the daily aggregegation data retrieved from the database.
+     * @return DailyTemperatureAggregationDTO for the purpose of displaying the weather data on the website.
+     */
     public DailyTemperatureAggregationDTO converDailyAggregationToDTO(DailyAggregationData data){
         return new DailyTemperatureAggregationDTO(
                 data.getMorningTemperature(),
@@ -108,6 +135,12 @@ public class WeatherDataService {
                 data.getMaximumDailyTemperature()
         );
     }
+    /**
+     * Converts a TemperatureAggregationDTO to a TemperatureAggregationData entity and saves it into the database.
+     *
+     * @param temperatureAggregationDTO temperatureAggregation record, holding the temperature aggregation data retrieved from the api.
+     * @return TemperatureAggregationData entity for the purpose of being used in saveDailyWeatherFromDTO method
+     */
     public TemperatureAggregationData getAggregationTemperatureFromDTO(TemperatureAggregationDTO temperatureAggregationDTO) {
         TemperatureAggregationData temperatureAggregationData = new TemperatureAggregationData();
         temperatureAggregationData.setMorningTemperature(temperatureAggregationDTO.morningTemperature());
@@ -118,6 +151,12 @@ public class WeatherDataService {
         temperatureAggregationDataRepository.save(temperatureAggregationData);
         return temperatureAggregationData;
     }
+    /**
+     * Converts a TemperatureAggregationData entity to a TemperatureAggregationDTO record.
+     *
+     * @param data TemperatureAggregationData entity, holding the temperature aggregegation data retrieved from the database.
+     * @return TemperatureAggregationDTO for the purpose of displaying the weather data on the website.
+     */
     public TemperatureAggregationDTO convertTempAggregationToDTO(TemperatureAggregationData data){
         return new TemperatureAggregationDTO(
                 data.getMorningTemperature(),
@@ -126,7 +165,12 @@ public class WeatherDataService {
                 data.getNightTemperature()
                 );
     }
-
+    /**
+     * Converts a HourlyWeatherData entity to a HourlyWeatherDTO record.
+     *
+     * @param data HourlyWeatherData entity, holding the hourly weather data retrieved from the database.
+     * @return HourlyWeatherDTO for the purpose of displaying the weather data on the website.
+     */
     public HourlyWeatherDTO convertHourlyDataToDTO(HourlyWeatherData data){
         return new HourlyWeatherDTO(
           data.getTimestamp(),
@@ -146,7 +190,12 @@ public class WeatherDataService {
                 null
         );
     }
-
+    /**
+     * Converts a HourlyWeatherDTO to a HourlyWeatherData entity and saves it into the database.
+     *
+     * @param hourlyWeatherDTO hourlyWeather record, holding the hourly weather data retrieved from the api.
+     * @param location name of the location corresponding to the hourly weather data.
+     */
     public void saveHourlyWeatherFromDTO(HourlyWeatherDTO hourlyWeatherDTO, String location) {
         HourlyWeatherData hourlyWeatherData = new HourlyWeatherData();
         hourlyWeatherData.setTemperature(hourlyWeatherDTO.temperature());

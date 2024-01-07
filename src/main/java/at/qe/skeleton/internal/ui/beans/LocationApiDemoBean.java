@@ -37,6 +37,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+/**
+ * Bean class for displaying in-depth weather data retrieved by the API for a certain location.
+ */
 
 @Component
 @Scope("view")
@@ -65,7 +68,12 @@ public class LocationApiDemoBean {
     private String query_name;
     private final int LIMIT = 1;
 
-
+    /**
+     * Initializes the Bean.
+     * Takes the query name from the URL, uses the weather service and the query_name to check if the desired location has weather data.
+     * Checks if there is already exists a weather data record in the database for the desired location
+     * Depending on that either retrieves the weather data from the database, or via the api.
+     */
     @PostConstruct
     public void init() {
         if(getQuery_name() != null){
