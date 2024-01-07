@@ -1,14 +1,17 @@
 package at.qe.skeleton.internal.services;
 
 import at.qe.skeleton.internal.model.Userx;
-import java.util.Collection;
+import at.qe.skeleton.internal.model.UserxRole;
+import at.qe.skeleton.internal.repositories.UserxRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import at.qe.skeleton.internal.repositories.UserxRepository;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * Service for accessing and manipulating user data.
@@ -74,9 +77,32 @@ public class UserxService {
         userRepository.delete(user);
     }
 
-    private Userx getAuthenticatedUser() {
+    public Userx getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findFirstByUsername(auth.getName());
     }
+
+    public void removeUserRole(String username, UserxRole userxRole) {
+        Userx userx = loadUser(username);
+        Set<UserxRole> oldRoles = userx.getRoles();
+
+        if (oldRoles.remove(userxRole)) {
+            userx.setRoles(oldRoles);
+            saveUser(userx);
+        }
+
+    }
+
+    public void addUserRole(String username, UserxRole userxRole) {
+        Userx userx = loadUser(username);
+        Set<UserxRole> oldRoles = userx.getRoles();
+
+        if (oldRoles.add(userxRole)) {
+            userx.setRoles(oldRoles);
+            saveUser(userx);
+        }
+
+    }
+
 
 }
