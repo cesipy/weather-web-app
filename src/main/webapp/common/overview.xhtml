@@ -8,37 +8,47 @@
                 template="/WEB-INF/templates/main.xhtml">
 
     <ui:define name="content">
-        <h:form>
-            <p:panel header="Request">
-                <div style="height: 50px">
-                    Favorite Locations.
-                </div>
-            </p:panel>
+        <h:form id="refreshForm">
 
+            <p:panel header="Favorites">
 
-            <p:panel header="Response">
-                <div>
-                    <p:dataTable var="weather" value="#{favoriteOverviewController.weatherOverviewList}" rendered="#{not empty favoriteOverviewController.weatherOverviewList}">
-                        <p:column headerText="location">
+                <div >
+                    <p:dataTable var="weather"
+                                 value="#{favoriteOverviewController.weatherOverviewList}"
+                                 rendered="#{not empty favoriteOverviewController.weatherOverviewList}">
+                        <p:column headerText="Location">
                             <h:outputText value="#{weather.location.name}" />
                         </p:column>
 
-                        <p:column headerText="temp">
+                        <p:column headerText="Temperature(°C)">
                             <h:outputText value="#{weather.temperature}"/>
                         </p:column>
 
-                        <p:column headerText="feels like">
+                        <p:column headerText="feels like (°C)">
                             <h:outputText value="#{weather.feelsLikeTemperature}"/>
                         </p:column>
 
-                        <p:column headerText="weather">
-                            <h:outputText value="#{weather.weather}"/>
+                        <p:column headerText="Weather">
+                            <h:outputText value="#{weather.weatherTitleAndDescription}"/>
                         </p:column>
 
                     </p:dataTable>
 
+                    <h:panelGroup rendered="#{empty favoriteOverviewController.weatherOverviewList}">
+                        <h:outputText value="No favorites found." />
+                        <br/>
+                    </h:panelGroup>
+                    <br/>
 
-                    <p:button value="Manage Favorites" outcome="/common/favorites.xhtml" />
+                    <p:button value="Manage Favorites"
+                              outcome="/common/favorites.xhtml"
+                              style="margin-right: 10px;"  />
+
+                    <p:commandButton icon="pi pi-refresh"
+                                     title="Refresh"
+                                     action="#{favoriteOverviewController.retrieveFavorites}"
+                                     update="refreshForm"
+                                     style="margin-top: 10px;" />
                 </div>
             </p:panel>
 

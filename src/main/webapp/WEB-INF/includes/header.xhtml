@@ -9,7 +9,7 @@
         <ui:composition>
             <h:form>
                 <p:menubar>
-                    <p:menuitem value="Overview" url="/common/overview.xhtml"/>
+                    <p:menuitem value="Home" url="/common/overview.xhtml" rendered="#{sessionInfoBean.hasRole('EMPLOYEE')}"/>
                     <p:submenu label="Employee Submenu 1" rendered="#{sessionInfoBean.hasRole('EMPLOYEE')}">
                         <p:menuitem value="Employee Action 1 - 1"/>
                         <p:menuitem value="Employee Action 1 - 2"/>

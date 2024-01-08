@@ -9,12 +9,14 @@ public class WeatherOverview {
     private double feelsLikeTemperature;
     private WeatherDTO weather;
     private Location location;
+    private String weatherTitleAndDescription;
 
     public WeatherOverview(double temperature, double feelsLikeTemperature, WeatherDTO weather, Location location) {
         this.temperature = temperature;
         this.feelsLikeTemperature = feelsLikeTemperature;
         this.weather = weather;
         this.location = location;
+        this.weatherTitleAndDescription = weather.title() + ", " + weather.description();
     }
 
     public double getTemperature() {
@@ -47,5 +49,13 @@ public class WeatherOverview {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public String getWeatherTitleAndDescription() {
+        return weatherTitleAndDescription;
+    }
+
+    public void setWeatherTitleAndDescription(String weatherTitleAndDescription) {
+        this.weatherTitleAndDescription = weatherTitleAndDescription;
     }
 }

@@ -26,7 +26,6 @@ public class FavoriteOverviewController {
     @Autowired
     WeatherApiRequestService weatherApiRequestService;
     List<Favorite> favorites;
-
     List<CurrentAndForecastAnswerDTO> weatherList;
     List<WeatherOverview> weatherOverviewList;
 
@@ -36,15 +35,18 @@ public class FavoriteOverviewController {
         weatherList = new ArrayList<>();
         weatherOverviewList = new ArrayList<>();
 
-        // only debugging
+        // needed to refresh favorites
         retrieveFavorites();
     }
 
     public void retrieveFavorites() {
+        // clear the existing list before retrieving new favorites
+        weatherOverviewList.clear();
+
         favorites = favoriteService.getFavoritesForUser();
 
         if (favorites.isEmpty()) {
-            LOGGER.info("favorites are empty");
+            LOGGER.info("favorites in overview are empty");
         }
 
         for (Favorite favorite : favorites) {
