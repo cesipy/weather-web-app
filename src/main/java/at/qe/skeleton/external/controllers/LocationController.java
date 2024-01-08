@@ -1,8 +1,12 @@
 package at.qe.skeleton.external.controllers;
 
+import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.LocationApiRequestService;
+import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.internal.ui.beans.LocationApiDemoBean;
+import at.qe.skeleton.internal.ui.beans.WeatherApiDemoBean;
+import at.qe.skeleton.external.model.location.Location;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
 
 
 import java.util.List;
@@ -32,6 +37,11 @@ public class LocationController {
     private LocationApiRequestService locationApiRequestService;
     @Autowired
     private LocationApiDemoBean locationApiDemoBean;
+    @Autowired
+    private WeatherApiDemoBean weatherApiDemoBean;
+
+    @Autowired
+    private LocationService locationService;
 
     public void search() {
         try {
@@ -85,6 +95,12 @@ public class LocationController {
         locationApiDemoBean.setQuery_name(location);
         locationApiDemoBean.init();
         return locationApiDemoBean.getCurrentLocation();
+    }
+
+    @GetMapping("/locations")
+    public String getAllLocations(Model model) {
+        model.addAttribute("locations", locationService.getAllLocations());
+        return "weather_api_demo";
     }
 
     public String getLocationName() {

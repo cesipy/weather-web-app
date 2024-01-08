@@ -1,7 +1,13 @@
 package at.qe.skeleton.external.domain;
 import jakarta.persistence.*;
 import java.time.Instant;
-
+/**
+ * Represents the temperature aggregation data.
+ * <p>
+ *     This class is used to store and retrieve the temperature aggregation data
+ *     in and from the database.
+ * </p>
+ */
 @Entity
 @Table(name = "temp_aggregation")
 public class TemperatureAggregationData {
@@ -15,6 +21,13 @@ public class TemperatureAggregationData {
 
     public TemperatureAggregationData() {
 
+    }
+
+    public TemperatureAggregationData(double morningTemperature, double dayTemperature, double eveningTemperature, double nightTemperature) {
+        this.morningTemperature = morningTemperature;
+        this.dayTemperature = dayTemperature;
+        this.eveningTemperature = eveningTemperature;
+        this.nightTemperature = nightTemperature;
     }
 
     public Long getTemp_aggregation_id() {

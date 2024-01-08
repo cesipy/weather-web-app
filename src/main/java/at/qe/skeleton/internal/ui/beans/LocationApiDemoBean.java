@@ -1,6 +1,7 @@
 package at.qe.skeleton.internal.ui.beans;
 
 import at.qe.skeleton.external.domain.DailyWeatherData;
+import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.CurrentWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
@@ -10,6 +11,7 @@ import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.services.WeatherDataService;
 import at.qe.skeleton.internal.repositories.DailyWeatherDataRepository;
+import at.qe.skeleton.internal.repositories.HourlyWeatherDataRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -35,6 +37,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+/**
+ * Bean class for displaying in-depth weather data retrieved by the API for a certain location.
+ */
 
 @Component
 @Scope("view")
@@ -46,6 +51,8 @@ public class LocationApiDemoBean {
     private LocationApiRequestService locationApiRequestService;
     @Autowired
     private DailyWeatherDataRepository dailyWeatherDataRepository;
+    @Autowired
+    private HourlyWeatherDataRepository hourlyWeatherDataRepository;
     @Autowired
     private WeatherApiRequestService weatherApiRequestService;
     @Autowired
@@ -61,63 +68,78 @@ public class LocationApiDemoBean {
     private String query_name;
     private final int LIMIT = 1;
 
-
+    /**
+     * Initializes the Bean.
+     * Takes the query name from the URL, uses the weather service and the query_name to check if the desired location has weather data.
+     * Checks if there is already exists a weather data record in the database for the desired location
+     * Depending on that either retrieves the weather data from the database, or via the api.
+     */
     @PostConstruct
     public void init() {
         if(getQuery_name() != null){
             String location = getQuery_name();
             setQuery_name(location.replace(" ", "_"));
         }
-        try {
-            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(getQuery_name(), getLIMIT());
+        if(getQuery_name()!= null) {
+            try {
 
-            // Check if the list is not empty
-            if (!answer.isEmpty()) {
-                // only process first entry in List of LocationDTOs
+                List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(getQuery_name(), getLIMIT());
 
-                LocationDTO firstLocation = answer.get(0);
-                Pageable last_four_entries = PageRequest.of(0, 4);
-                List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_four_entries);
+                // Check if the list is not empty
+                if (!answer.isEmpty()) {
+                    // only process first entry in List of LocationDTOs
 
-                if (!latestData.isEmpty()) {
-                    DailyWeatherData latestRecord = latestData.get(0);
-                    Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
+                    LocationDTO firstLocation = answer.get(0);
+                    Pageable last_four_entries = PageRequest.of(0, 4);
+                    Pageable last_two_entries = PageRequest.of(0, 2);
+                    List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_four_entries);
+                    List<HourlyWeatherData> latestDataHourly = hourlyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_two_entries);
 
-                    if (latestRecord.getAdditionTime().isAfter(oneHourAgo)) {
-                        //Lacking the current and weather in hour, thus data below is not displayed correctly.
+                    if (!latestData.isEmpty() && !latestDataHourly.isEmpty()) {
+                        DailyWeatherData latestRecord = latestData.get(0);
+                        HourlyWeatherData latestRecordHourly = latestDataHourly.get(0);
+                        Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
 
-                        this.setDailyWeatherToday(weatherDataService.convertDailyDataToDTO(latestData.get(3)));
-                        this.setDailyWeatherTomorrow(weatherDataService.convertDailyDataToDTO(latestData.get(2)));
-                        this.setDailyWeatherDAT(weatherDataService.convertDailyDataToDTO(latestData.get(1)));
-                        this.setDailyWeatherInThreeDays(weatherDataService.convertDailyDataToDTO(latestData.get(0)));
-                        return;
+                        if (latestRecord.getAdditionTime().isAfter(oneHourAgo) && latestRecordHourly.getAdditionTime().isAfter(oneHourAgo)) {
+                            this.setLocation(firstLocation);
+                            this.setCurrentWeather(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(0)));
+                            this.setWeatherInOneHour(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(1)));
+
+                            this.setDailyWeatherToday(weatherDataService.convertDailyDataToDTO(latestData.get(0)));
+                            this.setDailyWeatherTomorrow(weatherDataService.convertDailyDataToDTO(latestData.get(1)));
+                            this.setDailyWeatherDAT(weatherDataService.convertDailyDataToDTO(latestData.get(2)));
+                            this.setDailyWeatherInThreeDays(weatherDataService.convertDailyDataToDTO(latestData.get(3)));
+                            return;
+                        }
                     }
+                    this.setLocation(firstLocation);
+
+                    CurrentAndForecastAnswerDTO forecastAnswer = this.weatherApiRequestService.retrieveCurrentAndForecastWeather(firstLocation.latitude(), firstLocation.longitude());
+                    List<HourlyWeatherDTO> hourlyWeatherList = forecastAnswer.hourlyWeather();
+
+                    this.setCurrentWeather(hourlyWeatherList.get(0));
+                    weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(0), firstLocation.name());
+                    this.setWeatherInOneHour(hourlyWeatherList.get(1));
+                    weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(1), firstLocation.name());
+
+                    List<DailyWeatherDTO> dailyWeatherList = forecastAnswer.dailyWeather();
+                    this.setDailyWeatherToday(dailyWeatherList.get(0));
+                    weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(0), firstLocation.name());
+                    this.setDailyWeatherTomorrow(dailyWeatherList.get(1));
+                    weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(1), firstLocation.name());
+                    this.setDailyWeatherDAT(dailyWeatherList.get(2));
+                    weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(2), firstLocation.name());
+                    this.setDailyWeatherInThreeDays(dailyWeatherList.get(3));
+                    weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(3), firstLocation.name());
+
+
+                } else {
+                    LOGGER.warn("The list of locations is empty.");
                 }
-                this.setLocation(firstLocation);
-
-                CurrentAndForecastAnswerDTO forecastAnswer = this.weatherApiRequestService.retrieveCurrentAndForecastWeather(firstLocation.latitude(), firstLocation.longitude());
-                List<HourlyWeatherDTO> hourlyWeatherList = forecastAnswer.hourlyWeather();
-
-                this.setCurrentWeather(hourlyWeatherList.get(0));
-                this.setWeatherInOneHour(hourlyWeatherList.get(1));
-
-                List<DailyWeatherDTO> dailyWeatherList = forecastAnswer.dailyWeather();
-                this.setDailyWeatherToday(dailyWeatherList.get(0));
-                weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(0), firstLocation.name());
-                this.setDailyWeatherTomorrow(dailyWeatherList.get(1));
-                weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(1), firstLocation.name());
-                this.setDailyWeatherDAT(dailyWeatherList.get(2));
-                weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(2), firstLocation.name());
-                this.setDailyWeatherInThreeDays(dailyWeatherList.get(3));
-                weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(3), firstLocation.name());
-
-                //LOGGER.info("current location: " + currentLocation);
-            } else {
-                LOGGER.warn("The list of locations is empty.");
+            } catch (Exception e) {
+                LOGGER.error("error in request in locationApi", e);
+                throw new RuntimeException(e);
             }
-        } catch (Exception e) {
-            LOGGER.error("error in request in locationApi", e);
-            throw new RuntimeException(e);
         }
     }
 

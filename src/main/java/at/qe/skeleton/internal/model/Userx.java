@@ -1,7 +1,14 @@
 package at.qe.skeleton.internal.model;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.domain.Persistable;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import jakarta.persistence.CollectionTable;
@@ -13,6 +20,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
@@ -30,9 +39,10 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
 
     @Id
     @Column(length = 100)
+    @NotEmpty(message = "Name can not be empty")
     private String username;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true) //Changed to true
     private Userx createUser;
     @Column(nullable = false)
     @CreationTimestamp
@@ -42,12 +52,40 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
+    @NotEmpty
+    @Size(min = 8, max = 64)
     private String password;
 
+    @NotEmpty
     private String firstName;
+
+    @NotEmpty
     private String lastName;
+
+    @NotEmpty
     private String email;
+
+    @NotEmpty
     private String phone;
+
+    @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CreditCard creditCard;
+
+    @OneToMany(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invoice> invoices = new ArrayList<>();
+
+    public List<Invoice> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(List<Invoice> invoices) {
+        this.invoices = invoices;
+    }
+
+
+    public CreditCard getCreditCard() {
+        return creditCard;
+    }
 
     boolean enabled;
 

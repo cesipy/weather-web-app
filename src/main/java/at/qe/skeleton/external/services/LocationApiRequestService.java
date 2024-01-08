@@ -12,6 +12,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
+
+/**
+ * Service class for making requests to a location API to retrieve location information.
+ * This class uses a `RestClient` for making HTTP requests to the location API.
+ *
+ * @see RestClient
+ */
 @Scope("application")
 @Component
 @Validated
@@ -26,6 +33,13 @@ public class LocationApiRequestService {
     @Autowired
     private RestClient restClient;
 
+    /**
+     * Retrieves a list of location data based on the specified city name and limit.
+     *
+     * @param cityName name of city for which location information is requested.
+     * @param limit    maximum number of results to be retrieved.
+     * @return A list of {@link LocationDTO} objects representing the retrieved location data.
+     */
     public List<LocationDTO> retrieveLocations(String cityName, int limit) {
 
         ResponseEntity<List<LocationDTO>> responseEntity = this.restClient.get()
