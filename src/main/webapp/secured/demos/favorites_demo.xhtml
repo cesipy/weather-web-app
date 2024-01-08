@@ -10,16 +10,35 @@
 
     <ui:define name="content">
         <h:form>
+            <p:panel header="Add Favorites" >
+                <p:inputText value="#{favoriteController.locationName}" />
+                <br/>
+                <br/>
+                <p:inputText value="#{favoriteController.priority}" />
+                <p:commandButton value ="Save"
+                                 action = "#{favoriteController.saveFavorite}"
+                                 />
+            </p:panel>
+
             <p:panel header="Favorites Request">
-                <p:inputText value="#{favoriteController.searchUser}" />
-                <p:commandButton value="Search"
-                                 action="#{favoriteController.retrieveFavorites(searchUser)}"
+                <div>
+                    Prints out the user's favorite places.
+                    <br/>
+                    <br/>
+                </div>
+                <p:commandButton value="Print Favorites"
+                                 action="#{favoriteController.retrieveFavorites}"
                                  update="favoriteSearchPanel"/>
 
             </p:panel>
             <p:panel header="Favorites Response" id="favoriteSearchPanel">
                 <div>
-                    <h:outputText escape="false" value="#{favoriteController.responseEntity}"/>
+                    <h:panelGroup rendered="#{not empty favoriteController.responseEntity.body}" >
+                        <h:outputText escape="false" value="#{favoriteController.responseEntity}"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{empty favoriteController.responseEntity.body}">
+                        <h:outputText value="No favorites found."/>
+                    </h:panelGroup>
                 </div>
             </p:panel>
         </h:form>

@@ -34,9 +34,9 @@ public class FavoriteService {
     }
 
 
-    public List<Favorite> getFavoritesByUsername(String username) {
-        Userx userx = userxService.loadUserContaining(username);
-        LOGGER.info("in favoriteservice, what is username: " + userx);
+    public List<Favorite> getFavoritesForUser() {
+        Userx userx = userxService.getCurrentUser();
+        LOGGER.info("username: " + userx);
 
         return favoriteRepository.findByUser(userx);
 
@@ -76,5 +76,7 @@ public class FavoriteService {
     public void deleteFavoriteById(Long id) {
         favoriteRepository.deleteById(id);
     }
+
+    // TODO: implement updateFavorite method
 
 }

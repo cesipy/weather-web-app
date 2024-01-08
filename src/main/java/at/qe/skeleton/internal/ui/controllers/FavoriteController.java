@@ -1,5 +1,6 @@
 package at.qe.skeleton.internal.ui.controllers;
 
+import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.internal.model.Favorite;
 import at.qe.skeleton.internal.services.FavoriteService;
 import at.qe.skeleton.internal.services.UserxService;
@@ -19,9 +20,11 @@ public class FavoriteController {
 
     private static Logger LOGGER = LoggerFactory.getLogger(FavoriteController.class);
 
-    private String searchUser;
 
-    private String tempo = "Hallo from favorite controller!";
+    private String locationName;
+
+    private int priority;
+
 
     @Autowired
     private FavoriteService favoriteService;
@@ -29,16 +32,15 @@ public class FavoriteController {
     ResponseEntity<List<Favorite>> responseEntity;
 
 
-    // temporary for demo, adds favorites to admin
-    @PostConstruct
-    public void init() {
-        favoriteService.saveFavorite("Absam", 1);
-        favoriteService.saveFavorite("Innsbruck", 2);
-        LOGGER.info("saved favorites for demo");
+
+    public void saveFavorite() {
+        favoriteService.saveFavorite(locationName, priority);
+        LOGGER.info("successfully saved favorite: " + locationName + ", priority: " +priority);
     }
 
-    public ResponseEntity<List<Favorite>> retrieveFavorites(String username) {
-        List<Favorite> favorites = favoriteService.getFavoritesByUsername(username);
+    public ResponseEntity<List<Favorite>> retrieveFavorites() {
+        // get favorites for the user that
+        List<Favorite> favorites = favoriteService.getFavoritesForUser();
 
         // TODO: handle user not found
         if (favorites.isEmpty()) {
@@ -53,17 +55,9 @@ public class FavoriteController {
 
         ResponseEntity<List<Favorite>> response = ResponseEntity.ok(favorites);
         responseEntity = response;
-        LOGGER.info("retrieval successful");
         return response;
     }
 
-    public String getTempo() {
-        return tempo;
-    }
-
-    public void setTempo(String tempo) {
-        this.tempo = tempo;
-    }
 
     public ResponseEntity<List<Favorite>> getResponseEntity() {
         return responseEntity;
@@ -73,11 +67,19 @@ public class FavoriteController {
         this.responseEntity = responseEntity;
     }
 
-    public String getSearchUser() {
-        return searchUser;
+    public String getLocationName() {
+        return locationName;
     }
 
-    public void setSearchUser(String searchUser) {
-        this.searchUser = searchUser;
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }

@@ -66,7 +66,7 @@ public class LocationControllerDb {
             List<Location> locations = locationService.autocomplete(extractedLocationName);
             Location firstLocation = locations.get(0);
             currentLocation = firstLocation;
-            LOGGER.info(firstLocation.toDebugString());
+            // LOGGER.info(firstLocation.toDebugString());
             return firstLocation;
 
         }
