@@ -20,7 +20,14 @@
             </p:panel>
             <p:panel header="Weather Response" id="weatherResponsePanel">
                 <div>
-                    <h:outputText escape="false" value="#{searchWeatherController.currentWeather}"/>
+                    <h:panelGroup rendered="#{not empty searchWeatherController.currentWeather}" >
+                        <h:outputText escape="false" value="#{searchWeatherController.currentWeather}"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{empty searchWeatherController.currentWeather}">
+                        <h:outputText value="No favorites found."/>
+                    </h:panelGroup>
+
+                    <!-- <h:outputText escape="false" value="#{searchWeatherController.currentWeather}"/> -->
                 </div>
             </p:panel>
         </h:form>

@@ -14,21 +14,12 @@ import java.util.List;
 @Controller
 @Scope("view")
 public class FavoriteController {
-
     private static Logger LOGGER = LoggerFactory.getLogger(FavoriteController.class);
-
-
     private String locationName;
-
     private int priority;
-
-
     @Autowired
     private FavoriteService favoriteService;
-
-
     private List<Favorite> favorites;
-
 
     public void saveFavorite() {
         favoriteService.saveFavorite(locationName, priority);
@@ -45,10 +36,26 @@ public class FavoriteController {
         }
     }
 
+    public void deleteFavorite(Favorite favorite) {
+        favoriteService.deleteFavorite(favorite);
+        LOGGER.info("Successfully deleted favorite: " + favorite.getLocation().getName());
+
+        // update favorite list
+        retrieveFavorites();
+    }
+
+    public void deleteFavoriteById(Long id) {
+        favoriteService.deleteFavoriteById(id);
+        LOGGER.info("Successfully deleted favorite with id: " + id);
+
+        // update favorite list
+        retrieveFavorites();
+
+    }
+
     public List<Favorite> getFavorites() {
         return favorites;
     }
-
 
     public String getLocationName() {
         return locationName;

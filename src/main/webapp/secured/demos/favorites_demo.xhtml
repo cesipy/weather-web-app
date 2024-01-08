@@ -31,16 +31,25 @@
                                  update="favoriteSearchPanel"/>
 
             </p:panel>
+
             <p:panel header="Favorites Response" id="favoriteSearchPanel">
                 <div>
-                    <h:panelGroup rendered="#{not empty favoriteController.responseEntity.body}" >
-                        <h:outputText escape="false" value="#{favoriteController.responseEntity}"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{empty favoriteController.responseEntity.body}">
+                    <p:dataTable var="favorite" value="#{favoriteController.favorites}" rendered="#{not empty favoriteController.favorites}">
+                        <p:column headerText="Location">
+                            <h:outputText value="#{favorite.location}" />
+                        </p:column>
+
+                        <p:column headerText="Actions">
+                            <p:commandButton value="Delete" action="#{favoriteController.deleteFavorite(favorite)}"/>
+
+                        </p:column>
+                    </p:dataTable>
+                    <h:panelGroup rendered="#{empty favoriteController.favorites}">
                         <h:outputText value="No favorites found."/>
                     </h:panelGroup>
                 </div>
             </p:panel>
+
         </h:form>
 
     </ui:define>
