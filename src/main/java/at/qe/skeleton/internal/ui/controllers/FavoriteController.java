@@ -3,15 +3,18 @@ package at.qe.skeleton.internal.ui.controllers;
 import at.qe.skeleton.internal.model.Favorite;
 import at.qe.skeleton.internal.services.FavoriteService;
 import at.qe.skeleton.internal.services.UserxService;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
 @Controller
+@Scope("view")
 public class FavoriteController {
 
     private static Logger LOGGER = LoggerFactory.getLogger(FavoriteController.class);
@@ -23,16 +26,19 @@ public class FavoriteController {
     @Autowired
     private FavoriteService favoriteService;
 
-    @Autowired
-            private UserxService userxService;
-
     ResponseEntity<List<Favorite>> responseEntity;
 
 
+    // temporary for demo, adds favorites to admin
+    @PostConstruct
+    public void init() {
+        favoriteService.saveFavorite("Absam", 1);
+        favoriteService.saveFavorite("Innsbruck", 2);
+        LOGGER.info("saved favorites for demo");
+    }
+
     public ResponseEntity<List<Favorite>> retrieveFavorites(String username) {
-        LOGGER.info("successfully entered retrieve Function!");
         List<Favorite> favorites = favoriteService.getFavoritesByUsername(username);
-        LOGGER.info("fetched favorites using favoriteService!");
 
         // TODO: handle user not found
         if (favorites.isEmpty()) {

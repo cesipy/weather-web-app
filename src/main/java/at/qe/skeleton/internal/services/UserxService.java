@@ -47,6 +47,11 @@ public class UserxService {
         return userRepository.findFirstByUsername(username);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or principal.username eq #username")
+    public Userx loadUserContaining(String username) {
+        return userRepository.findFirstByUsernameContaining(username);
+    }
+
     /**
      * Saves the user. This method will also set {@link Userx#createDate} for new
      * entities or {@link Userx#updateDate} for updated entities. The user
@@ -81,7 +86,7 @@ public class UserxService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findFirstByUsername(auth.getName());
     }
-
+    
     public void removeUserRole(String username, UserxRole userxRole) {
         Userx userx = loadUser(username);
         Set<UserxRole> oldRoles = userx.getRoles();
@@ -104,5 +109,9 @@ public class UserxService {
 
     }
 
+    public Userx getCurrentUser() {
+        Userx authenticatedUser = getAuthenticatedUser();
+        return authenticatedUser;
+    }
 
 }
