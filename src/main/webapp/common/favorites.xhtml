@@ -17,7 +17,10 @@
                                 minQueryLength="3" />
                 <p:commandButton value ="Save"
                                  action = "#{favoriteController.saveFavorite}"
+                                 update="messages"
                 />
+                <p:messages id="messages" showDetail="true" showSummary="true"
+                style="color: red; margin-left: 10px;" />
             </p:panel>
 
             <p:panel header="Favorites Request">

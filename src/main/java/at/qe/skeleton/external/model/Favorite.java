@@ -1,6 +1,7 @@
-package at.qe.skeleton.internal.model;
+package at.qe.skeleton.external.model;
 
 import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.internal.model.Userx;
 import jakarta.persistence.*;
 
 @Entity

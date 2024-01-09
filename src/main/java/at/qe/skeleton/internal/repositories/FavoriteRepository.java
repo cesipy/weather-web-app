@@ -1,6 +1,6 @@
 package at.qe.skeleton.internal.repositories;
 
-import at.qe.skeleton.internal.model.Favorite;
+import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.internal.model.Userx;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
