@@ -1,19 +1,16 @@
 package at.qe.skeleton.external.services;
 
-import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.repositories.FavoriteRepository;
 import at.qe.skeleton.internal.services.UserxService;
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +24,6 @@ public class FavoriteService {
     private UserxService userxService;
     @Autowired
     private LocationService locationService;
-    private List<Favorite> favorites;
     public List<Favorite> getFavorites(Userx userx) {
         return favoriteRepository.findByUser(userx);
     }
@@ -50,7 +46,7 @@ public class FavoriteService {
     public List<Favorite> getFavoritesForUser() {
         Userx userx = userxService.getCurrentUser();
 
-        return favoriteRepository.findByUser(userx);
+        return getFavorites(userx);
     }
 
     public List<Location> autocomplete(String query) {
@@ -60,6 +56,7 @@ public class FavoriteService {
     public boolean isLocationAlreadyFavorite(String locationName) {
         retrieveCurrentData(locationName);
 
+        List<Favorite> favorites = favoriteRepository.findByUser(currentUserx);
         if (!favorites.isEmpty()) {
             // check if location is already saved
 
@@ -70,13 +67,13 @@ public class FavoriteService {
     }
 
     private void retrieveCurrentData(String locationName) {
-            currentUserx = userxService.getCurrentUser();
+        currentUserx = userxService.getCurrentUser();
 
-            currentLocation = locationService.retrieveLocation(locationName);
+        currentLocation = locationService.retrieveLocation(locationName);
     }
 
     // maybe with Favorite instance, instead of creation
-    public void saveFavorite( String locationName) throws EmptyLocationException, LocationAlreadyInFavoritesException {
+    public void saveFavorite( String locationName) {
         retrieveCurrentData(locationName);
 
         if (currentLocation == null) {
@@ -85,6 +82,7 @@ public class FavoriteService {
         }
 
         int priority = calculatePriority(currentUserx);
+        LOGGER.info(String.valueOf(currentUserx));
 
         Favorite favorite = new Favorite();
         favorite.setUser(currentUserx);
@@ -92,9 +90,6 @@ public class FavoriteService {
         favorite.setPriority(priority);
 
         favoriteRepository.save(favorite);
-
-        // save to current list, to check for duplicated favorites
-        favorites.add(favorite);
     }
 
 
@@ -114,12 +109,22 @@ public class FavoriteService {
         return favorites.size() + 1;
     }
 
-    @PostConstruct
-    private void init() {
-        favorites = new ArrayList<>();
-        LOGGER.info("post constructed favoriteService!");
+    // TODO: implement updateFavorite method
+
+    public Userx getCurrentUserx() {
+        return currentUserx;
     }
 
-    // TODO: implement updateFavorite method
+    public void setCurrentUserx(Userx currentUserx) {
+        this.currentUserx = currentUserx;
+    }
+
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(Location currentLocation) {
+        this.currentLocation = currentLocation;
+    }
 
 }
