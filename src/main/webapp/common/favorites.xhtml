@@ -10,7 +10,7 @@
 
     <ui:define name="content">
         <h:form>
-            <p:panel header="Add Favorites" >
+            <p:panel header="Add Favorite Locations" >
                 <p:autoComplete value="#{favoriteController.locationName}"
                                 completeMethod="#{favoriteController.autocomplete}"
                                 maxResults="5"
@@ -23,20 +23,12 @@
                 style="color: red; margin-left: 10px;" />
             </p:panel>
 
-            <p:panel header="Favorites Request">
-                <div>
-                    Prints out the user's favorite places.
-                    <br/>
-                    <br/>
-                </div>
-                <p:commandButton value="Print Favorites"
+            <p:panel header="Favorite Locations" id="favoriteSearchPanel">
+                <p:commandButton value="Show Favorites List"
                                  action="#{favoriteController.retrieveFavorites}"
                                  update="favoriteSearchPanel"/>
-
-            </p:panel>
-
-            <p:panel header="Favorites Response" id="favoriteSearchPanel">
                 <div>
+                    <br/>
                     <p:dataTable var="favorite" value="#{favoriteController.favorites}" rendered="#{not empty favoriteController.favorites}">
                         <p:column headerText="#">
                             <h:outputText value="#{favorite.priority}" />

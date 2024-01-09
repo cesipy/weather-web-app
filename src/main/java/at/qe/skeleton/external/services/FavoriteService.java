@@ -111,7 +111,7 @@ public class FavoriteService {
         List<Favorite> favorites =  favoriteRepository.findByUser(userx);
 
         LOGGER.info("priority: " + favorites.size());
-        return favorites.size();
+        return favorites.size() + 1;
     }
 
     @PostConstruct

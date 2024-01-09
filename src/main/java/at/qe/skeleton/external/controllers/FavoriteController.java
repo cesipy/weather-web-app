@@ -69,12 +69,6 @@ public class FavoriteController {
         }
     }
 
-    @ExceptionHandler(LocationAlreadyInFavoritesException.class)
-    public void handleException() {
-        LOGGER.info("in exception handler!");
-    }
-
-
     public void retrieveFavorites() {
         try {
             // Get favorites for the user
@@ -86,7 +80,6 @@ public class FavoriteController {
 
                 // load all locations
                 locations.add(favorite.getLocation());
-                LOGGER.info("extracted location: " + favorite.getLocation().getLatitude());
             }
 
         } catch (Exception e) {
