@@ -1,5 +1,6 @@
 package at.qe.skeleton.external.model.location;
 
+import at.qe.skeleton.external.model.Favorite;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
@@ -115,7 +116,21 @@ public class Location implements Serializable {
 
         @Override
         public String toString() {
-                return name + ", " + country;
+                return name; //+ ", " + country;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+                if (obj == this) {
+                        return true;
+                }
+                if (!(obj instanceof Location)) {
+                        return false;
+                }
+
+                Location loc = (Location) obj;
+
+                return loc.getId().equals(this.id);
         }
 }
 

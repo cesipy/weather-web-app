@@ -41,17 +41,17 @@ public class LocationService {
      *
      * @param name query for autocompletion.
      * @return list of locations matching the provided query.
-     * @throws EmptyLocationException If the provided name is empty.
      */
-    public List<Location> autocomplete(String name) throws EmptyLocationException {
-        if (Objects.equals(name, "")) {
-            LOGGER.info("throwing exception in LocationService");
-            throw new EmptyLocationException();
-        }
-        else {
-            return locationRepository.findByNameStartingWithIgnoreCase(name);
-        }
+    public List<Location> autocomplete(String name) {
+        return locationRepository.findByNameStartingWithIgnoreCase(name);
+    }
 
+    public Location retrieveLocationByExactName(String name) {
+        return locationRepository.findFirstByName(name);
+    }
+
+    public Location retrieveLocation(String name) {
+        return locationRepository.findFirstByNameStartingWithIgnoreCase(name);
     }
 
     public List<Location> getAllLocations(){

@@ -32,22 +32,19 @@ public class LocationControllerDb {
      * @return A list of locations matching the provided query.
      */
     public List<Location> autocomplete(String query)  {
-        try {
-            if (Objects.equals(locationName, "")) {
-                LOGGER.info("Query is null!");
-            }
-
-            List <Location> locations = locationService.autocomplete(query);
-
-            logLocations(locations);
-
-            return locations;
+        if (Objects.equals(locationName, "")) {
+            LOGGER.info("Query is null!");
         }
-        catch (EmptyLocationException e) {
+
+        List <Location> locations = locationService.autocomplete(query);
+
+        if (locations.isEmpty()) {
             LOGGER.info("empty location list in autocomplete!");
+            return Collections.emptyList();
         }
 
-        return Collections.emptyList();
+        logLocations(locations);
+        return locations;
     }
 
 
@@ -58,23 +55,24 @@ public class LocationControllerDb {
      * @return The first matching location.
      */
     public Location requestFirstMatch() {
-        try {
-            // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
-            // only locationName has to be extracted
-            String extractedLocationName = locationName.split(",")[0];
 
-            List<Location> locations = locationService.autocomplete(extractedLocationName);
-            Location firstLocation = locations.get(0);
-            currentLocation = firstLocation;
-            LOGGER.info(firstLocation.toDebugString());
-            return firstLocation;
+        // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
+        // only locationName has to be extracted
+        String extractedLocationName = locationName.split(",")[0];
 
-        }
-        catch (EmptyLocationException e) {
+        List<Location> locations = locationService.autocomplete(extractedLocationName);
+
+        if (locations.isEmpty()) {
             LOGGER.info("no location found");
             currentLocation = null;
+            return null;
         }
-        return null;
+
+        Location firstLocation = locations.get(0);
+        currentLocation = firstLocation;
+        // LOGGER.info(firstLocation.toDebugString());
+        return firstLocation;
+
     }
 
     //TODO: convert LocationEntity to .json string

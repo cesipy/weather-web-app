@@ -3,6 +3,11 @@ package at.qe.skeleton.internal.services;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.repositories.UserxRepository;
+import java.util.Collection;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +28,7 @@ import java.util.Set;
 @Scope("application")
 public class UserxService {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(UserxService.class);
     @Autowired
     private UserxRepository userRepository;
 
@@ -45,6 +51,11 @@ public class UserxService {
     @PreAuthorize("hasAuthority('ADMIN') or principal.username eq #username")
     public Userx loadUser(String username) {
         return userRepository.findFirstByUsername(username);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN') or principal.username eq #username")
+    public Userx loadUserContaining(String username) {
+        return userRepository.findFirstByUsernameContaining(username);
     }
 
     /**
@@ -81,7 +92,7 @@ public class UserxService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findFirstByUsername(auth.getName());
     }
-
+    
     public void removeUserRole(String username, UserxRole userxRole) {
         Userx userx = loadUser(username);
         Set<UserxRole> oldRoles = userx.getRoles();
@@ -103,6 +114,13 @@ public class UserxService {
         }
 
     }
+
+    public Userx getCurrentUser() {
+        Userx authenticatedUser = getAuthenticatedUser();
+
+        return authenticatedUser;
+    }
+
 
 
 }
