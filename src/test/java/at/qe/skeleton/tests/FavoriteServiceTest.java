@@ -21,16 +21,12 @@ import static org.mockito.Mockito.*;
 public class FavoriteServiceTest {
     @Mock
     private FavoriteRepository favoriteRepository;
-
     @Mock
     private UserxService userxService;
-
     @Mock
     private LocationService locationService;
-
     @InjectMocks
     private FavoriteService favoriteService;
-
     private Userx testUser;
     private Favorite testFavorite;
 
@@ -53,34 +49,25 @@ public class FavoriteServiceTest {
     @Test
     void testGetFavorites() {
         when(favoriteRepository.findByUser(testUser)).thenReturn(List.of(testFavorite));
+        when(favoriteRepository.findByUserOrderByPriority(testUser)).thenReturn(List.of(testFavorite));
 
-        List<Favorite> favorites = favoriteService.getFavorites(testUser);
+        List<Favorite> favorites = favoriteService.getSortedFavoritesList(testUser);
 
         assertEquals(1, favorites.size());
         assertEquals(testFavorite, favorites.get(0));
     }
 
-    /*@Test
-    void testUpdateFavoritePriority() {
-        when(favoriteRepository.findById(1L)).thenReturn(Optional.of(testFavorite));
-
-        favoriteService.updateFavoritePriority(1L, 5);
-
-        assertEquals(5, testFavorite.getPriority());
-        verify(favoriteRepository, times(1)).save(testFavorite);
-    }*/
 
     @Test
     void testGetFavoritesForUser() {
         when(userxService.getCurrentUser()).thenReturn(testUser);
         when(favoriteRepository.findByUser(testUser)).thenReturn(List.of(testFavorite));
-
-        List<Favorite> favorites = favoriteService.getFavoritesForUser();
+        when(favoriteRepository.findByUserOrderByPriority(testUser)).thenReturn(List.of(testFavorite));
+        List<Favorite> favorites = favoriteService.getSortedFavoritesForUser();
 
         assertEquals(1, favorites.size());
         assertEquals(testFavorite, favorites.get(0));
     }
-
 
 
     @Test
