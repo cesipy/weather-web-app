@@ -42,6 +42,16 @@
                             <p:commandButton value="Delete" action="#{favoriteController.deleteFavorite(favorite)}"/>
                         </p:column>
 
+                        <p:column headerText="Update">
+                            <p:commandButton value="move up"
+                                             action="#{favoriteController.moveFavoriteUp(favorite)}"/>
+                        </p:column>
+
+                        <p:column headerText="Update">
+                            <p:commandButton value="move down"
+                                             action="#{favoriteController.moveFavoriteDown(favorite)}" />
+                        </p:column>
+
 
                     </p:dataTable>
 

@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller class handling user interactions for managing favorite locations.
+ */
 @Controller
 @Scope("view")
 public class FavoriteController {
@@ -28,21 +31,37 @@ public class FavoriteController {
     private List<Favorite> favorites;
     private List<Location> locations;
     private int updatedPriority;
-
+    private Favorite selectedFavorite;
 
     @PostConstruct
     public void init() {
         locations = new ArrayList<>();
     }
 
-    public void updateFavoritePriority(Long id, int priority) {
-        favoriteService.updateFavoritePriority(id, priority);
-        LOGGER.info("Successfully updated priority for favorite with ID: " + id);
-
-        // Update the favorite list
-        retrieveFavorites();
+    /**
+     * Moves a favorite location up in priority.
+     *
+     * @param favorite The favorite location to be moved.
+     */
+    public void moveFavoriteUp(Favorite favorite) {
+        boolean up = true;
+        favoriteService.moveFavoriteUpOrDown(favorite, up);
     }
 
+    /**
+     * Moves a favorite location down in priority.
+     *
+     * @param favorite The favorite location to be moved.
+     */
+    public void moveFavoriteDown(Favorite favorite) {
+        boolean up = false;
+        favoriteService.moveFavoriteUpOrDown(favorite, up);
+    }
+
+    /**
+     * Saves a favorite location if it is not already in the list of favorites.
+     * Displays an error message if the location is already a favorite.
+     */
     public void saveFavorite() {
         try {
             boolean isAlreadyFavorite = favoriteService.isLocationAlreadyFavorite(locationName);
@@ -55,10 +74,7 @@ public class FavoriteController {
                 LOGGER.info("location " + locationName + " is already favorite!");
             }
             else {
-
                 favoriteService.saveFavorite(locationName);
-                LOGGER.info("Successfully saved favorite: " + locationName);
-
             }
             // clear locationName after save
             locationName = "";
@@ -69,10 +85,13 @@ public class FavoriteController {
         }
     }
 
+    /**
+     * Retrieves the list of favorite locations for the current user.
+     */
     public void retrieveFavorites() {
         try {
             // Get favorites for the user
-            favorites = favoriteService.getFavoritesForUser();
+            favorites = favoriteService.getSortedFavoritesForUser();
 
             // Log favorites
             for (Favorite favorite : favorites) {
@@ -87,6 +106,11 @@ public class FavoriteController {
         }
     }
 
+    /**
+     * Deletes a favorite location and updates the list of favorites.
+     *
+     * @param favorite The favorite location to be deleted.
+     */
     public void deleteFavorite(Favorite favorite) {
         try {
             favoriteService.deleteFavorite(favorite);
@@ -99,7 +123,14 @@ public class FavoriteController {
         }
     }
 
+
+    /**
+     * Deletes a favorite location by its ID and updates the list of favorites.
+     *
+     * @param id The ID of the favorite location to be deleted.
+     */
     public void deleteFavoriteById(Long id) {
+        //currently not in use
         try {
             favoriteService.deleteFavoriteById(id);
             LOGGER.info("Successfully deleted favorite with id: " + id);
@@ -108,6 +139,28 @@ public class FavoriteController {
             retrieveFavorites();
         } catch (Exception e) {
             LOGGER.error("Error deleting favorite", e);
+        }
+    }
+
+    /**
+     * Updates the priority of a favorite location.
+     *
+     * @param favorite The favorite location whose priority is to be updated.
+     * @param priority The new priority value.
+     */
+    public void updateFavoritePriority(Favorite favorite, int priority) {
+        // currently not in use, might be needed later
+        if (favorite != null) {
+            LOGGER.info("NEW PRIO IN CONTROLLER: " + priority);
+
+            favoriteService.updateFavoritePriority(favorite, priority);
+
+            // clear selectedFavorite to avoid unintentional updates
+            selectedFavorite = null;
+            updatedPriority = 0;
+
+            LOGGER.info("Successfully updated priority for favorite with ID: " + favorite.getId());
+            retrieveFavorites();
         }
     }
 
@@ -141,5 +194,13 @@ public class FavoriteController {
 
     public void setUpdatedPriority(int updatedPriority) {
         this.updatedPriority = updatedPriority;
+    }
+
+    public Favorite getSelectedFavorite() {
+        return selectedFavorite;
+    }
+
+    public void setSelectedFavorite(Favorite selectedFavorite) {
+        this.selectedFavorite = selectedFavorite;
     }
 }

@@ -43,7 +43,7 @@ public class FavoriteOverviewController {
         // clear the existing list before retrieving new favorites
         weatherOverviewList.clear();
 
-        favorites = favoriteService.getFavoritesForUser();
+        favorites = favoriteService.getSortedFavoritesForUser();
 
         if (favorites.isEmpty()) {
             LOGGER.info("favorites in overview are empty");
