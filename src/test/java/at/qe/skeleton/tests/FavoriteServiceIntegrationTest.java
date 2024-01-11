@@ -5,7 +5,7 @@ import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.FavoriteService;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.internal.model.Userx;
-import at.qe.skeleton.internal.repositories.FavoriteRepository;
+import at.qe.skeleton.external.repositories.FavoriteRepository;
 import at.qe.skeleton.internal.services.UserxService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

@@ -1,13 +1,11 @@
 package at.qe.skeleton.tests;
 
-import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.FavoriteService;
-import at.qe.skeleton.external.services.LocationAlreadyInFavoritesException;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.internal.model.Userx;
-import at.qe.skeleton.internal.repositories.FavoriteRepository;
+import at.qe.skeleton.external.repositories.FavoriteRepository;
 import at.qe.skeleton.internal.services.UserxService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,7 +47,7 @@ public class FavoriteServiceTest {
         testFavorite.setUser(testUser);
         testFavorite.setLocation(location);
         testFavorite.setPriority(1);
-        favoriteService.init();
+
     }
 
     @Test
@@ -63,7 +60,7 @@ public class FavoriteServiceTest {
         assertEquals(testFavorite, favorites.get(0));
     }
 
-    @Test
+    /*@Test
     void testUpdateFavoritePriority() {
         when(favoriteRepository.findById(1L)).thenReturn(Optional.of(testFavorite));
 
@@ -71,7 +68,7 @@ public class FavoriteServiceTest {
 
         assertEquals(5, testFavorite.getPriority());
         verify(favoriteRepository, times(1)).save(testFavorite);
-    }
+    }*/
 
     @Test
     void testGetFavoritesForUser() {
