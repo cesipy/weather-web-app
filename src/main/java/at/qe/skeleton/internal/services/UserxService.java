@@ -1,5 +1,6 @@
 package at.qe.skeleton.internal.services;
 
+import at.qe.skeleton.external.model.WeatherDataField;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.repositories.UserxRepository;
@@ -15,7 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -121,6 +122,26 @@ public class UserxService {
         return authenticatedUser;
     }
 
+    public List<WeatherDataField> getSelectedWeatherFieldsForUser() {
+        Userx userx = getCurrentUser();
 
+        return userx.getSelectedFields();
+    }
+
+    public void addSelectedWeatherFieldsForUser(List<WeatherDataField> newSelectedFields) {
+        Userx userx = getCurrentUser();
+        List<WeatherDataField> selectedFields = userx.getSelectedFields();
+
+        selectedFields.addAll(newSelectedFields);
+
+        userx.setSelectedFields(selectedFields);
+    }
+
+    public void deleteSelectedWeatherFieldsForUser(List<WeatherDataField> toDeleteSelectedFields) {
+        Userx userx = getCurrentUser();
+        List<WeatherDataField> selectedFields = userx.getSelectedFields();
+
+        selectedFields.removeAll(toDeleteSelectedFields);
+    }
 
 }
