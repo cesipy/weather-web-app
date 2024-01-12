@@ -5,53 +5,116 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/WEB-INF/templates/main.xhtml">
 
     <ui:define name="content">
         <h:form id="refreshForm">
+        <div class="card">
+        <div class="flex justify-content-between">
+            <div>
+            </div>
+        </div>
 
-            <p:panel header="Favorites">
+            <!--
+             hides columns using method described here:
+             https://stackoverflow.com/questions/25487243/how-can-i-initially-hide-columns-in-a-pdatatable-with-pcolumntoggler
+             -->
+            <p:dataTable id="weathers" var="weather" value="#{favoriteOverviewController.currentWeatherDataList}">
+                <f:facet name="header">
+                    <div class="flex justify-content-between align-items-center">
+                        List of Products
 
-                <div >
-                    <p:dataTable var="weather"
-                                 value="#{favoriteOverviewController.weatherOverviewList}"
-                                 rendered="#{not empty favoriteOverviewController.weatherOverviewList}">
-                        <p:column headerText="Location">
-                            <h:outputText value="#{weather.location.name}" />
-                        </p:column>
+                        <div style="margin-top: 10px; text-align: right;">
+                            <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                            <p:columnToggler datasource="weathers" trigger="toggler">
+                                <p:ajax />
+                            </p:columnToggler>
+                        </div>
+                    </div>
+                </f:facet>
 
-                        <p:column headerText="Temperature(°C)">
-                            <h:outputText value="#{weather.temperature}"/>
-                        </p:column>
+                <p:column headerText="Location">
+                    <h:outputText value="#{weather.location.name}" />
+                </p:column>
 
-                        <p:column headerText="feels like (°C)">
-                            <h:outputText value="#{weather.feelsLikeTemperature}"/>
-                        </p:column>
+                <p:column headerText="Temperature(°C)" visible="#{favoriteOverviewController.isInList('TEMP')}">
+                    <h:outputText value="#{weather.temperature}"/>
+                </p:column>
 
-                        <p:column headerText="Weather">
-                            <h:outputText value="#{weather.weatherTitleAndDescription}"/>
-                        </p:column>
+                <p:column headerText="feels like (°C)" visible="#{favoriteOverviewController.isInList('FEELS_LIKE')}">
+                    <h:outputText value="#{weather.feelsLikeTemperature}"/>
+                </p:column>
 
-                    </p:dataTable>
+                <p:column headerText="Weather" visible="#{favoriteOverviewController.isInList('WEATHER_MAIN')}">
+                    <h:outputText value="#{weather.description}"/>
+                </p:column>
 
-                    <h:panelGroup rendered="#{empty favoriteOverviewController.weatherOverviewList}">
-                        <h:outputText value="No favorites found." />
-                        <br/>
-                    </h:panelGroup>
-                    <br/>
+                <p:column headerText="Sunrise" visible="#{favoriteOverviewController.isInList('SUNRISE')}">
+                    <h:outputText value="#{weather.getSunriseFormatted()}"/>
+                </p:column>
 
-                    <p:button value="Manage Favorites"
-                              outcome="/common/favorites.xhtml"
-                              style="margin-right: 10px;"  />
+                <p:column headerText="Sunset" visible="#{favoriteOverviewController.isInList('SUNSET')}">
+                    <h:outputText value="#{weather.getSunsetFormatted()}"/>
+                </p:column>
 
-                    <p:commandButton icon="pi pi-refresh"
-                                     title="Refresh"
-                                     action="#{favoriteOverviewController.retrieveFavorites}"
-                                     update="refreshForm"
-                                     style="margin-top: 10px;" />
-                </div>
-            </p:panel>
+                <p:column headerText="Pressure" visible="#{favoriteOverviewController.isInList('PRESSURE')}">
+                    <h:outputText value="#{weather.pressure}"/>
+                </p:column>
 
+                <p:column headerText="Humidity" visible="#{favoriteOverviewController.isInList('HUMIDITY')}">
+                    <h:outputText value="#{weather.humidity}"/>
+                </p:column>
+
+                <p:column headerText="Dew Point" visible="#{favoriteOverviewController.isInList('DEW_POINT')}">
+                    <h:outputText value="#{weather.dewPoint}"/>
+                </p:column>
+
+                <p:column headerText="Clouds" visible="#{favoriteOverviewController.isInList('CLOUDS')}">
+                    <h:outputText value="#{weather.clouds}"/>
+                </p:column>
+
+                <p:column headerText="UV-Index" visible="#{favoriteOverviewController.isInList('UVI')}">
+                    <h:outputText value="#{weather.uvi}"/>
+                </p:column>
+
+                <p:column headerText="Visibility (km)" visible="#{favoriteOverviewController.isInList('VISIBILITY')}">
+                    <h:outputText value="#{weather.visibility}"/>
+                </p:column>
+
+                <p:column headerText="Wind Speed" visible="#{favoriteOverviewController.isInList('WIND_SPEED')}">
+                    <h:outputText value="#{weather.windSpeed}"/>
+                </p:column>
+
+                <p:column headerText="Wind direction" visible="#{favoriteOverviewController.isInList('WIND_DIRECTION')}">
+                    <h:outputText value="#{weather.windDirection}"/>
+                </p:column>
+
+                <p:column headerText="Rain" visible="#{favoriteOverviewController.isInList('RAIN')}">
+                    <h:outputText value="#{weather.rain}"/>
+                </p:column>
+
+                <p:column headerText="Snow" visible="#{favoriteOverviewController.isInList('SNOW')}">
+                    <h:outputText value="#{weather.snow}"/>
+                </p:column>
+
+                <p:column headerText="Icon" visible="#{favoriteOverviewController.isInList('WEATHER_ICON')}">
+                    <h:outputText value="#{weather.icon}"/>
+                </p:column>
+
+            </p:dataTable>
+        </div>
+            <div style="margin-top: 15px; margin-left: 10px; text-align: left;">
+                <p:button value="Manage Favorites"
+                          outcome="/common/favorites.xhtml"
+                          style="margin-right: 10px;"  />
+
+                <p:commandButton icon="pi pi-refresh"
+                                 title="Refresh"
+                                 action="#{favoriteOverviewController.retrieveFavorites}"
+                                 update="refreshForm"
+                                 style="margin-top: 10px;" />
+            </div>
 
         </h:form>
     </ui:define>

@@ -36,6 +36,11 @@ public class FavoriteController {
     @PostConstruct
     public void init() {
         locations = new ArrayList<>();
+        // temporary for debugging
+        locationName = "Vienna";
+        saveFavorite();
+        locationName = "Absam";
+        saveFavorite();
     }
 
     /**
