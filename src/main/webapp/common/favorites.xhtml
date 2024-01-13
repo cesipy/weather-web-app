@@ -7,7 +7,6 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/templates/main.xhtml">
 
-
     <ui:define name="content">
         <h:form>
             <p:panel header="Add Favorite Locations" >
@@ -21,15 +20,14 @@
                 />
                 <p:messages id="messages" showDetail="true" showSummary="true"
                 style="color: red; margin-left: 10px;" />
-            </p:panel>
 
+            </p:panel>
             <p:panel header="Favorite Locations" id="favoriteSearchPanel">
-                <p:commandButton value="Show Favorites List"
-                                 action="#{favoriteController.retrieveFavorites}"
-                                 update="favoriteSearchPanel"/>
                 <div>
                     <br/>
-                    <p:dataTable var="favorite" value="#{favoriteController.favorites}" rendered="#{not empty favoriteController.favorites}">
+                    <p:dataTable var="favorite" value="#{favoriteController.favorites}"
+                                 rendered="#{not empty favoriteController.favorites}">
+
                         <p:column headerText="#">
                             <h:outputText value="#{favorite.priority}" />
                         </p:column>
@@ -60,6 +58,13 @@
                     </h:panelGroup>
                 </div>
             </p:panel>
+
+
+            <p:commandButton icon="pi pi-refresh"
+                             title="Refresh"
+                             action="#{favoriteController.retrieveFavorites}"
+                             update="favoriteSearchPanel"
+                             style="margin-top: 10px; margin-left: 10px" />
         </h:form>
     </ui:define>
 </ui:composition>

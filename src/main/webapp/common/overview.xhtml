@@ -28,6 +28,7 @@
                         <div style="margin-top: 10px; text-align: right;">
                             <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
                             <p:columnToggler datasource="weathers" trigger="toggler">
+                                <!-- notifies the 'onToggle' method in controller to save the configured columns -->
                                 <p:ajax  event="toggle" listener="#{favoriteOverviewController.onToggle}"/>
                             </p:columnToggler>
                         </div>
@@ -50,23 +51,23 @@
                     <h:outputText value="#{weather.temperature}"/>
                 </p:column>
 
-                <p:column headerText="feels like (°C)" visible="#{favoriteOverviewController.isInList('FEELS_LIKE')}">
+                <p:column headerText="feels like(°C)" visible="#{favoriteOverviewController.isInList('FEELS_LIKE')}">
                     <h:outputText value="#{weather.feelsLikeTemperature}"/>
                 </p:column>
 
-                <p:column headerText="Pressure" visible="#{favoriteOverviewController.isInList('PRESSURE')}">
+                <p:column headerText="Pressure (hPa)" visible="#{favoriteOverviewController.isInList('PRESSURE')}">
                     <h:outputText value="#{weather.pressure}"/>
                 </p:column>
 
-                <p:column headerText="Humidity" visible="#{favoriteOverviewController.isInList('HUMIDITY')}">
+                <p:column headerText="Humidity (%)" visible="#{favoriteOverviewController.isInList('HUMIDITY')}">
                     <h:outputText value="#{weather.humidity}"/>
                 </p:column>
 
-                <p:column headerText="Dew Point" visible="#{favoriteOverviewController.isInList('DEW_POINT')}">
+                <p:column headerText="Dew Point(°C)" visible="#{favoriteOverviewController.isInList('DEW_POINT')}">
                     <h:outputText value="#{weather.dewPoint}"/>
                 </p:column>
 
-                <p:column headerText="Clouds" visible="#{favoriteOverviewController.isInList('CLOUDS')}">
+                <p:column headerText="Clouds(%)" visible="#{favoriteOverviewController.isInList('CLOUDS')}">
                     <h:outputText value="#{weather.clouds}"/>
                 </p:column>
 
@@ -74,15 +75,15 @@
                     <h:outputText value="#{weather.uvi}"/>
                 </p:column>
 
-                <p:column headerText="Visibility (km)" visible="#{favoriteOverviewController.isInList('VISIBILITY')}">
+                <p:column headerText="Visibility(km)" visible="#{favoriteOverviewController.isInList('VISIBILITY')}">
                     <h:outputText value="#{weather.visibility}"/>
                 </p:column>
 
-                <p:column headerText="Wind Speed" visible="#{favoriteOverviewController.isInList('WIND_SPEED')}">
+                <p:column headerText="Wind Speed(km/h)" visible="#{favoriteOverviewController.isInList('WIND_SPEED')}">
                     <h:outputText value="#{weather.windSpeed}"/>
                 </p:column>
 
-                <p:column headerText="Wind direction" visible="#{favoriteOverviewController.isInList('WIND_DIRECTION')}">
+                <p:column headerText="Wind direction(degree)" visible="#{favoriteOverviewController.isInList('WIND_DIRECTION')}">
                     <h:outputText value="#{weather.windDirection}"/>
                 </p:column>
 
