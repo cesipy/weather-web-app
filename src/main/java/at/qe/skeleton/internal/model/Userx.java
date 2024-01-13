@@ -46,7 +46,7 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     private LocalDateTime updateDate;
 
     @NotEmpty
-    @Size(min = 8, max = 64)
+    @Size(min = 5, max = 64)
     private String password;
 
     @NotEmpty
@@ -55,10 +55,10 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @NotEmpty
     private String lastName;
 
-    @NotEmpty
+
     private String email;
 
-    @NotEmpty
+
     private String phone;
 
     boolean enabled;
