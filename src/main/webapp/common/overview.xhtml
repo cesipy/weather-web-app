@@ -28,7 +28,7 @@
                         <div style="margin-top: 10px; text-align: right;">
                             <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
                             <p:columnToggler datasource="weathers" trigger="toggler">
-                                <p:ajax />
+                                <p:ajax  event="toggle" listener="#{favoriteOverviewController.onToggle}"/>
                             </p:columnToggler>
                         </div>
                     </div>
@@ -38,24 +38,20 @@
                     <h:outputText value="#{weather.location.name}" />
                 </p:column>
 
-                <p:column headerText="Temperature(°C)" visible="#{favoriteOverviewController.isInList('TEMP')}">
-                    <h:outputText value="#{weather.temperature}"/>
-                </p:column>
-
-                <p:column headerText="feels like (°C)" visible="#{favoriteOverviewController.isInList('FEELS_LIKE')}">
-                    <h:outputText value="#{weather.feelsLikeTemperature}"/>
-                </p:column>
-
-                <p:column headerText="Weather" visible="#{favoriteOverviewController.isInList('WEATHER_MAIN')}">
-                    <h:outputText value="#{weather.description}"/>
-                </p:column>
-
                 <p:column headerText="Sunrise" visible="#{favoriteOverviewController.isInList('SUNRISE')}">
                     <h:outputText value="#{weather.getSunriseFormatted()}"/>
                 </p:column>
 
                 <p:column headerText="Sunset" visible="#{favoriteOverviewController.isInList('SUNSET')}">
                     <h:outputText value="#{weather.getSunsetFormatted()}"/>
+                </p:column>
+
+                <p:column headerText="Temperature(°C)" visible="#{favoriteOverviewController.isInList('TEMP')}">
+                    <h:outputText value="#{weather.temperature}"/>
+                </p:column>
+
+                <p:column headerText="feels like (°C)" visible="#{favoriteOverviewController.isInList('FEELS_LIKE')}">
+                    <h:outputText value="#{weather.feelsLikeTemperature}"/>
                 </p:column>
 
                 <p:column headerText="Pressure" visible="#{favoriteOverviewController.isInList('PRESSURE')}">
@@ -98,8 +94,12 @@
                     <h:outputText value="#{weather.snow}"/>
                 </p:column>
 
-                <p:column headerText="Icon" visible="#{favoriteOverviewController.isInList('WEATHER_ICON')}">
+                <p:column headerText="Icon" visible="#{favoriteOverviewController.isInList('ICON')}">
                     <h:outputText value="#{weather.icon}"/>
+                </p:column>
+
+                <p:column headerText="Weather" visible="#{favoriteOverviewController.isInList('DESCRIPTION')}">
+                    <h:outputText value="#{weather.description}"/>
                 </p:column>
 
             </p:dataTable>

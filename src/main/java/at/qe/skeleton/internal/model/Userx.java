@@ -76,6 +76,8 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     private List<Invoice> invoices = new ArrayList<>();
 
     @ElementCollection
+    @CollectionTable(name = "USERX_SELECTEDFIELDS", joinColumns = @JoinColumn(name = "USERX_USERNAME"))
+    @Column(name = "SELECTEDFIELD")
     @Enumerated(EnumType.STRING)
     private List<WeatherDataField> selectedFields;
 

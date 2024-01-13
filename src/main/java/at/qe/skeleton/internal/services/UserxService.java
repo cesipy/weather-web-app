@@ -69,7 +69,6 @@ public class UserxService {
      * @return the updated user
      */
 
-
     public Userx saveUser(Userx user) {
         if (user.isNew()) {
             user.setCreateUser(getAuthenticatedUser());
@@ -117,9 +116,8 @@ public class UserxService {
     }
 
     public Userx getCurrentUser() {
-        Userx authenticatedUser = getAuthenticatedUser();
 
-        return authenticatedUser;
+        return getAuthenticatedUser();
     }
 
     public List<WeatherDataField> getSelectedWeatherFieldsForUser() {
@@ -135,6 +133,8 @@ public class UserxService {
         selectedFields.addAll(newSelectedFields);
 
         userx.setSelectedFields(selectedFields);
+        userRepository.save(userx);
+        LOGGER.info("successfully saved user: " + userx);
     }
 
     public void deleteSelectedWeatherFieldsForUser(List<WeatherDataField> toDeleteSelectedFields) {
@@ -142,6 +142,8 @@ public class UserxService {
         List<WeatherDataField> selectedFields = userx.getSelectedFields();
 
         selectedFields.removeAll(toDeleteSelectedFields);
+        userRepository.save(userx);
+        LOGGER.info("successfully saved user: " + userx);
     }
 
 }

@@ -240,14 +240,10 @@ public class FavoriteService {
 
     public void addSelectedFields(List<WeatherDataField> newSelectedFields) {
         userxService.addSelectedWeatherFieldsForUser(newSelectedFields);
-
-        LOGGER.info("successfully added selectedFields!");
     }
 
     public void deleteSelectedFields(List<WeatherDataField> toDeleteSelectedFields) {
         userxService.deleteSelectedWeatherFieldsForUser(toDeleteSelectedFields);
-
-        LOGGER.info("successfully deleted selected fields:" );
     }
 
     public List<WeatherDataField> retrieveSelectedFields() {
@@ -257,8 +253,7 @@ public class FavoriteService {
     }
 
     public void setDefaultSelectedFields() {
-
-        addSelectedFields(List.of(WeatherDataField.TEMP, WeatherDataField.FEELS_LIKE, WeatherDataField.WEATHER_MAIN));
+        addSelectedFields(List.of(WeatherDataField.TEMP, WeatherDataField.FEELS_LIKE, WeatherDataField.DESCRIPTION));
     }
 
 

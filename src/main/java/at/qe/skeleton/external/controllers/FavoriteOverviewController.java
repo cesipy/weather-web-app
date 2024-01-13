@@ -10,6 +10,8 @@ import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.services.WeatherDataService;
 import jakarta.annotation.PostConstruct;
+import org.primefaces.event.ToggleEvent;
+import org.primefaces.model.Visibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,6 @@ public class FavoriteOverviewController {
         favorites = new ArrayList<>();
         selectedFieldList = new ArrayList<>();
         currentWeatherDataList = new ArrayList<>();
-        favoriteService.setDefaultSelectedFields();
 
         // needed to refresh favorites
         retrieveFavorites();
@@ -54,8 +55,8 @@ public class FavoriteOverviewController {
         currentWeatherDataList.clear();
 
         favorites = favoriteService.getSortedFavoritesForUser();
-
         selectedFieldList = favoriteService.retrieveSelectedFields();
+        LOGGER.info("selected fields: " + selectedFieldList);
 
         if (favorites.isEmpty()) {
             LOGGER.info("favorites in overview are empty");
@@ -69,14 +70,13 @@ public class FavoriteOverviewController {
         }
     }
 
-    public CurrentWeatherData fetchCurrentWeather(Location location) {
+    private CurrentWeatherData fetchCurrentWeather(Location location) {
         List<CurrentWeatherData> currentWeatherDataList =  currentWeatherDataRepository
                 .findByLocationOrderByAdditionTimeDesc(location);
 
         if (currentWeatherDataList.isEmpty()) {
             CurrentAndForecastAnswerDTO weather = weatherApiRequestService
                     .retrieveCurrentAndForecastWeather(location.getLatitude(), location.getLongitude());
-
 
             weatherDataService.saveCurrentWeatherFromDTO(weather.currentWeather(), location);
 
@@ -103,16 +103,12 @@ public class FavoriteOverviewController {
     }
 
     public boolean isInList(String fieldName) {
-        LOGGER.info(String.valueOf(selectedFieldList));
         WeatherDataField[] selectedFields = WeatherDataField.values();
-        LOGGER.info(fieldName);
         for (WeatherDataField field : selectedFieldList) {
             if (field.name().equals(fieldName)) {
-                LOGGER.info( field.name() + "is in list" + ", " + fieldName);
                 return true;
             }
         }
-        LOGGER.info("Not in list");
         return false;
     }
 
@@ -122,5 +118,80 @@ public class FavoriteOverviewController {
 
     public void setCurrentWeatherDataList(List<CurrentWeatherData> currentWeatherDataList) {
         this.currentWeatherDataList = currentWeatherDataList;
+    }
+
+    public void onToggle(ToggleEvent e) {
+        int data = (int) e.getData();
+        Visibility visibility = e.getVisibility();
+
+        LOGGER.info("in onToggle with event: " + e + ", " + data);
+        LOGGER.info("visibility for event: " + visibility);
+
+        // hard coded WeatherDataFields. AJAX toggle only returns an integer that has to be mapped to the
+        // corresponding WeatherDataField.
+        // there are simpler ways, but they are not really readable.
+        switch (data) {
+            case 1:
+                updateSelectedField(WeatherDataField.SUNRISE, visibility);
+                break;
+            case 2:
+                updateSelectedField(WeatherDataField.SUNSET, visibility);
+                break;
+            case 3:
+                updateSelectedField(WeatherDataField.TEMP, visibility);
+                break;
+            case 4:
+                updateSelectedField(WeatherDataField.FEELS_LIKE, visibility);
+                break;
+            case 5:
+                updateSelectedField(WeatherDataField.PRESSURE, visibility);
+                break;
+            case 6:
+                updateSelectedField(WeatherDataField.HUMIDITY, visibility);
+                break;
+            case 7:
+                updateSelectedField(WeatherDataField.DEW_POINT, visibility);
+                break;
+            case 8:
+                updateSelectedField(WeatherDataField.CLOUDS, visibility);
+                break;
+            case 9:
+                updateSelectedField(WeatherDataField.UVI, visibility);
+                break;
+            case 10:
+                updateSelectedField(WeatherDataField.VISIBILITY, visibility);
+                break;
+            case 11:
+                updateSelectedField(WeatherDataField.WIND_SPEED, visibility);
+                break;
+            case 12:
+                updateSelectedField(WeatherDataField.WIND_DIRECTION, visibility);
+                break;
+            case 13:
+                updateSelectedField(WeatherDataField.RAIN, visibility);
+                break;
+            case 14:
+                updateSelectedField(WeatherDataField.SNOW, visibility);
+                break;
+            case 15:
+                updateSelectedField(WeatherDataField.ICON, visibility);
+                break;
+            case 16:
+                updateSelectedField(WeatherDataField.DESCRIPTION, visibility);
+                break;
+        }
+    }
+
+    public void updateSelectedField(WeatherDataField weatherDataField, Visibility visibility) {
+        if (visibility == Visibility.VISIBLE) {
+            LOGGER.info("set visibility for " + weatherDataField + " to visible" );
+            favoriteService.addSelectedFields(List.of(weatherDataField));
+        } else if (visibility == Visibility.HIDDEN) {
+            LOGGER.info("set visibility for " + weatherDataField + " to hidden" );
+            favoriteService.deleteSelectedFields(List.of(weatherDataField));
+        }
+        else {
+            LOGGER.info("Error occurred!");
+        }
     }
 }
