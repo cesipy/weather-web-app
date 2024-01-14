@@ -63,7 +63,7 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @NotEmpty
     private String lastName;
 
-
+    @NotEmpty
     private String email;
 
 
@@ -72,8 +72,8 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
     private CreditCard creditCard;
 
-    @OneToMany(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Invoice> invoices = new ArrayList<>();
+    @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Invoice invoice;
 
     @ElementCollection
     @CollectionTable(name = "USERX_SELECTEDFIELDS", joinColumns = @JoinColumn(name = "USERX_USERNAME"))
@@ -81,13 +81,9 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @Enumerated(EnumType.STRING)
     private List<WeatherDataField> selectedFields;
 
-    public List<Invoice> getInvoices() {
-        return invoices;
-    }
+    public Invoice getInvoice() {return this.invoice;}
 
-    public void setInvoices(List<Invoice> invoices) {
-        this.invoices = invoices;
-    }
+    public void setInvoice(Invoice invoices) {this.invoice = invoice;}
 
     public CreditCard getCreditCard() {
         return creditCard;
