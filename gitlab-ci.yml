@@ -2,7 +2,7 @@ image: alpine:3.17
 
 stages:          # List of stages for jobs, and their order of execution
   - test
-  - sonarCheck
+  - sonarqube-check
 .before_script_template:
   before_script:
     - apk add --update maven
@@ -31,4 +31,3 @@ sonarqube-check:
     - master
     - main
     - develop
-    -
