@@ -2,13 +2,21 @@ package at.qe.skeleton.external.model.weather;
 
 import at.qe.skeleton.external.model.location.Location;
 import jakarta.persistence.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * This class represents the current weather data for a specific location. It includes various
+ * weather-related attributes such as temperature, humidity, wind speed, and more. The class also provides methods
+ * for formatting sunrise and sunset times.
+ */
 @Entity
 public class CurrentWeatherData {
+    private static Logger LOGGER = LoggerFactory.getLogger(CurrentWeatherData.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -68,6 +76,11 @@ public class CurrentWeatherData {
         this.sunrise = sunrise;
     }
 
+    /**
+     * Gets the formatted sunrise time in "HH'h':mm'm'" format.
+     *
+     * @return The formatted sunrise time.
+     */
     public String getSunriseFormatted() {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH'h':mm'm'");
         return dateTimeFormatter.format(sunrise.atZone(ZoneId.of("CET")));
@@ -81,6 +94,11 @@ public class CurrentWeatherData {
         this.sunset = sunset;
     }
 
+    /**
+     * Gets the formatted sunset time in "HH'h':mm'm'" format.
+     *
+     * @return The formatted sunset time.
+     */
     public String getSunsetFormatted() {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH'h':mm'm'");
         return dateTimeFormatter.format(sunset.atZone(ZoneId.of("CET")));
@@ -151,6 +169,7 @@ public class CurrentWeatherData {
     }
 
     public Double getRain() {
+        // LOGGER.info(String.valueOf(rain));
         return rain;
     }
 

@@ -39,6 +39,10 @@ public class FavoriteOverviewController {
     private List<CurrentWeatherData> currentWeatherDataList;
     private List<WeatherDataField> selectedFieldList;
 
+    // threshold to retrieve previously saved weather data, in seconds
+    private static final long STALE_WEATHER_DATA_THRESHOLD_SECONDS = 600;
+
+
 
     @PostConstruct
     public void init() {
@@ -50,31 +54,49 @@ public class FavoriteOverviewController {
         retrieveFavorites();
     }
 
+    /**
+     * Retrieves user favorites and updates the current weather data list for display.
+     */
     public void retrieveFavorites() {
         // clear the existing list before retrieving new favorites
         currentWeatherDataList.clear();
-
         favorites = favoriteService.getSortedFavoritesForUser();
         selectedFieldList = favoriteService.retrieveSelectedFields();
-        LOGGER.info("selected fields: " + selectedFieldList);
 
         if (favorites.isEmpty()) {
             LOGGER.info("favorites in overview are empty");
         }
 
+        fetchWeatherDataForFavorites();
+    }
+
+    /**
+     * Fetches the current weather data for each favorite location and adds it to the list.
+     * If the weather data is not present in the local database, an API request is made
+     * to retrieve the current weather information.
+     *
+     * @see #fetchCurrentWeather(Location)
+     */
+    private void fetchWeatherDataForFavorites() {
         for (Favorite favorite : favorites) {
             Location location = favorite.getLocation();
             CurrentWeatherData currentWeatherData = fetchCurrentWeather(location);
-
             currentWeatherDataList.add(currentWeatherData);
         }
     }
 
+    /**
+     * Fetches current weather data for a given location, either from the database or by making an API request.
+     *
+     * @param location The location for which to fetch weather data.
+     * @return The current weather data for the specified location.
+     */
     private CurrentWeatherData fetchCurrentWeather(Location location) {
-        List<CurrentWeatherData> currentWeatherDataList =  currentWeatherDataRepository
+        List<CurrentWeatherData> currentWeatherDataList = currentWeatherDataRepository
                 .findByLocationOrderByAdditionTimeDesc(location);
 
-        if (currentWeatherDataList.isEmpty()) {
+        // is data outdated or no data is saved?
+        if (currentWeatherDataList.isEmpty() || isWeatherDataStale(currentWeatherDataList.get(0))) {
             CurrentAndForecastAnswerDTO weather = weatherApiRequestService
                     .retrieveCurrentAndForecastWeather(location.getLatitude(), location.getLongitude());
 
@@ -82,26 +104,33 @@ public class FavoriteOverviewController {
 
             return currentWeatherDataRepository
                     .findByLocationOrderByAdditionTimeDesc(location).get(0);
-        }
-        Instant additionTime = currentWeatherDataList.get(0).getAdditionTime();
-        Instant nowTime = Instant.now();
-        Duration timeElapsed = Duration.between(additionTime, nowTime);
-
-        if (timeElapsed.getSeconds() < 600) {
-            LOGGER.info("Taking weather data from database!");
-            return currentWeatherDataList.get(0);
         } else {
-            CurrentAndForecastAnswerDTO weather = weatherApiRequestService
-                    .retrieveCurrentAndForecastWeather(location.getLatitude(), location.getLongitude());
-
-            weatherDataService.saveCurrentWeatherFromDTO(weather.currentWeather(), location);
-
-            LOGGER.info(" weather data is too old, new fetch!");
-            return currentWeatherDataRepository
-                    .findByLocationOrderByAdditionTimeDesc(location).get(0);
+            LOGGER.info("Taking weather data from database for location {}", location);
+            return currentWeatherDataList.get(0);
         }
     }
 
+    /**
+     * Checks if the provided weather data is considered stale based on the time elapsed since its addition.
+     *
+     * @param weatherData The weatherData to check for staleness.
+     * @return {@code true} if the weather data is considered stale, {@code false} otherwise.
+     */
+    private boolean isWeatherDataStale(CurrentWeatherData weatherData) {
+        Instant additionTime = weatherData.getAdditionTime();
+        Instant nowTime = Instant.now();
+        Duration timeElapsed = Duration.between(additionTime, nowTime);
+        return timeElapsed.getSeconds() >= STALE_WEATHER_DATA_THRESHOLD_SECONDS;
+    }
+
+
+    /**
+     * Checks if a field is selected by the user
+     * It does so by checking if a given field name is present in the list of selected weather data fields.
+     *
+     * @param fieldName The name of the field to check.
+     * @return true if the field is in the list, false otherwise.
+     */
     public boolean isInList(String fieldName) {
         WeatherDataField[] selectedFields = WeatherDataField.values();
         for (WeatherDataField field : selectedFieldList) {
@@ -112,25 +141,19 @@ public class FavoriteOverviewController {
         return false;
     }
 
-    public List<CurrentWeatherData> getCurrentWeatherDataList() {
-        return currentWeatherDataList;
-    }
-
-    public void setCurrentWeatherDataList(List<CurrentWeatherData> currentWeatherDataList) {
-        this.currentWeatherDataList = currentWeatherDataList;
-    }
-
+    /**
+     * Handles the event triggered when a column is toggled in the DataTable in Primefaces.
+     *
+     * @param e The ToggleEvent containing information about the toggle event.
+     */
     public void onToggle(ToggleEvent e) {
-        int data = (int) e.getData();
+        int columnIndex = (int) e.getData();
         Visibility visibility = e.getVisibility();
-
-        LOGGER.info("in onToggle with event: " + e + ", " + data);
-        LOGGER.info("visibility for event: " + visibility);
 
         // hard coded WeatherDataFields. AJAX toggle only returns an integer that has to be mapped to the
         // corresponding WeatherDataField.
         // there are simpler ways, but they are not really readable.
-        switch (data) {
+        switch (columnIndex) {
             case 1:
                 updateSelectedField(WeatherDataField.SUNRISE, visibility);
                 break;
@@ -179,10 +202,18 @@ public class FavoriteOverviewController {
             case 16:
                 updateSelectedField(WeatherDataField.DESCRIPTION, visibility);
                 break;
+            default:
+                LOGGER.warn("Unexpected value in onToggle: " + columnIndex);
         }
     }
 
-    public void updateSelectedField(WeatherDataField weatherDataField, Visibility visibility) {
+    /**
+     * Updates the list of selected weather fields based on the visibility of a specific field.
+     *
+     * @param weatherDataField The weather data field to update.
+     * @param visibility The visibility status of the field.
+     */
+    private void updateSelectedField(WeatherDataField weatherDataField, Visibility visibility) {
         if (visibility == Visibility.VISIBLE) {
             LOGGER.info("set visibility for " + weatherDataField + " to visible" );
             favoriteService.addSelectedFields(List.of(weatherDataField));
@@ -193,5 +224,13 @@ public class FavoriteOverviewController {
         else {
             LOGGER.info("Error occurred!");
         }
+    }
+
+    public List<CurrentWeatherData> getCurrentWeatherDataList() {
+        return currentWeatherDataList;
+    }
+
+    public void setCurrentWeatherDataList(List<CurrentWeatherData> currentWeatherDataList) {
+        this.currentWeatherDataList = currentWeatherDataList;
     }
 }
