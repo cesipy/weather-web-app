@@ -31,7 +31,7 @@ public class WeatherApiRequestService {
     private static final String LONGITUDE_PARAMETER = "lon";
     private static final String LATITUDE_PARAMETER = "lat";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherApiRequestService.class);
+    private static final Logger logger = LoggerFactory.getLogger(WeatherApiRequestService.class);
 
     @Autowired
     private RestClient restClient;
@@ -83,11 +83,11 @@ public class WeatherApiRequestService {
             if (firstElement != null) {
                 return firstElement.get("name").asText();
             } else {
-                LOGGER.error("No elements in the JSON array");
+                logger.error("No elements in the JSON array");
                 return null;
             }
         } catch (IOException e) {
-            LOGGER.error("Error parsing JSON response", e);
+            logger.error("Error parsing JSON response", e);
             return null;
         }
 

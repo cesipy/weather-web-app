@@ -1,6 +1,6 @@
 package at.qe.skeleton.external.model.location;
 
-import at.qe.skeleton.external.model.Favorite;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;

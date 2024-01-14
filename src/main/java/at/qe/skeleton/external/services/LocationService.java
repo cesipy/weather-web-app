@@ -1,6 +1,5 @@
 package at.qe.skeleton.external.services;
 
-import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.repositories.LocationRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -25,7 +23,7 @@ import java.util.Objects;
 @Scope("application")
 public class LocationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationService.class);
 
     @Autowired
     private LocationRepository locationRepository;
@@ -79,9 +77,9 @@ public class LocationService {
      * Initializes the service by populating the database with location data.
      */
     public void init() {
-        LOGGER.info("starting population of database");
+        logger.info("starting population of database");
         loadDataFromJson(filePath);
-        LOGGER.info("populated database");
+        logger.info("populated database");
     }
 
     public String getFilePath() {
