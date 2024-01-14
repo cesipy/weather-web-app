@@ -1,17 +1,13 @@
 package at.qe.skeleton.external.controllers;
 
-import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.internal.ui.beans.LocationApiDemoBean;
 import at.qe.skeleton.internal.ui.beans.WeatherApiDemoBean;
-import at.qe.skeleton.external.model.location.Location;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +24,7 @@ import java.util.List;
 @Scope("view")
 public class LocationController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationController.class);
     private final int LIMIT = 1;        // we want to get only one result for a location
     private String locationName;
     private String currentLocation;
@@ -53,7 +49,7 @@ public class LocationController {
             //TODO: handle other errors
 
         } catch (Exception e) {
-            LOGGER.error("Error in location search", e);
+            logger.error("Error in location search", e);
 
         }
     }
@@ -78,14 +74,13 @@ public class LocationController {
                 this.setCurrentLocation(escapedHtmlAnswerWithLineBreaks);
                 this.setCurrentLocationDTO(firstLocation);
 
-                LOGGER.info("current location: " + currentLocation);
-
             } else {
-                LOGGER.warn("The list of locations is empty.");
+                logger.warn("The list of locations is empty.");
                 // TODO: Error message when no location is found
             }
         } catch (JsonProcessingException e) {
-            LOGGER.error("Error in request in locationApi", e);
+            logger.error("Error in request in locationApi", e);
+            // TODO better handling of Exception
             throw new RuntimeException(e);
         }
     }

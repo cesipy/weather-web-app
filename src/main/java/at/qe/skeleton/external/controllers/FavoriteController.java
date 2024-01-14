@@ -21,7 +21,7 @@ import java.util.List;
 @Controller
 @Scope("view")
 public class FavoriteController {
-    private static Logger LOGGER = LoggerFactory.getLogger(FavoriteController.class);
+    private static Logger logger = LoggerFactory.getLogger(FavoriteController.class);
     private String locationName;
     private int priority;
     @Autowired
@@ -74,7 +74,7 @@ public class FavoriteController {
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
                                 "location already in favorites!",
                                         null));
-                LOGGER.info("location " + locationName + " is already favorite!");
+                logger.info("location {} is already favorite!", locationName);
             }
             else {
                 favoriteService.saveFavorite(locationName);
@@ -84,7 +84,7 @@ public class FavoriteController {
 
         } catch (Exception e) {
 
-            LOGGER.error("Error saving favorite", e);
+            logger.error("Error saving favorite", e);
         }
     }
 
@@ -98,14 +98,14 @@ public class FavoriteController {
 
             // Log favorites
             for (Favorite favorite : favorites) {
-                LOGGER.info(String.valueOf(favorite));
+                logger.info(String.valueOf(favorite));
 
                 // load all locations
                 locations.add(favorite.getLocation());
             }
 
         } catch (Exception e) {
-            LOGGER.error("Error retrieving favorites", e);
+            logger.error("Error retrieving favorites", e);
         }
     }
 
@@ -117,12 +117,12 @@ public class FavoriteController {
     public void deleteFavorite(Favorite favorite) {
         try {
             favoriteService.deleteFavorite(favorite);
-            LOGGER.info("Successfully deleted favorite: " + favorite.getLocation().getName());
+            logger.info("Successfully deleted favorite: {}" , favorite.getLocation().getName());
 
             // update favorite list
             retrieveFavorites();
         } catch (Exception e) {
-            LOGGER.error("Error deleting favorite", e);
+            logger.error("Error deleting favorite", e);
         }
     }
 
@@ -136,12 +136,12 @@ public class FavoriteController {
         //currently not in use
         try {
             favoriteService.deleteFavoriteById(id);
-            LOGGER.info("Successfully deleted favorite with id: " + id);
+            logger.info("Successfully deleted favorite with id: " + id);
 
             // update favorite list
             retrieveFavorites();
         } catch (Exception e) {
-            LOGGER.error("Error deleting favorite", e);
+            logger.error("Error deleting favorite", e);
         }
     }
 
@@ -154,7 +154,6 @@ public class FavoriteController {
     public void updateFavoritePriority(Favorite favorite, int priority) {
         // currently not in use, might be needed later
         if (favorite != null) {
-            LOGGER.info("NEW PRIO IN CONTROLLER: " + priority);
 
             favoriteService.updateFavoritePriority(favorite, priority);
 
@@ -162,7 +161,7 @@ public class FavoriteController {
             selectedFavorite = null;
             updatedPriority = 0;
 
-            LOGGER.info("Successfully updated priority for favorite with ID: " + favorite.getId());
+            logger.info("Successfully updated priority for favorite with ID: {} ", favorite.getId());
             retrieveFavorites();
         }
     }

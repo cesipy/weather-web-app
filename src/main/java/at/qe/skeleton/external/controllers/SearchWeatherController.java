@@ -38,8 +38,6 @@ public class SearchWeatherController {
         // query in database= "inns" result: only innsbruck
         // query in api    = "inns" result: Inns quay B, Inns quay A, Inns quay C, Inns
 
-        //locationControllerDb.getFirstMatch();
-        //Location singleLocation = locationControllerDb.getSingleLocation();
         Location singleLocation = locationControllerDb.requestFirstMatch();
 
         if (singleLocation != null) {

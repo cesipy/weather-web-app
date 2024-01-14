@@ -1,6 +1,6 @@
 package at.qe.skeleton.tests;
 
-import at.qe.skeleton.external.controllers.EmptyLocationException;
+
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.LocationService;
 import org.junit.jupiter.api.Test;

@@ -26,7 +26,7 @@ import java.util.List;
 @Controller
 @Scope("view")
 public class FavoriteOverviewController {
-    private static Logger LOGGER = LoggerFactory.getLogger(FavoriteOverviewController.class);
+    private static Logger logger = LoggerFactory.getLogger(FavoriteOverviewController.class);
     @Autowired
     private FavoriteService favoriteService;
     @Autowired
@@ -64,7 +64,7 @@ public class FavoriteOverviewController {
         selectedFieldList = favoriteService.retrieveSelectedFields();
 
         if (favorites.isEmpty()) {
-            LOGGER.info("favorites in overview are empty");
+            logger.info("favorites in overview are empty");
         }
 
         fetchWeatherDataForFavorites();
@@ -105,7 +105,7 @@ public class FavoriteOverviewController {
             return currentWeatherDataRepository
                     .findByLocationOrderByAdditionTimeDesc(location).get(0);
         } else {
-            LOGGER.info("Taking weather data from database for location {}", location);
+            logger.info("Taking weather data from database for location {}", location);
             return currentWeatherDataList.get(0);
         }
     }
@@ -132,7 +132,6 @@ public class FavoriteOverviewController {
      * @return true if the field is in the list, false otherwise.
      */
     public boolean isInList(String fieldName) {
-        WeatherDataField[] selectedFields = WeatherDataField.values();
         for (WeatherDataField field : selectedFieldList) {
             if (field.name().equals(fieldName)) {
                 return true;
@@ -203,7 +202,7 @@ public class FavoriteOverviewController {
                 updateSelectedField(WeatherDataField.DESCRIPTION, visibility);
                 break;
             default:
-                LOGGER.warn("Unexpected value in onToggle: " + columnIndex);
+                logger.warn("Unexpected value in onToggle: {} ", columnIndex);
         }
     }
 
@@ -215,14 +214,14 @@ public class FavoriteOverviewController {
      */
     private void updateSelectedField(WeatherDataField weatherDataField, Visibility visibility) {
         if (visibility == Visibility.VISIBLE) {
-            LOGGER.info("set visibility for " + weatherDataField + " to visible" );
+            logger.info("set visibility for {}  to visible", weatherDataField );
             favoriteService.addSelectedFields(List.of(weatherDataField));
         } else if (visibility == Visibility.HIDDEN) {
-            LOGGER.info("set visibility for " + weatherDataField + " to hidden" );
+            logger.info("set visibility for {} to hidden", weatherDataField );
             favoriteService.deleteSelectedFields(List.of(weatherDataField));
         }
         else {
-            LOGGER.info("Error occurred!");
+            logger.info("Error occurred!");
         }
     }
 

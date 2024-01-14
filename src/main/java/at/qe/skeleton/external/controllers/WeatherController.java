@@ -28,7 +28,7 @@ public class WeatherController {
     @Autowired
     private WeatherApiRequestService weatherApiRequestService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherController.class);
+    private static final Logger logger = LoggerFactory.getLogger(WeatherController.class);
 
     /**
      * Retrieves the current and forecast weather for the specified location,
@@ -49,7 +49,7 @@ public class WeatherController {
             this.setCurrentWeather(escapedHtmlAnswerWithLineBreaks);
 
         } catch (final Exception e) {
-            LOGGER.error("error in request", e);
+            logger.error("error in request", e);
         }
     }
 
