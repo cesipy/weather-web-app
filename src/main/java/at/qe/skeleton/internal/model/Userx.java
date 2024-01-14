@@ -63,7 +63,7 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @NotEmpty
     private String lastName;
 
-    @NotEmpty
+
     private String email;
 
 
