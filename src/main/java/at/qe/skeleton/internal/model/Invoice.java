@@ -1,6 +1,7 @@
 package at.qe.skeleton.internal.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -9,26 +10,26 @@ import java.util.UUID;
 
 @Entity
 public class Invoice implements Serializable, Comparable<Invoice> {
-
-    private static final long serialVersionUID = 1L;
-
     @Id
     @Column(length = 36, updatable = false, nullable = false)
     private String invoiceId;
 
-    private LocalDateTime invoiceDate;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "username")
+    private Userx userx;
+
+    @CreationTimestamp
+    private LocalDateTime createDate;
 
     private boolean invoiceOpen;
 
     public Invoice() {
         this.invoiceId = UUID.randomUUID().toString();
-        this.invoiceDate = LocalDateTime.now();
+        this.createDate = LocalDateTime.now();
         this.invoiceOpen = true;
     }
 
-    public boolean isInvoiceOpen() {
-        return invoiceOpen;
-    }
+    public boolean isInvoiceOpen() {return invoiceOpen;}
 
     public void setInvoiceOpen(boolean invoiceOpen) {
         this.invoiceOpen = invoiceOpen;
@@ -38,9 +39,10 @@ public class Invoice implements Serializable, Comparable<Invoice> {
         return invoiceId;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "username")
-    private Userx userx;
+    public void setUserx(Userx userx) {this.userx = userx;}
+
+    public LocalDateTime getCreateDate() {return createDate;}
+
 
     @Override
     public int hashCode() {

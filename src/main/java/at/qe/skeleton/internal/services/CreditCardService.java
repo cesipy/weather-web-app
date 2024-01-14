@@ -19,4 +19,8 @@ public class CreditCardService {
     public void deleteCreditCard(CreditCard creditCard) {
         creditCardRepository.delete(creditCard);
     }
+    public void updateBalance(double price, CreditCard creditCard){
+        creditCard.setBalance(creditCard.getBalance()-price);
+        saveCreditCard(creditCard);
+    }
 }
