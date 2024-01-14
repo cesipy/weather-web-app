@@ -197,7 +197,7 @@ public class UserServiceTest {
     @WithMockUser(username = "user1", authorities = {"EMPLOYEE"})
     public void testUnauthorizedSaveUser() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
-            String username = "user1";
+            String username = "user";   //Changed user1 to user otherwise there will never be thrown an AccessDeniedException
             Userx user = userService.loadUser(username);
             Assertions.assertEquals(username, user.getUsername(), "Call to userService.loadUser returned wrong user");
             userService.saveUser(user);
