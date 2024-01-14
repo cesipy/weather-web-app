@@ -76,21 +76,26 @@ public class UserDetailController implements Serializable {
      * Action to register the currently displayed user
      */
 
-    public void doRegister() throws IOException {
-        user.setCreateUser(user);
-        user.setEnabled(true);
+    public Userx doRegister(){
+        this.userService.saveUser(user);
+
         Set<UserxRole> roles = new HashSet<>();
         roles.add(UserxRole.EMPLOYEE);
         user.setRoles(roles);
-        String encodedPassword = doEncodePassword(user.getPassword());
-        user.setPassword(encodedPassword);
-        user = this.userService.saveUser(user);
+        user.setPassword(doEncodePassword(user.getPassword()));
+        user.setEnabled(true);
+        user.setCreateUser(user);
+        Userx saved = this.userService.saveUser(user);
 
+        redirectToLogin();
+        return saved;
+    }
+    public void redirectToLogin(){
         FacesContext facesContext = FacesContext.getCurrentInstance();
         ExternalContext externalContext = facesContext.getExternalContext();
         try {
             externalContext.redirect(externalContext.getRequestContextPath() + "/login.xhtml");
-        } catch (ValidationException ve) {
+        } catch (ValidationException | IOException ve) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ve.getMessage(), null));
         }
     }
