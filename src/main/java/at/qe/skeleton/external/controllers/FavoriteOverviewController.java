@@ -233,4 +233,12 @@ public class FavoriteOverviewController {
     public void setCurrentWeatherDataList(List<CurrentWeatherData> currentWeatherDataList) {
         this.currentWeatherDataList = currentWeatherDataList;
     }
+
+    public List<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<Favorite> favorites) {
+        this.favorites = favorites;
+    }
 }
