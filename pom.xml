@@ -29,8 +29,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <joinfaces.version>5.2.0</joinfaces.version>
         <duplicate-finder-maven-plugin.version>2.0.1</duplicate-finder-maven-plugin.version>
-    </properties>
-    <properties>
         <sonar.projectKey>informatik_qe_swapsws23_group1_g1t3_AY0ILkQhlVU4MgHyMN8J</sonar.projectKey>
         <sonar.projectName>G1T3</sonar.projectName>
         <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
