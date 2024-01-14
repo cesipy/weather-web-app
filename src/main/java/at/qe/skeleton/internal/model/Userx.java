@@ -62,10 +62,10 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @NotEmpty
     private String lastName;
 
-    @NotEmpty
+
     private String email;
 
-    @NotEmpty
+
     private String phone;
 
     @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -2,6 +2,7 @@ package at.qe.skeleton.internal.ui.beans;
 
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
+import at.qe.skeleton.internal.services.UserReloadService;
 import at.qe.skeleton.internal.services.UserxService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -21,6 +22,9 @@ public class SubscriptionBean implements Serializable {
 
     @Autowired
     private UserxService userxService;
+
+    @Autowired
+    private UserReloadService userReloadService;
 
     private String buttonText;
 
@@ -76,14 +80,17 @@ public class SubscriptionBean implements Serializable {
                 userxService.addUserRole(username, UserxRole.PREMIUM);
             }
 
-            //neues login
+            userReloadService.reloadUserAuthentication();
+
+
+            /** neues login
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             try {
                 externalContext.redirect(externalContext.getRequestContextPath() + "/login.xhtml");
             } catch (ValidationException | IOException ve) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ve.getMessage(), null));
-            }
+            }**/
 
             // Aktualisiere den Button-Text nach dem Umschalten
             updateButtonText();
