@@ -4,11 +4,9 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - sonarCheck
   - sonarqube-vulnerability-report
-
 .before_script_template:
   before_script:
     - apk add --update maven
-
 unit-test-job:   # This job runs in the test stage.
   extends: .before_script_template
   stage: test
@@ -16,7 +14,6 @@ unit-test-job:   # This job runs in the test stage.
     - echo "Running unit tests..."
     - mvn test
   allow_failure: true
-
 sonarqube-check:
   stage: sonarqube-check
   image: maven:3-eclipse-temurin-17
