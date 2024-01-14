@@ -29,9 +29,6 @@ public class SubscriptionBean implements Serializable {
     @Autowired
     private CashUpBean cashUpBean;
 
-    @Autowired
-    private UserReloadService userReloadService;
-
     private String buttonText;
 
     @PostConstruct
