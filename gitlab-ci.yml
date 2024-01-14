@@ -3,6 +3,7 @@ image: alpine:3.17
 stages:          # List of stages for jobs, and their order of execution
   - test
   - sonarCheck
+  - sonarqube-vulnerability-report
 
 .before_script_template:
   before_script:
@@ -10,19 +11,44 @@ stages:          # List of stages for jobs, and their order of execution
 
 unit-test-job:   # This job runs in the test stage.
   extends: .before_script_template
-  stage: test    
+  stage: test
   script:
     - echo "Running unit tests..."
     - mvn test
   allow_failure: true
 
 sonarqube-check:
-  extends: .before_script_template
-  stage: sonarCheck
+  stage: sonarqube-check
+  image: maven:3-eclipse-temurin-17
   variables:
-    SONAR_USER_HOME: "${CI_PROJECT_DIR}/code/.sonar"
-    GIT_DEPTH: "0"
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
   script:
-    - echo Running sonar analysis for ${SONAR_PROJECT_KEY}
-    - mvn -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName="${CI_PROJECT_NAME} ${GITLAB_USER_NAME}" --fail-at-end verify sonar:sonar
+    - mvn verify sonar:sonar
   allow_failure: true
+  only:
+    - merge_requests
+    - master
+    - main
+    - develop
+    -
+sonarqube-vulnerability-report:
+  stage: sonarqube-vulnerability-report
+  script:
+    - 'curl -u "${SONAR_TOKEN}:" "${SONAR_HOST_URL}/api/issues/gitlab_sast_export?projectKey=informatik_qe_swapsws23_group1_g1t3_AY0ILkQhlVU4MgHyMN8J&branch=${CI_COMMIT_BRANCH}&pullRequest=${CI_MERGE_REQUEST_IID}" -o gl-sast-sonar-report.json'
+  allow_failure: true
+  only:
+    - merge_requests
+    - master
+    - main
+    - develop
+  artifacts:
+    expire_in: 1 day
+    reports:
+      sast: gl-sast-sonar-report.json
+  dependencies:
+    - sonarqube-check
