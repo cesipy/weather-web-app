@@ -17,22 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @WebAppConfiguration
 public class LocationServiceTest {
-
     private static Logger LOGGER = LoggerFactory.getLogger(LocationServiceTest.class);
-
     @Autowired
     private LocationService locationService;
 
     @Test
-    public void testAutocompleteException() throws EmptyLocationException {
-        String query = "";
-        assertThrows(EmptyLocationException.class, () -> {
-            List<Location> locations = locationService.autocomplete(query);
-        }, "query is empty - test");
-    }
-
-    @Test
-    public void testAutocompleteInnsbruck() throws EmptyLocationException {
+    public void testAutocompleteInnsbruck() {
         String query = "Innsbruck";
         List<Location> locations = locationService.autocomplete(query);
         Location firstLocation = locations.get(0);
@@ -40,7 +30,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void testAutocompleteHall() throws EmptyLocationException {
+    public void testAutocompleteHall() {
         String query = "Hall";  // for simply "Hall" "Hallau" is expected.
         List<Location> locations = locationService.autocomplete(query);
         Location firstLocation = locations.get(0);
@@ -58,7 +48,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void testAutocompleteWithNonExistingLocation() throws EmptyLocationException {
+    public void testAutocompleteWithNonExistingLocation() {
         String query = "NonExistingLocation";
         List<Location> locations = locationService.autocomplete(query);
         assertTrue(locations.isEmpty(), "no locations should be found for a non-existing location");
@@ -79,6 +69,5 @@ public class LocationServiceTest {
         String expectedPath = "src/main/resources/owm_city_list.json";      // if folder is moved, this has to be changed!!
         String actualPath = locationService.getFilePath();
         assertEquals(expectedPath, actualPath, "is the path setting with @Value correct.");
-
     }
 }

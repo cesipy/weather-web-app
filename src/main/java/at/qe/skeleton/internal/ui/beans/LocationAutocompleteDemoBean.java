@@ -30,19 +30,16 @@ public class LocationAutocompleteDemoBean {
     }
 
     public void demo() {
-        try {
-            if (locationName == null) {
-                LOGGER.info("query is null!");
-            }
-            locations = locationService.autocomplete(locationName);
-            LOGGER.info("successfully autocomplete");
 
-            for (Location location : locations) {
-                LOGGER.info(String.valueOf(location));
-            }
+        if (locationName == null) {
+            LOGGER.info("query is null!");
         }
-        catch (EmptyLocationException e) {
-            LOGGER.info("no location found!");
+        locations = locationService.autocomplete(locationName);
+        LOGGER.info("successfully autocomplete");
+
+        for (Location location : locations) {
+            LOGGER.info(String.valueOf(location));
         }
     }
+
 }

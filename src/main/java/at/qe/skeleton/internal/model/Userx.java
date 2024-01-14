@@ -1,5 +1,6 @@
 package at.qe.skeleton.internal.model;
 
+import at.qe.skeleton.external.model.WeatherDataField;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -74,6 +75,12 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @OneToMany(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice> invoices = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "USERX_SELECTEDFIELDS", joinColumns = @JoinColumn(name = "USERX_USERNAME"))
+    @Column(name = "SELECTEDFIELD")
+    @Enumerated(EnumType.STRING)
+    private List<WeatherDataField> selectedFields;
+
     public List<Invoice> getInvoices() {
         return invoices;
     }
@@ -81,7 +88,6 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     public void setInvoices(List<Invoice> invoices) {
         this.invoices = invoices;
     }
-
 
     public CreditCard getCreditCard() {
         return creditCard;
@@ -233,4 +239,11 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
         return this.username.compareTo(o.getUsername());
     }
 
+    public List<WeatherDataField> getSelectedFields() {
+        return selectedFields;
+    }
+
+    public void setSelectedFields(List<WeatherDataField> selectedFields) {
+        this.selectedFields = selectedFields;
+    }
 }
