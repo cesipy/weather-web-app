@@ -100,6 +100,5 @@ public class SubscriptionBean implements Serializable {
 
     private void updateButtonText() {
         buttonText = isPremium() ? "Deabonnieren" : (hasCreditCard() ? "Abonnieren" : "Bitte Zahlungsinformation hinterlegen");
-        System.out.println(isPremium());
     }
 }
