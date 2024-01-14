@@ -1,61 +1,24 @@
 package at.qe.skeleton.external.model.weather;
 
-
-import at.qe.skeleton.external.model.location.Location;
-import at.qe.skeleton.external.model.shared.WeatherDTO;
+import at.qe.skeleton.external.model.WeatherDataField;
 
 public class WeatherOverview {
-    private double temperature;
-    private double feelsLikeTemperature;
-    private WeatherDTO weather;
-    private Location location;
-    private String weatherTitleAndDescription;
+    private WeatherDataField weatherDataField;
+    private String value;
 
-    public WeatherOverview(double temperature, double feelsLikeTemperature, WeatherDTO weather, Location location) {
-        this.temperature = temperature;
-        this.feelsLikeTemperature = feelsLikeTemperature;
-        this.weather = weather;
-        this.location = location;
-        this.weatherTitleAndDescription = weather.title() + ", " + weather.description();
+    public WeatherDataField getWeatherDataField() {
+        return weatherDataField;
     }
 
-    public double getTemperature() {
-        return temperature;
+    public void setWeatherDataField(WeatherDataField weatherDataField) {
+        this.weatherDataField = weatherDataField;
     }
 
-    public void setTemperature(double temperature) {
-        this.temperature = temperature;
+    public String getValue() {
+        return value;
     }
 
-    public double getFeelsLikeTemperature() {
-        return feelsLikeTemperature;
-    }
-
-    public void setFeelsLikeTemperature(double feelsLikeTemperature) {
-        this.feelsLikeTemperature = feelsLikeTemperature;
-    }
-
-    public WeatherDTO getWeather() {
-        return weather;
-    }
-
-    public void setWeather(WeatherDTO weather) {
-        this.weather = weather;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public String getWeatherTitleAndDescription() {
-        return weatherTitleAndDescription;
-    }
-
-    public void setWeatherTitleAndDescription(String weatherTitleAndDescription) {
-        this.weatherTitleAndDescription = weatherTitleAndDescription;
+    public void setValue(String value) {
+        this.value = value;
     }
 }

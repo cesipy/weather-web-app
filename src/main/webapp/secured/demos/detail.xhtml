@@ -2,233 +2,124 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xml:lang="en">
 <h:head>
+    <link rel="stylesheet" th:href="@{/css/theme.css}"/>
     <title>Weather Details</title>
 </h:head>
 <h:body>
     <h:form>
         <f:metadata>
-            <f:viewParam name="location" value="#{locationApiDemoBean.query_name}" />
-            <f:event type="preRenderView" listener="#{locationApiDemoBean.init}" />
+            <f:viewParam name="location" value="#{locationApiDemoBean.query_name}"/>
+            <f:event type="preRenderView" listener="#{locationApiDemoBean.init}"/>
         </f:metadata>
 
-        <!-- Current Hourly Weather -->
-        <h:outputText value="Current Weather for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.currentWeatherAsList}">
-            <p:column headerText="Temperature">
-                <h:outputText value="#{locationApiDemoBean.currentWeather.temperature()} °C"/>
-            </p:column>
-            <p:column headerText="Feels like">
-                <h:outputText value="#{locationApiDemoBean.currentWeather.feelsLikeTemperature()} °C"/>
-            </p:column>
-            <p:column headerText="Wind speed">
-                <h:outputText value="#{locationApiDemoBean.currentWeather.windSpeed()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind Direction">
-                <h:outputText value="#{locationApiDemoBean.currentWeather.windDirection()} °"/>
-            </p:column>
-            <p:column headerText="Proability of Precipitation">
-                <h:outputText value="#{locationApiDemoBean.currentWeather.probabilityOfPrecipitation()}"/>
-            </p:column>
-        </p:dataTable>
+        <!--Hourly forecasts -->
+        <h2>Hourly forecasts</h2>
+        <p:tabView rendered="#{not empty locationApiDemoBean.hourlyWeatherList}"
+                   value="#{locationApiDemoBean.hourlyWeatherList}" var="hourlyWeather" scrollable="true">
+            <p:tab title="#{hourlyWeather.timestamp()}">
+                <p:dataTable value="#{hourlyWeather}">
+                    <p:column headerText="Temperature">
+                        <h:outputText value="#{hourlyWeather.temperature()} °C"/>
+                    </p:column>
+                    <p:column headerText="Pressure">
+                        <h:outputText value="#{hourlyWeather.pressure()} hPa"/>
+                    </p:column>
+                    <p:column headerText="Humidity">
+                        <h:outputText value="#{hourlyWeather.humidity()} %"/>
+                    </p:column>
+                    <p:column headerText="Feels like">
+                        <h:outputText value="#{hourlyWeather.feelsLikeTemperature()} °C"/>
+                    </p:column>
+                    <p:column headerText="Clouds">
+                        <h:outputText value="#{hourlyWeather.clouds()} %"/>
+                    </p:column>
+                    <p:column headerText="Visibility">
+                        <h:outputText value="#{hourlyWeather.visibility()} m"/>
+                    </p:column>
+                    <p:column headerText="Wind speed">
+                        <h:outputText value="#{hourlyWeather.windSpeed()} m/s"/>
+                    </p:column>
+                    <p:column headerText="Wind Direction">
+                        <h:outputText value="#{hourlyWeather.windDirection()} °"/>
+                    </p:column>
+                    <p:column headerText="Proability of Precipitation">
+                        <h:outputText value="#{hourlyWeather.probabilityOfPrecipitation()}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+        </p:tabView>
 
-        <!-- Weather in One Hour-->
-        <h:outputText value="Weather in One Hour for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.weatherInOneHourAsList}">
-            <p:column headerText="Temperature">
-                <h:outputText value="#{locationApiDemoBean.weatherInOneHour.temperature()} °C"/>
-            </p:column>
-            <p:column headerText="Feels like">
-                <h:outputText value="#{locationApiDemoBean.weatherInOneHour.feelsLikeTemperature()} °C"/>
-            </p:column>
-            <p:column headerText="Wind speed">
-                <h:outputText value="#{locationApiDemoBean.weatherInOneHour.windSpeed()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind Direction">
-                <h:outputText value="#{locationApiDemoBean.weatherInOneHour.windDirection()} °"/>
-            </p:column>
-            <p:column headerText="Proability of Precipitation">
-                <h:outputText value="#{locationApiDemoBean.weatherInOneHour.probabilityOfPrecipitation()}"/>
-            </p:column>
-        </p:dataTable>
-
-        <!-- Daily forecast today-->
-        <h:outputText value="Todays Daily forecast for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.dailyWeatherTodayAsList}">
-            <p:column headerText="Sunrise and Sunset">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.sunrise()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.sunset()} °C"/>
-            </p:column>
-            <p:column headerText="Temperature (Avg, Min, Max">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.dailyTemperatureAggregation().dayTemperature()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.dailyTemperatureAggregation().minimumDailyTemperature()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.dailyTemperatureAggregation().maximumDailyTemperature()} °C"/>
-            </p:column>
-            <p:column headerText="Feels like">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.feelsLikeTemperatureAggregation().dayTemperature()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind speed">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.windSpeed()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind gust">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.windGust()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind Direction">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.windDirection()} °"/>
-            </p:column>
-            <p:column headerText="Proability of Precipitation">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.probabilityOfPrecipitation()} %"/>
-            </p:column>
-            <p:column headerText="Rain">
-                <h:outputText value="not raining" rendered="#{locationApiDemoBean.dailyWeatherToday.rain() == null}"/>
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.rain()} mm/h" rendered="#{locationApiDemoBean.dailyWeatherToday.rain() != null}"/>
-            </p:column>
-            <p:column headerText="Snow">
-                <h:outputText value="not snowing" rendered="#{locationApiDemoBean.dailyWeatherToday.snow() == null}"/>
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.snow()} mm/h" rendered="#{locationApiDemoBean.dailyWeatherToday.snow() != null}"/>
-            </p:column>
-            <br />
-            <p:column headerText="Summary">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.summary()}"/>
-            </p:column>
-        </p:dataTable>
-
-        <!-- Daily forecast tomorrow-->
-        <h:outputText value="Tomorrows Daily forecast for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.dailyWeatherTomorrowAsList}">
-            <p:column headerText="Sunrise and Sunset">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.sunrise()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherToday.sunset()} °C"/>
-            </p:column>
-            <p:column headerText="Temperature (Avg, Min, Max">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.dailyTemperatureAggregation().dayTemperature()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.dailyTemperatureAggregation().minimumDailyTemperature()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.dailyTemperatureAggregation().maximumDailyTemperature()} °C"/>
-            </p:column>
-            <p:column headerText="Feels like">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.feelsLikeTemperatureAggregation().dayTemperature()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind speed">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.windSpeed()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind gust">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.windGust()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind Direction">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.windDirection()} °"/>
-            </p:column>
-            <p:column headerText="Proability of Precipitation">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.probabilityOfPrecipitation()} %"/>
-            </p:column>
-            <p:column headerText="Rain">
-                <h:outputText value="not raining" rendered="#{locationApiDemoBean.dailyWeatherTomorrow.rain() == null}"/>
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.rain()} mm/h" rendered="#{locationApiDemoBean.dailyWeatherTomorrow.rain() != null}"/>
-            </p:column>
-            <p:column headerText="Snow">
-                <h:outputText value="not snowing" rendered="#{locationApiDemoBean.dailyWeatherTomorrow.snow() == null}"/>
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.snow()} mm/h" rendered="#{locationApiDemoBean.dailyWeatherTomorrow.snow() != null}"/>
-            </p:column>
-            <br />
-            <p:column headerText="Summary">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherTomorrow.summary()}"/>
-            </p:column>
-        </p:dataTable>
-
-        <!-- Daily forecast DAT-->
-        <h:outputText value="DATs Daily forecast for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.dailyWeatherDATAsList}">
-            <p:column headerText="Sunrise and Sunset">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.sunrise()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.sunset()} °C"/>
-            </p:column>
-            <p:column headerText="Temperature (Avg, Min, Max">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.dailyTemperatureAggregation().dayTemperature()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.dailyTemperatureAggregation().minimumDailyTemperature()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.dailyTemperatureAggregation().maximumDailyTemperature()} °C"/>
-            </p:column>
-            <p:column headerText="Feels like">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.feelsLikeTemperatureAggregation().dayTemperature()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind speed">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.windSpeed()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind gust">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.windGust()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind Direction">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.windDirection()} °"/>
-            </p:column>
-            <p:column headerText="Proability of Precipitation">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.probabilityOfPrecipitation()} %"/>
-            </p:column>
-            <p:column headerText="Rain">
-                <h:outputText value="not raining" rendered="#{locationApiDemoBean.dailyWeatherDAT.rain() == null}"/>
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.rain()} mm/h" rendered="#{locationApiDemoBean.dailyWeatherDAT.rain() != null}"/>
-            </p:column>
-            <p:column headerText="Snow">
-                <h:outputText value="not snowing" rendered="#{locationApiDemoBean.dailyWeatherDAT.snow() == null}"/>
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.snow()} mm/h" rendered="#{locationApiDemoBean.dailyWeatherDAT.snow() != null}"/>
-            </p:column>
-            <br />
-            <p:column headerText="Summary">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherDAT.summary()}"/>
-            </p:column>
-        </p:dataTable>
-        <!-- Daily forecast in three days-->
-        <h:outputText value="in Three Days Daily forecast for #{locationApiDemoBean.currentLocation.name()}" escape="false" />
-        <p:dataTable value="#{locationApiDemoBean.dailyWeatherInThreeDaysAsList}">
-            <p:column headerText="Sunrise and Sunset">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.sunrise()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.sunset()} °C"/>
-            </p:column>
-            <p:column headerText="Temperature (Avg, Min, Max">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.dailyTemperatureAggregation().dayTemperature()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.dailyTemperatureAggregation().minimumDailyTemperature()} °C"/>
-                <br />
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.dailyTemperatureAggregation().maximumDailyTemperature()} °C"/>
-            </p:column>
-            <p:column headerText="Feels like">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.feelsLikeTemperatureAggregation().dayTemperature()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind speed">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.windSpeed()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind gust">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.windGust()} m/s"/>
-            </p:column>
-            <p:column headerText="Wind Direction">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.windDirection()} °"/>
-            </p:column>
-            <p:column headerText="Proability of Precipitation">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.probabilityOfPrecipitation()} %"/>
-            </p:column>
-            <p:column headerText="Rain">
-                <h:outputText value="not raining" rendered="#{locationApiDemoBean.dailyWeatherInThreeDays.rain() == null}"/>
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.rain()} mm/h" rendered="#{locationApiDemoBean.dailyWeatherInThreeDays.rain() != null}"/>
-            </p:column>
-            <p:column headerText="Snow">
-                <h:outputText value="not snowing" rendered="#{locationApiDemoBean.dailyWeatherInThreeDays.snow() == null}"/>
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.snow()} mm/h" rendered="#{locationApiDemoBean.dailyWeatherInThreeDays.snow() != null}"/>
-            </p:column>
-            <br />
-            <p:column headerText="Summary">
-                <h:outputText value="#{locationApiDemoBean.dailyWeatherInThreeDays.summary()}"/>
-            </p:column>
-        </p:dataTable>
+        <!-- Daily forecasts-->
+        <h2>Daily forecasts</h2>
+        <p:tabView rendered="#{not empty locationApiDemoBean.dailyWeatherList}"
+                   value="#{locationApiDemoBean.dailyWeatherList}" var="dailyWeather" scrollable="true">
+            <p:tab title="#{dailyWeather.timestamp()}">
+                <p:dataTable value="#{dailyWeather}">
+                    <p:column headerText="Sunrise and Sunset">
+                        <h:outputText value="#{dailyWeather.sunrise()} °C"/>
+                        <br/>
+                        <h:outputText value="#{dailyWeather.sunset()} °C"/>
+                    </p:column>
+                    <p:column headerText="Moon phase">
+                        <h:outputText value="#{dailyWeather.moonPhase()}"/>
+                    </p:column>
+                    <p:column headerText="Temperature (Avg, Min, Max">
+                        <h:outputText value="#{dailyWeather.dailyTemperatureAggregation().dayTemperature()} °C"/>
+                        <br/>
+                        <h:outputText
+                                value="#{dailyWeather.dailyTemperatureAggregation().minimumDailyTemperature()} °C"/>
+                        <br/>
+                        <h:outputText
+                                value="#{dailyWeather.dailyTemperatureAggregation().maximumDailyTemperature()} °C"/>
+                    </p:column>
+                    <p:column headerText="Feels like">
+                        <h:outputText value="#{dailyWeather.feelsLikeTemperatureAggregation().dayTemperature()} m/s"/>
+                    </p:column>
+                    <p:column headerText="Pressure">
+                        <h:outputText value="#{dailyWeather.pressure()} hPa"/>
+                    </p:column>
+                    <p:column headerText="Humidity">
+                        <h:outputText value="#{dailyWeather.humidity()} %"/>
+                    </p:column>
+                    <p:column headerText="Dew point">
+                        <h:outputText value="#{dailyWeather.dewPoint()} °C"/>
+                    </p:column>
+                    <p:column headerText="Wind speed">
+                        <h:outputText value="#{dailyWeather.windSpeed()} m/s"/>
+                    </p:column>
+                    <p:column headerText="Wind gust">
+                        <h:outputText value="#{dailyWeather.windGust()} m/s"/>
+                    </p:column>
+                    <p:column headerText="Wind Direction">
+                        <h:outputText value="#{dailyWeather.windDirection()} °"/>
+                    </p:column>
+                    <p:column headerText="Clouds">
+                        <h:outputText value="#{dailyWeather.clouds()} %"/>
+                    </p:column>
+                    <p:column headerText="Proability of Precipitation">
+                        <h:outputText value="#{dailyWeather.probabilityOfPrecipitation()} %"/>
+                    </p:column>
+                    <p:column headerText="Rain">
+                        <h:outputText value="not raining" rendered="#{dailyWeather.rain() == null}"/>
+                        <h:outputText value="#{dailyWeather.rain()} mm/h" rendered="#{dailyWeather.rain() != null}"/>
+                    </p:column>
+                    <p:column headerText="Snow">
+                        <h:outputText value="not snowing" rendered="#{dailyWeather.snow() == null}"/>
+                        <h:outputText value="#{dailyWeather.snow()} mm/h" rendered="#{dailyWeather.snow() != null}"/>
+                    </p:column>
+                    <br/>
+                    <p:column headerText="Summary">
+                        <h:outputText value="#{dailyWeather.summary()}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+        </p:tabView>
     </h:form>
 </h:body>
 </html>

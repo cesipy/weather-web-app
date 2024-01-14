@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 /**
@@ -60,11 +61,8 @@ public class LocationApiDemoBean {
     private LocationDTO currentLocation;
     private HourlyWeatherDTO currentWeather;
     private HourlyWeatherDTO weatherInOneHour;
-
-    private DailyWeatherDTO dailyWeatherToday;
-    private DailyWeatherDTO dailyWeatherTomorrow;
-    private DailyWeatherDTO dailyWeatherDAT;
-    private DailyWeatherDTO dailyWeatherInThreeDays;
+    private List<HourlyWeatherDTO> hourlyWeatherList;
+    private List<DailyWeatherDTO> dailyWeatherList;
     private String query_name;
     private final int LIMIT = 1;
 
@@ -90,10 +88,10 @@ public class LocationApiDemoBean {
                     // only process first entry in List of LocationDTOs
 
                     LocationDTO firstLocation = answer.get(0);
-                    Pageable last_four_entries = PageRequest.of(0, 4);
-                    Pageable last_two_entries = PageRequest.of(0, 2);
-                    List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_four_entries);
-                    List<HourlyWeatherData> latestDataHourly = hourlyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_two_entries);
+                    Pageable last_eight_entries = PageRequest.of(0, 8);
+                    Pageable last_fourty_eight_entries = PageRequest.of(0, 2);
+                    List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_eight_entries);
+                    List<HourlyWeatherData> latestDataHourly = hourlyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_fourty_eight_entries);
 
                     if (!latestData.isEmpty() && !latestDataHourly.isEmpty()) {
                         DailyWeatherData latestRecord = latestData.get(0);
@@ -102,36 +100,34 @@ public class LocationApiDemoBean {
 
                         if (latestRecord.getAdditionTime().isAfter(oneHourAgo) && latestRecordHourly.getAdditionTime().isAfter(oneHourAgo)) {
                             this.setLocation(firstLocation);
-                            this.setCurrentWeather(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(0)));
-                            this.setWeatherInOneHour(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(1)));
 
-                            this.setDailyWeatherToday(weatherDataService.convertDailyDataToDTO(latestData.get(0)));
-                            this.setDailyWeatherTomorrow(weatherDataService.convertDailyDataToDTO(latestData.get(1)));
-                            this.setDailyWeatherDAT(weatherDataService.convertDailyDataToDTO(latestData.get(2)));
-                            this.setDailyWeatherInThreeDays(weatherDataService.convertDailyDataToDTO(latestData.get(3)));
+                            ArrayList<HourlyWeatherDTO> latestHourlyWeather = new ArrayList<>();
+                            for(int n = latestDataHourly.size() - 1; n >= 0 ; n--){
+                                latestHourlyWeather.add(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(n)));
+                            }
+                            this.setHourlyWeatherList(latestHourlyWeather);
+
+                            ArrayList<DailyWeatherDTO> latestWeather = new ArrayList<>();
+                            for(int n = latestData.size() - 1; n >= 0 ; n--){
+                                latestWeather.add(weatherDataService.convertDailyDataToDTO(latestData.get(n)));
+                            }
+                            this.setDailyWeatherList(latestWeather);
                             return;
                         }
                     }
                     this.setLocation(firstLocation);
 
                     CurrentAndForecastAnswerDTO forecastAnswer = this.weatherApiRequestService.retrieveCurrentAndForecastWeather(firstLocation.latitude(), firstLocation.longitude());
-                    List<HourlyWeatherDTO> hourlyWeatherList = forecastAnswer.hourlyWeather();
 
-                    this.setCurrentWeather(hourlyWeatherList.get(0));
-                    weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(0), firstLocation.name());
-                    this.setWeatherInOneHour(hourlyWeatherList.get(1));
-                    weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(1), firstLocation.name());
+                    this.setHourlyWeatherList(forecastAnswer.hourlyWeather());
+                    for(int n = 0; n < getHourlyWeatherList().size(); n++){
+                        weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(n), firstLocation.name());
+                    }
 
-                    List<DailyWeatherDTO> dailyWeatherList = forecastAnswer.dailyWeather();
-                    this.setDailyWeatherToday(dailyWeatherList.get(0));
-                    weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(0), firstLocation.name());
-                    this.setDailyWeatherTomorrow(dailyWeatherList.get(1));
-                    weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(1), firstLocation.name());
-                    this.setDailyWeatherDAT(dailyWeatherList.get(2));
-                    weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(2), firstLocation.name());
-                    this.setDailyWeatherInThreeDays(dailyWeatherList.get(3));
-                    weatherDataService.saveDailyWeatherFromDTO(dailyWeatherList.get(3), firstLocation.name());
-
+                    this.setDailyWeatherList(forecastAnswer.dailyWeather());
+                    for(int n = 0; n < getDailyWeatherList().size(); n++){
+                        weatherDataService.saveDailyWeatherFromDTO(getDailyWeatherList().get(n), firstLocation.name());
+                    }
 
                 } else {
                     LOGGER.warn("The list of locations is empty.");
@@ -183,38 +179,6 @@ public class LocationApiDemoBean {
         this.weatherInOneHour = weatherInOneHour;
     }
 
-    public DailyWeatherDTO getDailyWeatherToday() {
-        return dailyWeatherToday;
-    }
-
-    public void setDailyWeatherToday(DailyWeatherDTO dailyWeatherToday) {
-        this.dailyWeatherToday = dailyWeatherToday;
-    }
-
-    public DailyWeatherDTO getDailyWeatherTomorrow() {
-        return dailyWeatherTomorrow;
-    }
-
-    public void setDailyWeatherTomorrow(DailyWeatherDTO dailyWeatherTomorrow) {
-        this.dailyWeatherTomorrow = dailyWeatherTomorrow;
-    }
-
-    public DailyWeatherDTO getDailyWeatherDAT() {
-        return dailyWeatherDAT;
-    }
-
-    public DailyWeatherDTO getDailyWeatherInThreeDays() {
-        return dailyWeatherInThreeDays;
-    }
-
-    public void setDailyWeatherInThreeDays(DailyWeatherDTO dailyWeatherInThreeDays) {
-        this.dailyWeatherInThreeDays = dailyWeatherInThreeDays;
-    }
-
-    public void setDailyWeatherDAT(DailyWeatherDTO dailyWeatherDAT) {
-        this.dailyWeatherDAT = dailyWeatherDAT;
-    }
-
     public List<HourlyWeatherDTO> getCurrentWeatherAsList() {
         if (currentWeather != null) {
             return Collections.singletonList(currentWeather);
@@ -231,33 +195,20 @@ public class LocationApiDemoBean {
         }
     }
 
-    public List<DailyWeatherDTO> getdailyWeatherTodayAsList() {
-        if (dailyWeatherToday != null) {
-            return Collections.singletonList(dailyWeatherToday);
-        } else {
-            return Collections.emptyList();
-        }
+    public List<DailyWeatherDTO> getDailyWeatherList() {
+        return dailyWeatherList;
     }
-    public List<DailyWeatherDTO> getdailyWeatherTomorrowAsList() {
-        if (dailyWeatherTomorrow != null) {
-            return Collections.singletonList(dailyWeatherTomorrow);
-        } else {
-            return Collections.emptyList();
-        }
+
+    public void setDailyWeatherList(List<DailyWeatherDTO> dailyWeatherList) {
+        this.dailyWeatherList = dailyWeatherList;
     }
-    public List<DailyWeatherDTO> getdailyWeatherDATAsList() {
-        if (dailyWeatherDAT != null) {
-            return Collections.singletonList(dailyWeatherDAT);
-        } else {
-            return Collections.emptyList();
-        }
+
+    public List<HourlyWeatherDTO> getHourlyWeatherList() {
+        return hourlyWeatherList;
     }
-    public List<DailyWeatherDTO> getdailyWeatherInThreeDaysAsList() {
-        if (dailyWeatherInThreeDays != null) {
-            return Collections.singletonList(dailyWeatherInThreeDays);
-        } else {
-            return Collections.emptyList();
-        }
+
+    public void setHourlyWeatherList(List<HourlyWeatherDTO> hourlyWeatherList) {
+        this.hourlyWeatherList = hourlyWeatherList;
     }
 }
 

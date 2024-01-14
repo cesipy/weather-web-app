@@ -116,4 +116,5 @@ public class LocationControllerDb {
             LOGGER.info(location.toDebugString());
         }
     }
+
 }

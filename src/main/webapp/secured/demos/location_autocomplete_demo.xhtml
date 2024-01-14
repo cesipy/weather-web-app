@@ -15,7 +15,10 @@
                                 maxResults="5"
                                 minQueryLength="3"
                 />
-                <p:commandButton value="Search" action="#{locationControllerDb.requestFirstMatch}"/>
+                <p:commandButton value="Search" action="#{locationControllerDb.requestFirstMatch}" update="link"/>
+                <h:outputLink id="link" value="detail.xhtml?location=#{locationControllerDb.locationName}">
+                    View Details
+                </h:outputLink>
             </p:panel>
         </h:form>
     </ui:define>
