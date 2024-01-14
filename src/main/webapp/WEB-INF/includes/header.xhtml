@@ -20,7 +20,7 @@
                         <p:menuitem value="Employee Action 2 - 2"/>
                     </p:submenu>
                     <p:submenu label="Manager Submenu" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-                        <p:menuitem value="Manager Action 1"/>
+                        <p:menuitem value="Cash up!" url="/manager/cashUp.xhtml"/>
                         <p:menuitem value="Manager Action 2"/>
                     </p:submenu>
                     <p:submenu label="Admin Submenu" rendered="#{sessionInfoBean.hasRole('ADMIN')}">

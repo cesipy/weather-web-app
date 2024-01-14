@@ -11,6 +11,11 @@
                 <h:outputLabel for="cardNumber" value="Card Number:" />
                 <h:inputText id="cardNumber" value="#{creditCardController.creditCard.creditCard}" required="true" />
             </div>
+            <div style="margin-bottom: 10px;">
+                <h:outputLabel for="balance" value="Balance:" />
+                <h:inputText id="balance" value="#{creditCardController.creditCard.balance}" required="true">
+                </h:inputText>
+            </div>
 <!--
             <div style="margin-bottom: 10px;">
                 <h:outputLabel for="validFrom" value="Valid from:" />
