@@ -1,4 +1,4 @@
-package at.qe.skeleton.internal.ui.beans;
+package at.qe.skeleton.internal.model;
 
 public class EmailRequest {
 
