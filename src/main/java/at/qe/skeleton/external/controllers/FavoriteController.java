@@ -3,7 +3,6 @@ package at.qe.skeleton.external.controllers;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.services.FavoriteService;
-import at.qe.skeleton.external.services.LocationAlreadyInFavoritesException;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +34,11 @@ public class FavoriteController {
     @PostConstruct
     public void init() {
         locations = new ArrayList<>();
+        // temporary for debugging
+        locationName = "Vienna";
+        saveFavorite();
+        locationName = "Absam";
+        saveFavorite();
     }
 
     /**

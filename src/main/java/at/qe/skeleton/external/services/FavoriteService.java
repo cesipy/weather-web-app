@@ -1,5 +1,6 @@
 package at.qe.skeleton.external.services;
 
+import at.qe.skeleton.external.model.WeatherDataField;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.internal.model.Userx;
@@ -191,12 +192,11 @@ public class FavoriteService {
      */
     public void saveFavorite( String locationName) {
         retrieveCurrentData(locationName);
-        if (currentLocation == null) {
+        if (currentLocation == null || currentUserx == null) {
             // TODO: proper handling
             return;
         }
         int priority = calculatePriority(currentUserx) + 1;
-
         Favorite favorite = new Favorite();
         favorite.setUser(currentUserx);
         favorite.setLocation(currentLocation);
@@ -236,6 +236,24 @@ public class FavoriteService {
     private int calculatePriority(Userx userx) {
         List<Favorite> favorites =  favoriteRepository.findByUser(userx);
         return favorites.size();
+    }
+
+    public void addSelectedFields(List<WeatherDataField> newSelectedFields) {
+        userxService.addSelectedWeatherFieldsForUser(newSelectedFields);
+    }
+
+    public void deleteSelectedFields(List<WeatherDataField> toDeleteSelectedFields) {
+        userxService.deleteSelectedWeatherFieldsForUser(toDeleteSelectedFields);
+    }
+
+    public List<WeatherDataField> retrieveSelectedFields() {
+        List<WeatherDataField> selectedFields = userxService.getSelectedWeatherFieldsForUser();
+        LOGGER.info("selected fields retrieved: " + selectedFields);
+        return selectedFields;
+    }
+
+    public void setDefaultSelectedFields() {
+        addSelectedFields(List.of(WeatherDataField.TEMP, WeatherDataField.FEELS_LIKE, WeatherDataField.DESCRIPTION));
     }
 
 
