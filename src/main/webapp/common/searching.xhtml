@@ -15,21 +15,18 @@
                                 maxResults="5"
                                 minQueryLength="3"
                 />
-                <!-- `weatherResponsePanel` is needed to identify each search and receive a result -->
-                <p:commandButton value="Search" action="#{searchWeatherController.searchWeatherByLocation}" update="weatherResponsePanel"/>
-            </p:panel>
-            <p:panel header="Weather Response" id="weatherResponsePanel">
-                <div>
-                    <h:panelGroup rendered="#{not empty searchWeatherController.currentWeather}" >
-                        <h:outputText escape="false" value="#{searchWeatherController.currentWeather}"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{empty searchWeatherController.currentWeather}">
-                        <h:outputText value="No favorites found."/>
-                    </h:panelGroup>
 
-                    <!-- <h:outputText escape="false" value="#{searchWeatherController.currentWeather}"/> -->
+                <p:commandButton value="Search"
+                                 action="#{searchWeatherController.searchWeatherByLocation}"
+                                 update="messages"/>
+                <div>
+                    <br/>
                 </div>
-            </p:panel>
+                <p:messages id="messages" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+
+           </p:panel>
         </h:form>
     </ui:define>
 
