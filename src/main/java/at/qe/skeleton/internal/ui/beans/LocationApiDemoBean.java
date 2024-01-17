@@ -3,20 +3,16 @@ package at.qe.skeleton.internal.ui.beans;
 import at.qe.skeleton.external.domain.DailyWeatherData;
 import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.CurrentWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
-import at.qe.skeleton.external.model.location.LocationDTO;
+import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.services.WeatherDataService;
 import at.qe.skeleton.internal.repositories.DailyWeatherDataRepository;
 import at.qe.skeleton.internal.repositories.HourlyWeatherDataRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+
 import jakarta.annotation.PostConstruct;
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,10 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,7 +38,7 @@ import java.util.List;
 @Scope("view")
 public class LocationApiDemoBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationApiDemoBean.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationApiDemoBean.class);
 
     @Autowired
     private LocationApiRequestService locationApiRequestService;
@@ -58,7 +50,7 @@ public class LocationApiDemoBean {
     private WeatherApiRequestService weatherApiRequestService;
     @Autowired
     private WeatherDataService weatherDataService;
-    private LocationDTO currentLocation;
+    private Location currentLocation;
     private HourlyWeatherDTO currentWeather;
     private HourlyWeatherDTO weatherInOneHour;
     private List<HourlyWeatherDTO> hourlyWeatherList;
@@ -81,17 +73,17 @@ public class LocationApiDemoBean {
         if(getQuery_name()!= null) {
             try {
 
-                List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(getQuery_name(), getLIMIT());
+                List<Location> answer = this.locationApiRequestService.retrieveLocations(getQuery_name(), getLIMIT());
 
                 // Check if the list is not empty
                 if (!answer.isEmpty()) {
                     // only process first entry in List of LocationDTOs
 
-                    LocationDTO firstLocation = answer.get(0);
+                    Location firstLocation = answer.get(0);
                     Pageable last_eight_entries = PageRequest.of(0, 8);
                     Pageable last_fourty_eight_entries = PageRequest.of(0, 2);
-                    List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_eight_entries);
-                    List<HourlyWeatherData> latestDataHourly = hourlyWeatherDataRepository.findLatestByLocation(firstLocation.name(), last_fourty_eight_entries);
+                    List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.getName(), last_eight_entries);
+                    List<HourlyWeatherData> latestDataHourly = hourlyWeatherDataRepository.findLatestByLocation(firstLocation.getName(), last_fourty_eight_entries);
 
                     if (!latestData.isEmpty() && !latestDataHourly.isEmpty()) {
                         DailyWeatherData latestRecord = latestData.get(0);
@@ -117,23 +109,23 @@ public class LocationApiDemoBean {
                     }
                     this.setLocation(firstLocation);
 
-                    CurrentAndForecastAnswerDTO forecastAnswer = this.weatherApiRequestService.retrieveCurrentAndForecastWeather(firstLocation.latitude(), firstLocation.longitude());
+                    CurrentAndForecastAnswerDTO forecastAnswer = this.weatherApiRequestService.retrieveCurrentAndForecastWeather(firstLocation.getLatitude(), firstLocation.getLongitude());
 
                     this.setHourlyWeatherList(forecastAnswer.hourlyWeather());
                     for(int n = 0; n < getHourlyWeatherList().size(); n++){
-                        weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(n), firstLocation.name());
+                        weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(n), firstLocation.getName());
                     }
 
                     this.setDailyWeatherList(forecastAnswer.dailyWeather());
                     for(int n = 0; n < getDailyWeatherList().size(); n++){
-                        weatherDataService.saveDailyWeatherFromDTO(getDailyWeatherList().get(n), firstLocation.name());
+                        weatherDataService.saveDailyWeatherFromDTO(getDailyWeatherList().get(n), firstLocation.getName());
                     }
 
                 } else {
-                    LOGGER.warn("The list of locations is empty.");
+                    logger.warn("The list of locations is empty.");
                 }
             } catch (Exception e) {
-                LOGGER.error("error in request in locationApi", e);
+                logger.error("error in request in locationApi", e);
                 throw new RuntimeException(e);
             }
         }
@@ -155,11 +147,11 @@ public class LocationApiDemoBean {
         return LIMIT;
     }
 
-    public void setLocation(LocationDTO location) {
+    public void setLocation(Location location) {
         this.currentLocation = location;
     }
 
-    public LocationDTO getCurrentLocation() {
+    public Location getCurrentLocation() {
         return currentLocation;
     }
 

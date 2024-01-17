@@ -1,6 +1,6 @@
 package at.qe.skeleton.external.controllers;
 
-import at.qe.skeleton.external.model.location.LocationDTO;
+import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.internal.ui.beans.LocationApiDemoBean;
@@ -28,7 +28,7 @@ public class LocationController {
     private final int LIMIT = 1;        // we want to get only one result for a location
     private String locationName;
     private String currentLocation;
-    private LocationDTO currentLocationDTO;
+    private Location currentLocationEntity;
     @Autowired
     private LocationApiRequestService locationApiRequestService;
     @Autowired
@@ -43,25 +43,24 @@ public class LocationController {
         try {
             searchLocation(locationName);           // perform searching for location
 
-            LocationDTO foundLocation = currentLocationDTO;
+            Location foundLocation = currentLocationEntity;
 
             //TODO: handling for no location found
             //TODO: handle other errors
 
         } catch (Exception e) {
             logger.error("Error in location search", e);
-
         }
     }
 
     private void searchLocation(String locationName) {
         try {
-            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
+            List<Location> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
 
             // Check if the list is not empty
             if (!answer.isEmpty()) {
                 // only process the first entry in the List of LocationDTOs
-                LocationDTO firstLocation = answer.get(0);
+                Location firstLocation = answer.get(0);
 
                 ObjectMapper mapper = new ObjectMapper()
                         .findAndRegisterModules()
@@ -72,7 +71,7 @@ public class LocationController {
                 String escapedHtmlAnswerWithLineBreaks = escapedHtmlAnswer.replace("\n", "<br>")
                         .replace(" ", "&nbsp;");
                 this.setCurrentLocation(escapedHtmlAnswerWithLineBreaks);
-                this.setCurrentLocationDTO(firstLocation);
+                this.setCurrentLocationEntity(firstLocation);
 
             } else {
                 logger.warn("The list of locations is empty.");
@@ -86,7 +85,7 @@ public class LocationController {
     }
 
     @GetMapping("/location")
-    public LocationDTO getLocation(@RequestParam String location) {
+    public Location getLocation(@RequestParam String location) {
         locationApiDemoBean.setQuery_name(location);
         locationApiDemoBean.init();
         return locationApiDemoBean.getCurrentLocation();
@@ -118,19 +117,20 @@ public class LocationController {
         this.currentLocation = currentLocation;
     }
 
-    public LocationDTO getCurrentLocationDTO() {
-        return currentLocationDTO;
-    }
-
-    public void setCurrentLocationDTO(LocationDTO locationDTO) {
-        this.currentLocationDTO = locationDTO;
-    }
 
     public double getLatitude() {
-        return currentLocationDTO.latitude();
+        return currentLocationEntity.getLatitude();
     }
 
     public double getLongitude() {
-        return currentLocationDTO.longitude();
+        return currentLocationEntity.getLongitude();
+    }
+
+    public Location getCurrentLocationEntity() {
+        return currentLocationEntity;
+    }
+
+    public void setCurrentLocationEntity(Location currentLocationEntity) {
+        this.currentLocationEntity = currentLocationEntity;
     }
 }
