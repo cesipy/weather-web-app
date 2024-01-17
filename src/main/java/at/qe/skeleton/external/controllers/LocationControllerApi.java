@@ -1,6 +1,6 @@
 package at.qe.skeleton.external.controllers;
 
-import at.qe.skeleton.external.model.location.LocationDTO;
+import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +23,7 @@ public class LocationControllerApi {
     private final int LIMIT = 1;        // we want to get only one result for a location
     private String locationName;
     private String currentLocation;
-    private LocationDTO currentLocationDTO;
+    private Location currentLocationEntity;
     @Autowired
     private LocationApiRequestService locationApiRequestService;
 
@@ -31,7 +31,7 @@ public class LocationControllerApi {
         try {
             searchLocation(locationName);           // perform searching for location
 
-            LocationDTO foundLocation = currentLocationDTO;
+            Location foundLocation = currentLocationEntity;
 
             //TODO: handling for no location found
             //TODO: handle other errors
@@ -44,12 +44,14 @@ public class LocationControllerApi {
 
     private void searchLocation(String locationName) {
         try {
-            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
+
+            List<Location> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
 
             // Check if the list is not empty
             if (!answer.isEmpty()) {
+
                 // only process the first entry in the List of LocationDTOs
-                LocationDTO firstLocation = answer.get(0);
+                Location firstLocation = answer.get(0);
 
                 ObjectMapper mapper = new ObjectMapper()
                         .findAndRegisterModules()
@@ -60,7 +62,7 @@ public class LocationControllerApi {
                 String escapedHtmlAnswerWithLineBreaks = escapedHtmlAnswer.replace("\n", "<br>")
                         .replace(" ", "&nbsp;");
                 this.setCurrentLocation(escapedHtmlAnswerWithLineBreaks);
-                this.setCurrentLocationDTO(firstLocation);
+                this.setCurrentLocation(firstLocation);
 
 
             } else {
@@ -93,19 +95,19 @@ public class LocationControllerApi {
         this.currentLocation = currentLocation;
     }
 
-    public LocationDTO getCurrentLocationDTO() {
-        return currentLocationDTO;
+    public Location getCurrentLocationEntity() {
+        return currentLocationEntity;
     }
 
-    public void setCurrentLocationDTO(LocationDTO locationDTO) {
-        this.currentLocationDTO = locationDTO;
+    public void setCurrentLocation(Location location) {
+        this.currentLocationEntity = location;
     }
 
     public double getLatitude() {
-        return currentLocationDTO.latitude();
+        return currentLocationEntity.getLatitude();
     }
 
     public double getLongitude() {
-        return currentLocationDTO.longitude();
+        return currentLocationEntity.getLongitude();
     }
 }
