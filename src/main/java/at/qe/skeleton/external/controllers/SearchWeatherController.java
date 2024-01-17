@@ -2,6 +2,8 @@ package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
 import at.qe.skeleton.external.model.location.Location;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +39,15 @@ public class SearchWeatherController {
         // easier. however, there are cities missing. example:
         // query in database= "inns" result: only innsbruck
         // query in api    = "inns" result: Inns quay B, Inns quay A, Inns quay C, Inns
-
         Location singleLocation = locationControllerDb.requestFirstMatch();
 
         if (singleLocation != null) {
             processWeatherForLocation(singleLocation);
         }
         else {
-            // TODO: improve error handling
+            // shows a faceMessage when no location is found
+            showInfoMessage(locationToSearch);
             LOGGER.info("in searchWeatherByLocation: no location found");
-            setCurrentWeather("No location found.");
         }
     }
 
@@ -66,6 +67,17 @@ public class SearchWeatherController {
         weatherController.requestWeather();
         setCurrentAndForecastAnswerDTO(weatherController.getCurrentWeatherDTO());
         setCurrentWeather(weatherController.getCurrentWeather());
+    }
+
+    /**
+     * Displays an informational message about a location not being found.
+     *
+     * @param locationName The name of the location for which the message is generated.
+     */
+    public void showInfoMessage(String locationName) {
+        String message = String.format("Location '%s' not found!", locationName);
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
     }
 
     public CurrentAndForecastAnswerDTO getCurrentAndForecastAnswerDTO() {
