@@ -37,7 +37,7 @@ public class UserDetailController implements Serializable {
     private EmailService emailService;
     @Autowired
     private UserxDetailsService userxDetailsService;
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private String tempPassword;
 
     /**
@@ -162,6 +162,6 @@ public class UserDetailController implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ve.getMessage(), null));
         }
     }
-    private String doEncodePassword(String password){return passwordEncoder.encode(password);}
+    public String doEncodePassword(String password){return passwordEncoder.encode(password);}
 
 }
