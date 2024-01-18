@@ -1,5 +1,6 @@
 package at.qe.skeleton.external.services;
 
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.WeatherDataField;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.Favorite;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @Service
 @Scope("application")
 public class FavoriteService {
-    private static Logger logger = LoggerFactory.getLogger(FavoriteService.class);
+    private static final Logger logger = LoggerFactory.getLogger(FavoriteService.class);
     @Autowired
     private FavoriteRepository favoriteRepository;
     @Autowired
@@ -156,7 +157,7 @@ public class FavoriteService {
      * @param query The query to autocomplete.
      * @return A list
      */
-    public List<Location> autocomplete(String query) {
+    public List<Location> autocomplete(String query) throws EmptyLocationException {
         return locationService.autocomplete(query);
     }
 
@@ -188,12 +189,12 @@ public class FavoriteService {
      *
      * @param locationName The name of the location to be saved as a favorite.
      */
-    public void saveFavorite( String locationName) {
+    public void saveFavorite( String locationName) throws EmptyLocationException {
         retrieveCurrentData(locationName);
         if (currentLocation == null || currentUserx == null) {
-            // TODO: proper handling
-            return;
+            throw new EmptyLocationException("Location does not exist!");
         }
+
         int priority = calculatePriority(currentUserx) + 1;
         Favorite favorite = new Favorite();
         favorite.setUser(currentUserx);

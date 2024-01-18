@@ -1,5 +1,6 @@
 package at.qe.skeleton.external.services;
 
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.repositories.LocationRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -40,8 +41,12 @@ public class LocationService {
      * @param name query for autocompletion.
      * @return list of locations matching the provided query.
      */
-    public List<Location> autocomplete(String name) {
-        return locationRepository.findByNameStartingWithIgnoreCase(name);
+    public List<Location> autocomplete(String name) throws EmptyLocationException {
+        if (name != null && !name.trim().isEmpty()) {
+            return locationRepository.findByNameStartingWithIgnoreCase(name);
+        }
+        String message = String.format("The given location: %s is empty!", name);
+        throw new EmptyLocationException(message);
     }
 
     public Location retrieveLocationByExactName(String name) {
@@ -77,9 +82,9 @@ public class LocationService {
      * Initializes the service by populating the database with location data.
      */
     public void init() {
-        logger.info("starting population of database");
+        logger.info("Starting population of database");
         loadDataFromJson(filePath);
-        logger.info("populated database");
+        logger.info("Populated database");
     }
 
     public String getFilePath() {

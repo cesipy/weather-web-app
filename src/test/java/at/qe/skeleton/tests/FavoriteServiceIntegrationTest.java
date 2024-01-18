@@ -1,5 +1,6 @@
 package at.qe.skeleton.tests;
 
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.FavoriteService;
@@ -83,7 +84,7 @@ public class FavoriteServiceIntegrationTest {
     }
 
     @Test
-    public void testAutocomplete() {
+    public void testAutocomplete() throws EmptyLocationException {
         String query = "absam";
 
         List<Location> locations = locationService.autocomplete(query);
@@ -93,7 +94,7 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
-    public void testSaveFavorite() {
+    public void testSaveFavorite() throws EmptyLocationException {
         String query = "Vienna";
         favoriteService.saveFavorite(query);
 
@@ -146,7 +147,7 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin")
-    public void testMoveFavoriteUp() {
+    public void testMoveFavoriteUp() throws EmptyLocationException {
         userx = userxService.getCurrentUser();
 
         String query1 = "Absam";
@@ -172,7 +173,7 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin")
-    public void testMoveFavoriteDown() {
+    public void testMoveFavoriteDown() throws EmptyLocationException {
         userx = userxService.getCurrentUser();
 
         String query1 = "Absam";
