@@ -33,15 +33,15 @@
                         <p:menuitem value="Location Searching Demo" url="/secured/demos/location_searching_demo.xhtml"/>
                         <p:menuitem value="Autocomplete Demo" url="/secured/demos/location_autocomplete_demo.xhtml"/>
                     </p:submenu>
-                    <p:submenu label="Weather" rendered="#{sessionInfoBean.loggedIn}">
+                    <p:submenu label="Weather" rendered="#{sessionInfoBean.loggedIn}" >
                         <p:menuitem value="Weather Searching" url="/common/searching.xhtml"/>
                         <p:menuitem value="Manage Favorites" url="/common/favorites.xhtml"/>
                     </p:submenu>
 
                     //neu
 
-                    <p:submenu label="Premium Submenu" rendered="#{sessionInfoBean.loggedIn}">
-                        <p:menuitem value="(de)abonnieren" url="/premium/abonnieren.xhtml"/>
+                    <p:submenu label="Premium Submenu" rendered="#{sessionInfoBean.loggedIn}" >
+                        <p:menuitem value="(un)subscribe" url="/premium/abonnieren.xhtml" />
                         <p:menuitem value="payment information" url="/premium/paymentInfo.xhtml"/>
                     </p:submenu>
 

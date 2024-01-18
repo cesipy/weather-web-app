@@ -16,21 +16,7 @@
                 <h:inputText id="balance" value="#{creditCardController.creditCard.balance}" required="true">
                 </h:inputText>
             </div>
-<!--
-            <div style="margin-bottom: 10px;">
-                <h:outputLabel for="validFrom" value="Valid from:" />
-                <h:inputText id="validFrom" value="#{creditCardController.creditCard.validFrom}" required="true">
-                    <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
-                </h:inputText>
-            </div>
 
-            <div style="margin-bottom: 10px;">
-                <h:outputLabel for="validTo" value="Valid to:" />
-                <h:inputText id="validTo" value="#{creditCardController.creditCard.validTo}" required="true">
-                    <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
-                </h:inputText>
-            </div>
--->
             <div>
                 <p:commandButton value="Save" action="#{creditCardController.doSaveCreditCard}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"/>
             </div>

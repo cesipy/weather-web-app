@@ -34,6 +34,7 @@ public class SubscriptionBean implements Serializable {
     @PostConstruct
     public void init() {
         updateButtonText();
+
     }
 
     public String getButtonText() {
@@ -59,22 +60,37 @@ public class SubscriptionBean implements Serializable {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Userx user = userxService.loadUser(authentication.getName());
 
-        if (authentication != null) {
-            String username = authentication.getName();
-
-            if (isPremium()) {
-                userxService.removeUserRole(username, UserxRole.PREMIUM);
-                cashUpBean.offSet(user);
-            } else {
-                userxService.addUserRole(username, UserxRole.PREMIUM);
-                cashUpBean.generateInvoice(user);
+        try {
+            if (!hasCreditCard()) {
+                throw new ValidationException();
             }
-            userReloadService.reloadUserAuthentication();
-            updateButtonText();
+
+            if (authentication != null) {
+                String username = authentication.getName();
+
+                if (isPremium()) {
+                    userxService.removeUserRole(username, UserxRole.PREMIUM);
+                    cashUpBean.offSet(user);
+                } else {
+                    userxService.addUserRole(username, UserxRole.PREMIUM);
+                    cashUpBean.generateInvoice(user);
+                }
+                userReloadService.reloadUserAuthentication();
+                updateButtonText();
+            }
+        } catch (ValidationException e) {
+            // Loggen?
+            //e.printStackTrace();
+
+            FacesContext.getCurrentInstance().addMessage(
+                    null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please provide payment information", e.getMessage())
+            );
         }
     }
 
+
     private void updateButtonText() {
-        buttonText = isPremium() ? "Deabonnieren" : (hasCreditCard() ? "Abonnieren" : "Bitte Zahlungsinformation hinterlegen");
+        buttonText = isPremium() ? "Unsubscribe" : "Subscribe" ;
     }
 }
