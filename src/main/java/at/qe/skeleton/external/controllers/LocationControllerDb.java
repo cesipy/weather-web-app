@@ -18,7 +18,7 @@ import java.util.Objects;
 @Controller
 @Scope("view")
 public class LocationControllerDb {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationControllerDb.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationControllerDb.class);
     @Autowired
     private LocationService locationService;
     private String locationName;
@@ -32,19 +32,27 @@ public class LocationControllerDb {
      * @return A list of locations matching the provided query.
      */
     public List<Location> autocomplete(String query)  {
-        if (Objects.equals(locationName, "")) {
-            LOGGER.info("Query is null!");
+        try {
+
+
+            if (Objects.equals(locationName, "")) {
+                logger.info("Query is null!");
+            }
+
+            List<Location> locations = locationService.autocomplete(query);
+
+            if (locations.isEmpty()) {
+                logger.info("empty location list in autocomplete!");
+                return Collections.emptyList();
+            }
+
+            logLocations(locations);
+            return locations;
+        } catch (EmptyLocationException e) {
+            logger.info("in locationcontrollerDB: {} ", e.getMessage());
         }
 
-        List <Location> locations = locationService.autocomplete(query);
-
-        if (locations.isEmpty()) {
-            LOGGER.info("empty location list in autocomplete!");
-            return Collections.emptyList();
-        }
-
-        logLocations(locations);
-        return locations;
+        return null; // only temp
     }
 
 
@@ -55,24 +63,27 @@ public class LocationControllerDb {
      * @return The first matching location.
      */
     public Location requestFirstMatch() {
+        try {
+            // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
+            // only locationName has to be extracted
+            String extractedLocationName = locationName.split(",")[0];
 
-        // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
-        // only locationName has to be extracted
-        String extractedLocationName = locationName.split(",")[0];
+            List<Location> locations = locationService.autocomplete(extractedLocationName);
 
-        List<Location> locations = locationService.autocomplete(extractedLocationName);
+            if (locations.isEmpty()) {
+                logger.info("no location found");
+                currentLocation = null;
+                return null;
+            }
 
-        if (locations.isEmpty()) {
-            LOGGER.info("no location found");
-            currentLocation = null;
-            return null;
+            Location firstLocation = locations.get(0);
+            currentLocation = firstLocation;
+
+            return firstLocation;
+        } catch (EmptyLocationException e) {
+            logger.info("no location found! {}", e.getMessage());
         }
-
-        Location firstLocation = locations.get(0);
-        currentLocation = firstLocation;
-        // LOGGER.info(firstLocation.toDebugString());
-        return firstLocation;
-
+        return null;
     }
 
     //TODO: convert LocationEntity to .json string
@@ -113,7 +124,7 @@ public class LocationControllerDb {
      */
     private void logLocations(List<Location> locations) {
         for (Location location : locations) {
-            LOGGER.info(location.toDebugString());
+            logger.info(location.toDebugString());
         }
     }
 

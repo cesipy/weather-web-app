@@ -5,11 +5,14 @@ import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswer
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.repositories.CurrentWeatherDataRepository;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.FavoriteService;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.services.WeatherDataService;
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.Visibility;
 import org.slf4j.Logger;
@@ -26,7 +29,7 @@ import java.util.List;
 @Controller
 @Scope("view")
 public class FavoriteOverviewController {
-    private static Logger LOGGER = LoggerFactory.getLogger(FavoriteOverviewController.class);
+    private static Logger logger = LoggerFactory.getLogger(FavoriteOverviewController.class);
     @Autowired
     private FavoriteService favoriteService;
     @Autowired
@@ -58,16 +61,26 @@ public class FavoriteOverviewController {
      * Retrieves user favorites and updates the current weather data list for display.
      */
     public void retrieveFavorites() {
-        // clear the existing list before retrieving new favorites
-        currentWeatherDataList.clear();
-        favorites = favoriteService.getSortedFavoritesForUser();
-        selectedFieldList = favoriteService.retrieveSelectedFields();
+        try {
+            // clear the existing list before retrieving new favorites
+            currentWeatherDataList.clear();
+            favorites = favoriteService.getSortedFavoritesForUser();
+            selectedFieldList = favoriteService.retrieveSelectedFields();
 
-        if (favorites.isEmpty()) {
-            LOGGER.info("favorites in overview are empty");
+            if (favorites.isEmpty()) {
+                logger.info("favorites in overview are empty");
+            }
+
+            fetchWeatherDataForFavorites();
+        }catch (ApiQueryException e) {
+            // TODO: show faceMessage in overview
+            logger.info("Error occurred while requesting API");
+
+            showWarnMessage();
         }
-
-        fetchWeatherDataForFavorites();
+        catch (Exception e) {
+            logger.info("error occurred!");
+        }
     }
 
     /**
@@ -77,7 +90,7 @@ public class FavoriteOverviewController {
      *
      * @see #fetchCurrentWeather(Location)
      */
-    private void fetchWeatherDataForFavorites() {
+    private void fetchWeatherDataForFavorites() throws ApiQueryException {
         for (Favorite favorite : favorites) {
             Location location = favorite.getLocation();
             CurrentWeatherData currentWeatherData = fetchCurrentWeather(location);
@@ -91,7 +104,7 @@ public class FavoriteOverviewController {
      * @param location The location for which to fetch weather data.
      * @return The current weather data for the specified location.
      */
-    private CurrentWeatherData fetchCurrentWeather(Location location) {
+    private CurrentWeatherData fetchCurrentWeather(Location location) throws ApiQueryException {
         List<CurrentWeatherData> currentWeatherDataList = currentWeatherDataRepository
                 .findByLocationOrderByAdditionTimeDesc(location);
 
@@ -105,7 +118,7 @@ public class FavoriteOverviewController {
             return currentWeatherDataRepository
                     .findByLocationOrderByAdditionTimeDesc(location).get(0);
         } else {
-            LOGGER.info("Taking weather data from database for location {}", location);
+            logger.info("Taking weather data from database for location {}", location);
             return currentWeatherDataList.get(0);
         }
     }
@@ -132,7 +145,6 @@ public class FavoriteOverviewController {
      * @return true if the field is in the list, false otherwise.
      */
     public boolean isInList(String fieldName) {
-        WeatherDataField[] selectedFields = WeatherDataField.values();
         for (WeatherDataField field : selectedFieldList) {
             if (field.name().equals(fieldName)) {
                 return true;
@@ -203,7 +215,7 @@ public class FavoriteOverviewController {
                 updateSelectedField(WeatherDataField.DESCRIPTION, visibility);
                 break;
             default:
-                LOGGER.warn("Unexpected value in onToggle: " + columnIndex);
+                logger.warn("Unexpected value in onToggle: {} ", columnIndex);
         }
     }
 
@@ -215,15 +227,21 @@ public class FavoriteOverviewController {
      */
     private void updateSelectedField(WeatherDataField weatherDataField, Visibility visibility) {
         if (visibility == Visibility.VISIBLE) {
-            LOGGER.info("set visibility for " + weatherDataField + " to visible" );
+            logger.info("set visibility for {}  to visible", weatherDataField );
             favoriteService.addSelectedFields(List.of(weatherDataField));
         } else if (visibility == Visibility.HIDDEN) {
-            LOGGER.info("set visibility for " + weatherDataField + " to hidden" );
+            logger.info("set visibility for {} to hidden", weatherDataField );
             favoriteService.deleteSelectedFields(List.of(weatherDataField));
         }
         else {
-            LOGGER.info("Error occurred!");
+            logger.info("Error occurred!");
         }
+    }
+
+    private void showWarnMessage() {
+        String message = "Could not fetch weather data!";
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
     }
 
     public List<CurrentWeatherData> getCurrentWeatherDataList() {

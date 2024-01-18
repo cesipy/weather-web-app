@@ -1,6 +1,7 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -28,7 +29,7 @@ public class WeatherController {
     @Autowired
     private WeatherApiRequestService weatherApiRequestService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherController.class);
+    private static final Logger logger = LoggerFactory.getLogger(WeatherController.class);
 
     /**
      * Retrieves the current and forecast weather for the specified location,
@@ -48,8 +49,16 @@ public class WeatherController {
                     .replace(" ", "&nbsp;");
             this.setCurrentWeather(escapedHtmlAnswerWithLineBreaks);
 
-        } catch (final Exception e) {
-            LOGGER.error("error in request", e);
+        } catch (ApiQueryException e) {
+            logger.info("error occurred in weather controller");
+            // TODO: proper handling here
+
+        }
+        catch (RuntimeException e) {
+            logger.info("unknownhost exception");
+        }
+        catch (Exception e) {
+            logger.error("error in request", e);
         }
     }
 

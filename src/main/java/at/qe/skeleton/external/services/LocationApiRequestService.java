@@ -1,6 +1,6 @@
 package at.qe.skeleton.external.services;
 
-import at.qe.skeleton.external.model.location.LocationDTO;
+import at.qe.skeleton.external.model.location.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
@@ -38,18 +38,23 @@ public class LocationApiRequestService {
      *
      * @param cityName name of city for which location information is requested.
      * @param limit    maximum number of results to be retrieved.
-     * @return A list of {@link LocationDTO} objects representing the retrieved location data.
+     * @return A list of {@link Location} objects representing the retrieved location data.
      */
-    public List<LocationDTO> retrieveLocations(String cityName, int limit) {
+    public List<Location> retrieveLocations(String cityName, int limit) throws ApiQueryException {
+        try {
+            ResponseEntity<List<Location>> responseEntity = this.restClient.get()
+                    .uri(UriComponentsBuilder.fromPath(GEOCODING_URI)
+                            .queryParam(CITY_NAME_PARAMETER, String.valueOf(cityName))
+                            .queryParam(LIMIT_PARAMETER, String.valueOf(limit))
+                            .build().toUriString())
+                    .retrieve()
+                    .toEntity(new ParameterizedTypeReference<List<Location>>() {
+                    });
 
-        ResponseEntity<List<LocationDTO>> responseEntity = this.restClient.get()
-                .uri(UriComponentsBuilder.fromPath(GEOCODING_URI)
-                    .queryParam(CITY_NAME_PARAMETER, String.valueOf(cityName))
-                    .queryParam(LIMIT_PARAMETER, String.valueOf(limit))
-                    .build().toUriString())
-                .retrieve()
-                .toEntity(new ParameterizedTypeReference<List<LocationDTO>>() {});
-
-        return responseEntity.getBody();
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ApiQueryException("Error in location API query!");
+        }
     }
 }

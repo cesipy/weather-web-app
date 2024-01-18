@@ -1,5 +1,6 @@
 package at.qe.skeleton.tests;
 
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.FavoriteService;
@@ -9,7 +10,6 @@ import at.qe.skeleton.external.repositories.FavoriteRepository;
 import at.qe.skeleton.internal.services.UserxService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @WebAppConfiguration
 public class FavoriteServiceIntegrationTest {
-    public static Logger LOGGER = LoggerFactory.getLogger(FavoriteServiceIntegrationTest.class);
+    public static Logger logger = LoggerFactory.getLogger(FavoriteServiceIntegrationTest.class);
     @Autowired
     private FavoriteRepository favoriteRepository;
     @Autowired
@@ -45,12 +45,10 @@ public class FavoriteServiceIntegrationTest {
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void testGetFavorites() {
         Userx temp = userxService.getCurrentUser();
-        LOGGER.info(String.valueOf(temp));
 
         String locationName = "Innsbruck";
 
         Location location = locationService.retrieveLocation(locationName);
-        LOGGER.info(String.valueOf(location));
 
         Favorite favorite = new Favorite();
         favorite.setUser(temp);
@@ -60,7 +58,6 @@ public class FavoriteServiceIntegrationTest {
         favoriteRepository.save(favorite);
 
         List<Favorite> favorites =   favoriteService.getSortedFavoritesList(temp);
-        LOGGER.info(favorites.toString());
 
         assertEquals(favorites.get(0).getLocation(), location);
     }
@@ -69,12 +66,10 @@ public class FavoriteServiceIntegrationTest {
     @WithMockUser(username = "user1", authorities =  {"EMPLOYEE"})
     public void testGetFavoritesNonAdmin() {
         Userx temp = userxService.getCurrentUser();
-        LOGGER.info(String.valueOf(temp));
 
         String locationName = "Innsbruck";
 
         Location location = locationService.retrieveLocation(locationName);
-        LOGGER.info(String.valueOf(location));
 
         Favorite favorite = new Favorite();
         favorite.setUser(temp);
@@ -84,13 +79,12 @@ public class FavoriteServiceIntegrationTest {
         favoriteRepository.save(favorite);
 
         List<Favorite> favorites =   favoriteService.getSortedFavoritesList(temp);
-        LOGGER.info(favorites.toString());
 
         assertEquals(favorites.get(0).getLocation(), location);
     }
 
     @Test
-    public void testAutocomplete() {
+    public void testAutocomplete() throws EmptyLocationException {
         String query = "absam";
 
         List<Location> locations = locationService.autocomplete(query);
@@ -100,12 +94,11 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
-    public void testSaveFavorite() {
+    public void testSaveFavorite() throws EmptyLocationException {
         String query = "Vienna";
         favoriteService.saveFavorite(query);
 
         Location location =  locationService.retrieveLocation(query);
-        LOGGER.info(String.valueOf(favoriteService.getCurrentUserx()));
 
         assertEquals(favoriteService.getCurrentUserx().getUsername(), "admin");
         assertEquals(favoriteService.getCurrentLocation(), location);
@@ -141,7 +134,6 @@ public class FavoriteServiceIntegrationTest {
         createAndSaveFavorite(query3, 3, userx);
 
         List <Favorite> favorites = favoriteService.getSortedFavoritesList(userx);
-        LOGGER.info(favorites.toString());
 
         assertEquals(favorites.get(0).getLocation().getName(), query1);
         assertEquals(favorites.get(0).getPriority(), 1);
@@ -155,7 +147,7 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin")
-    public void testMoveFavoriteUp() {
+    public void testMoveFavoriteUp() throws EmptyLocationException {
         userx = userxService.getCurrentUser();
 
         String query1 = "Absam";
@@ -171,7 +163,6 @@ public class FavoriteServiceIntegrationTest {
         favoriteService.moveFavoriteUpOrDown(favorite2, true);
 
         favorites = favoriteService.getSortedFavoritesList(userx);
-        LOGGER.info(favorites.toString());
         assertEquals(favorites.get(0).getLocation().getName(), query2);
         assertEquals(favorites.get(0).getId(), favorite2.getId());
 
@@ -182,7 +173,7 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin")
-    public void testMoveFavoriteDown() {
+    public void testMoveFavoriteDown() throws EmptyLocationException {
         userx = userxService.getCurrentUser();
 
         String query1 = "Absam";
@@ -198,7 +189,6 @@ public class FavoriteServiceIntegrationTest {
         favoriteService.moveFavoriteUpOrDown(favorite1, false);
 
         favorites = favoriteService.getSortedFavoritesList(userx);
-        LOGGER.info(favorites.toString());
         assertEquals(favorites.get(0).getLocation().getName(), query2);
         assertEquals(favorites.get(0).getId(), favorite2.getId());
 

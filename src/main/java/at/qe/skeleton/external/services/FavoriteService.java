@@ -1,5 +1,6 @@
 package at.qe.skeleton.external.services;
 
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.WeatherDataField;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.Favorite;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @Service
 @Scope("application")
 public class FavoriteService {
-    private static Logger LOGGER = LoggerFactory.getLogger(FavoriteService.class);
+    private static final Logger logger = LoggerFactory.getLogger(FavoriteService.class);
     @Autowired
     private FavoriteRepository favoriteRepository;
     @Autowired
@@ -42,10 +43,10 @@ public class FavoriteService {
         int currentMaxPriority = calculatePriority(userx);
 
         if (oldPriority <= 1 && up) {
-            LOGGER.info("Cant move Location up!" + favorite);
+            // favorite cannot be moved up
             return;
         } else if (oldPriority >= currentMaxPriority && !up) {
-            LOGGER.info("Cant move Location down!" + favorite);
+            // favorite cannot be moved down
             return;
         }
 
@@ -59,10 +60,10 @@ public class FavoriteService {
             favorite.setPriority(newPriority);
             favoriteRepository.save(favorite);
 
-            LOGGER.info("after successful move, og. favorite priority: " + favorite.getPriority() + "other: " + favoriteToMove.getPriority());
+            logger.info("after successful move, og. favorite priority: {} other: {} ", favorite.getPriority(), favoriteToMove.getPriority());
         }
         else {
-            LOGGER.info("Error fetching favorites");
+            logger.info("Error fetching favorites");
             // TODO: Proper exception
         }
     }
@@ -75,37 +76,36 @@ public class FavoriteService {
      */
     public void updateFavoritePriority(Favorite favorite, int newPriority) {
         // currently not in use
+
         if (newPriority < 0) {
-            LOGGER.info("Priority is too small: " + newPriority);
             return;
         }
         int oldPriority = favorite.getPriority();
-        LOGGER.info("in updatePriority with arguments: " + favorite + "; newPrio: " + newPriority + "; oldPrio: " + oldPriority);
 
         // get current max priority for user
         currentUserx = userxService.getCurrentUser();
         int currentMaxPriority = calculatePriority(currentUserx);
         List<Favorite>  favoritesByPriority = favoriteRepository.findByUserAndPriority(currentUserx, newPriority);
-        LOGGER.info(" favorites with this priority" + favoritesByPriority.toString());
+        logger.info(" favorites with this priority" + favoritesByPriority.toString());
 
         boolean isPriorityAlreadyTaken = !favoritesByPriority.isEmpty();
 
-        LOGGER.info("currentMaxPriority for user "+ currentUserx  + ": " + currentMaxPriority);
+        logger.info("currentMaxPriority for user "+ currentUserx  + ": " + currentMaxPriority);
 
         if (newPriority > (currentMaxPriority)) {
-            LOGGER.info("priority" + newPriority + " is too high");
+
             return;
         }
         if (isPriorityAlreadyTaken) {
-            LOGGER.info("favorite priority" + newPriority + " already in use, switching!");
+
             rebasePrioritiesFromPriority(newPriority, oldPriority);
         }
 
         favorite.setPriority(newPriority);      // update priority of favorite
         favoriteRepository.save(favorite);
 
-        LOGGER.info("Successfully updated priority for favorite with ID: " + favorite);
-        LOGGER.info("Updated priority is now: " + newPriority);
+        logger.info("Successfully updated priority for favorite with ID: " + favorite);
+        logger.info("Updated priority is now: " + newPriority);
     }
 
     /**
@@ -125,7 +125,6 @@ public class FavoriteService {
             if (priority >= startingPriority && priority < endingPriority) {
                 favorite.setPriority(priority + 1);
                 favoriteRepository.save(favorite);
-                LOGGER.info("updated priority " + priority + " to " + (priority+1));
             }
         }
     }
@@ -158,7 +157,7 @@ public class FavoriteService {
      * @param query The query to autocomplete.
      * @return A list
      */
-    public List<Location> autocomplete(String query) {
+    public List<Location> autocomplete(String query) throws EmptyLocationException {
         return locationService.autocomplete(query);
     }
 
@@ -190,12 +189,12 @@ public class FavoriteService {
      *
      * @param locationName The name of the location to be saved as a favorite.
      */
-    public void saveFavorite( String locationName) {
+    public void saveFavorite( String locationName) throws EmptyLocationException {
         retrieveCurrentData(locationName);
         if (currentLocation == null || currentUserx == null) {
-            // TODO: proper handling
-            return;
+            throw new EmptyLocationException("Location does not exist!");
         }
+
         int priority = calculatePriority(currentUserx) + 1;
         Favorite favorite = new Favorite();
         favorite.setUser(currentUserx);
@@ -203,7 +202,7 @@ public class FavoriteService {
         favorite.setPriority(priority);
         favoriteRepository.save(favorite);
 
-        LOGGER.info("successfully saved favorite " + favorite + " for " + currentUserx);
+        logger.info("successfully saved favorite {}  for  {}", favorite, currentUserx);
     }
 
     /**
@@ -248,7 +247,7 @@ public class FavoriteService {
 
     public List<WeatherDataField> retrieveSelectedFields() {
         List<WeatherDataField> selectedFields = userxService.getSelectedWeatherFieldsForUser();
-        LOGGER.info("selected fields retrieved: " + selectedFields);
+        logger.info("selected fields retrieved: " + selectedFields);
         return selectedFields;
     }
 

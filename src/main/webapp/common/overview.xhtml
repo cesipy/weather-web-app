@@ -23,7 +23,7 @@
             <p:dataTable id="weathers" var="weather" value="#{favoriteOverviewController.currentWeatherDataList}">
                 <f:facet name="header">
                     <div class="flex justify-content-between align-items-center">
-                        List of Products
+                        Overview
 
                         <div style="margin-top: 10px; text-align: right;">
                             <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
@@ -104,6 +104,10 @@
                 </p:column>
 
             </p:dataTable>
+
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
         </div>
             <div style="margin-top: 15px; margin-left: 10px; text-align: left;">
                 <p:button value="Manage Favorites"
@@ -113,9 +117,10 @@
                 <p:commandButton icon="pi pi-refresh"
                                  title="Refresh"
                                  action="#{favoriteOverviewController.retrieveFavorites}"
-                                 update="refreshForm"
+                                 update="refreshForm messages"
                                  style="margin-top: 10px;" />
             </div>
+
 
         </h:form>
     </ui:define>

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -25,7 +24,7 @@ import java.util.Objects;
 @Scope("application")
 public class LocationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationService.class);
 
     @Autowired
     private LocationRepository locationRepository;
@@ -42,8 +41,12 @@ public class LocationService {
      * @param name query for autocompletion.
      * @return list of locations matching the provided query.
      */
-    public List<Location> autocomplete(String name) {
-        return locationRepository.findByNameStartingWithIgnoreCase(name);
+    public List<Location> autocomplete(String name) throws EmptyLocationException {
+        if (name != null && !name.trim().isEmpty()) {
+            return locationRepository.findByNameStartingWithIgnoreCase(name);
+        }
+        String message = String.format("The given location: %s is empty!", name);
+        throw new EmptyLocationException(message);
     }
 
     public Location retrieveLocationByExactName(String name) {
@@ -79,9 +82,9 @@ public class LocationService {
      * Initializes the service by populating the database with location data.
      */
     public void init() {
-        LOGGER.info("starting population of database");
+        logger.info("Starting population of database");
         loadDataFromJson(filePath);
-        LOGGER.info("populated database");
+        logger.info("Populated database");
     }
 
     public String getFilePath() {
