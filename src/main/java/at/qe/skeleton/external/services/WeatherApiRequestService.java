@@ -45,17 +45,20 @@ public class WeatherApiRequestService {
      * @return the current and forecast weather
      */
     public CurrentAndForecastAnswerDTO retrieveCurrentAndForecastWeather(@Min(-90) @Max(90) double latitude,
-                                                                         @Min(-180) @Max(180) double longitude) {
-
-        ResponseEntity<CurrentAndForecastAnswerDTO> responseEntity = this.restClient.get()
-                .uri(UriComponentsBuilder.fromPath(CURRENT_AND_FORECAST_URI)
-                        .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
-                        .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
-                        .build().toUriString())
-                .retrieve()
-                .toEntity(CurrentAndForecastAnswerDTO.class);
-        // todo introduce error handling using responseEntity.getStatusCode.isXXXError
-        return responseEntity.getBody();
+                                                                         @Min(-180) @Max(180) double longitude) throws ApiQueryException {
+        try {
+            ResponseEntity<CurrentAndForecastAnswerDTO> responseEntity = this.restClient.get()
+                    .uri(UriComponentsBuilder.fromPath(CURRENT_AND_FORECAST_URI)
+                            .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
+                            .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
+                            .build().toUriString())
+                    .retrieve()
+                    .toEntity(CurrentAndForecastAnswerDTO.class);
+            // todo introduce error handling using responseEntity.getStatusCode.isXXXError
+            return responseEntity.getBody();
+        } catch (Exception e) {
+            throw new ApiQueryException("Failed to retrieve weather data from API!");
+        }
     }
 
     /**
