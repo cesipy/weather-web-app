@@ -9,9 +9,9 @@
         <h:form id="subscriptionForm">
             <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
 
-            <h:commandButton value="#{subscriptionBean.buttonText}" action="#{subscriptionBean.toggleSubscription}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-                <f:ajax render="subscriptionForm messages" />
-            </h:commandButton>
+            <p:commandButton value="#{subscriptionBean.buttonText}" action="#{subscriptionBean.toggleSubscription}" update="@form">
+                <p:ajax render="subscriptionForm messages" />
+            </p:commandButton>
 
             <h:outputText value=" " style="margin-right: 10px;" />
 
