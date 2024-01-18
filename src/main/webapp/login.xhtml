@@ -23,8 +23,24 @@
                     <span class="ui-button-text">Register</span>
                 </button>
 
+                <p:commandButton value="Reset Password" onclick="PF('resetPasswordDialog').show()" />
             </h:panelGrid>
         </form>
 
+        <p:dialog header="Reset Password" widgetVar="resetPasswordDialog" resizable="false">
+            <h:form>
+                <p:outputLabel for="username" value="username:"/>
+                <p:inputText id="username" value="#{userDetailController.user.username}" required="true" />
+
+                <p:commandButton value="Reset" action="#{userDetailController.resetOldPassword}"
+                                 oncomplete="PF('resetPasswordDialog').hide(); PF('helloWorldDialog').show()" />
+
+                <p:commandButton value="Cancel" onclick="PF('resetPasswordDialog').hide()" />
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Reset!" widgetVar="helloWorldDialog" resizable="false">
+            <h:outputText value="You got an email with a temporary password!" />
+        </p:dialog>
     </ui:define>
 </ui:composition>

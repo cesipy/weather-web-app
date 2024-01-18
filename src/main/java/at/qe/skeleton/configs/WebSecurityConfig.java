@@ -52,6 +52,8 @@ public class WebSecurityConfig {
                             .requestMatchers(new AntPathRequestMatcher("/jakarta.faces.resource/**")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/register.**")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/register/**")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/resetPassword.xhtml.**")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/resetPassword.xhtml/**")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/error/**")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAnyAuthority("ADMIN")
                             .requestMatchers(new AntPathRequestMatcher("/secured/**")).hasAnyAuthority(ADMIN, MANAGER, EMPLOYEE)
