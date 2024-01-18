@@ -1,6 +1,7 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.LocationService;
@@ -56,12 +57,12 @@ public class LocationController {
 
     private void searchLocation(String locationName) {
         try {
-            List<Location> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
+            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
 
             // Check if the list is not empty
             if (!answer.isEmpty()) {
                 // only process the first entry in the List of LocationDTOs
-                Location firstLocation = answer.get(0);
+                Location firstLocation = locationApiRequestService.convertLocationDTOtoLocation(answer.get(0));
 
                 ObjectMapper mapper = new ObjectMapper()
                         .findAndRegisterModules()
@@ -82,7 +83,7 @@ public class LocationController {
             logger.error("Error in request in locationApi", e);
             // TODO better handling of Exception
             throw new RuntimeException(e);
-        } catch (ApiQueryException e) {
+        } catch (ApiQueryException | EmptyLocationException e) {
             logger.info(e.getMessage());
         }
     }

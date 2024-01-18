@@ -2,6 +2,7 @@ package at.qe.skeleton.external.services;
 
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.repositories.LocationRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +29,8 @@ public class LocationService {
 
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired
+    private LocationApiRequestService locationApiRequestService;
 
     // points to "src/main/resources/owm_city_list.json"
     // json file with cities is from: https://github.com/manifestinteractive/openweathermap-cities
@@ -53,8 +56,14 @@ public class LocationService {
         return locationRepository.findFirstByName(name);
     }
 
-    public Location retrieveLocation(String name) {
-        return locationRepository.findFirstByNameStartingWithIgnoreCase(name);
+    public Location retrieveLocation(String name) throws EmptyLocationException, ApiQueryException {
+        Location location =  locationRepository.findFirstByNameStartingWithIgnoreCase(name);
+
+        if (location == null) {
+            List<LocationDTO> locationDTOS =  locationApiRequestService.retrieveLocations(name, 1);
+            return locationApiRequestService.convertLocationDTOtoLocation(locationDTOS.get(0));
+        }
+        return location;
     }
 
     public List<Location> getAllLocations(){

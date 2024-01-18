@@ -32,10 +32,10 @@ public class LocationServiceTest {
 
     @Test
     public void testAutocompleteHall() throws EmptyLocationException {
-        String query = "Hall";  // for simply "Hall" "Hallau" is expected.
+        String query = "Hall";  // for simply "Hall" "Hall in Tirol" is expected.
         List<Location> locations = locationService.autocomplete(query);
         Location firstLocation = locations.get(0);
-        assertEquals(firstLocation.getName(), "Hallau");
+        assertEquals(firstLocation.getName(), "Hall in Tirol");
     }
 
     @Test
