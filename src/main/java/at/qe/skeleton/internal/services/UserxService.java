@@ -194,4 +194,11 @@ public class UserxService {
 
     }
 
+    public Userx passwordService(String username, String password){
+        Userx user = userRepository.findFirstByUsername(username);
+        user.setPassword(password);
+        saveUser(user);
+        return user;
+    }
+
 }
