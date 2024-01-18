@@ -5,11 +5,15 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/WEB-INF/templates/main.xhtml">
 
     <ui:define name="content">
         <h:form>
             <p:panel header="Location Search">
+                <f:facet name="header">
+                    Search
+                </f:facet>
                 <p:autoComplete value="#{searchWeatherController.locationToSearch}"
                                 completeMethod="#{locationControllerDb.autocomplete}"
                                 maxResults="5"
