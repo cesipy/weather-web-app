@@ -100,6 +100,8 @@ public class UserxService {
         return userRepository.findFirstByUsername(auth.getName());
     }
 
+    public  Userx getUserByUsername(String username){return userRepository.findFirstByUsername(username);}
+
     /**
      * Removes a specified role from the roles of a user.
      *

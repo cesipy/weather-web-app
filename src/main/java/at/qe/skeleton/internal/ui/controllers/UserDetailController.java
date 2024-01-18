@@ -91,18 +91,25 @@ public class UserDetailController implements Serializable {
      */
 
     public Userx doRegister(){
-        this.userService.saveUser(user);
+        try {
+            this.userService.saveUser(user);
 
-        Set<UserxRole> roles = new HashSet<>();
-        roles.add(UserxRole.EMPLOYEE);
-        user.setRoles(roles);
-        user.setPassword(doEncodePassword(user.getPassword()));
-        user.setEnabled(true);
-        user.setCreateUser(user);
-        Userx saved = this.userService.saveUser(user);
+            Set<UserxRole> roles = new HashSet<>();
+            roles.add(UserxRole.EMPLOYEE);
+            user.setRoles(roles);
+            user.setPassword(doEncodePassword(user.getPassword()));
+            user.setEnabled(true);
+            user.setCreateUser(user);
 
-        redirectToLogin();
-        return saved;
+            this.userService.saveUser(user);
+            Userx saved = this.userService.loadUser(user.getUsername());
+
+            redirectToLogin();
+            return saved;
+        } catch(Exception e){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", e.getMessage()));
+            return null;
+        }
     }
 
 
