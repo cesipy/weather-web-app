@@ -78,7 +78,6 @@ public class UserDetailController implements Serializable {
 
     public Userx doRegister(){
         try {
-            if(userService.getUserByUsername(user.getUsername())!=null)
             this.userService.saveUser(user);
 
             Set<UserxRole> roles = new HashSet<>();
@@ -87,7 +86,9 @@ public class UserDetailController implements Serializable {
             user.setPassword(doEncodePassword(user.getPassword()));
             user.setEnabled(true);
             user.setCreateUser(user);
-            Userx saved = this.userService.saveUser(user);
+
+            this.userService.saveUser(user);
+            Userx saved = this.userService.loadUser(user.getUsername());
 
             redirectToLogin();
             return saved;
@@ -106,7 +107,7 @@ public class UserDetailController implements Serializable {
         }
     }
 
-    private String doEncodePassword(String password){
+    public String doEncodePassword(String password){
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
     }
