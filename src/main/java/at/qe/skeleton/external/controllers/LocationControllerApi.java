@@ -1,6 +1,7 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,8 +70,11 @@ public class LocationControllerApi {
                 logger.warn("The list of locations is empty.");
                 // TODO: Error message when no location is found
             }
+        } catch (ApiQueryException e) {
+            logger.info("Error in LocationApi. {}", e.getMessage());
+            // TODO improve handling here or merge with locaton controllerDB
         } catch (JsonProcessingException e) {
-            logger.error("Error in request in locationApi", e);
+            logger.error("Error in request in locationApi. {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }

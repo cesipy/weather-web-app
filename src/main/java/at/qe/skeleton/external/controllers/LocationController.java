@@ -1,6 +1,7 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.internal.ui.beans.LocationApiDemoBean;
@@ -81,6 +82,8 @@ public class LocationController {
             logger.error("Error in request in locationApi", e);
             // TODO better handling of Exception
             throw new RuntimeException(e);
+        } catch (ApiQueryException e) {
+            logger.info(e.getMessage());
         }
     }
 
