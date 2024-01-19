@@ -1,6 +1,7 @@
 package at.qe.skeleton.tests;
 
 import at.qe.skeleton.internal.model.CreditCard;
+import at.qe.skeleton.internal.model.Invoice;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -39,6 +40,15 @@ public class EqualsImplementationTest {
         Userx user2 = new Userx();
         user2.setUsername("user2");
         EqualsVerifier.forClass(CreditCard.class).withPrefabValues(Userx.class, user1, user2).suppress(Warning.STRICT_INHERITANCE, Warning.ALL_FIELDS_SHOULD_BE_USED).verify();
+    }
+
+    @Test
+    public void testInvoiceEqualsContract() {
+        Userx user1 = new Userx();
+        user1.setUsername("user1");
+        Userx user2 = new Userx();
+        user2.setUsername("user2");
+        EqualsVerifier.forClass(Invoice.class).withPrefabValues(Userx.class, user1, user2).suppress(Warning.STRICT_INHERITANCE, Warning.ALL_FIELDS_SHOULD_BE_USED).verify();
     }
 
 }
