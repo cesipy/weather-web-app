@@ -23,4 +23,8 @@ public class CreditCardService {
         creditCard.setBalance(creditCard.getBalance()-price);
         saveCreditCard(creditCard);
     }
+
+    public CreditCard getCreditCardById(String creditcard){
+        return creditCardRepository.findFirstByCreditCard(creditcard);
+    }
 }
