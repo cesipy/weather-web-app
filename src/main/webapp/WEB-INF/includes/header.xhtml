@@ -38,14 +38,12 @@
                         <p:menuitem value="Manage Favorites" url="/common/favorites.xhtml"/>
                     </p:submenu>
 
-                    //neu
 
                     <p:submenu label="Premium Submenu" rendered="#{sessionInfoBean.loggedIn}" >
                         <p:menuitem value="(un)subscribe" url="/premium/abonnieren.xhtml" />
                         <p:menuitem value="payment information" url="/premium/paymentInfo.xhtml"/>
                     </p:submenu>
 
-                    //
                     
                     <p:menuitem value="Login" url="/login.xhtml" rendered="#{!sessionInfoBean.loggedIn}"/>
                     <p:menuitem value="Logout" url="/logout" rendered="#{sessionInfoBean.loggedIn}"/>                    
