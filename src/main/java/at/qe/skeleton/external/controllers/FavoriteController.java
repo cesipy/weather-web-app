@@ -72,7 +72,7 @@ public class FavoriteController {
         }
         catch (EmptyLocationException e) {
             String warnMessage = "Cannot find city: %s".formatted(locationName);
-            showWarnMessage(warnMessage);
+            showInfoMessage(warnMessage);
         }
         catch (ApiQueryException e) {
             String warnMessage = "Error occurred while fetching weather data";
@@ -212,6 +212,16 @@ public class FavoriteController {
                 new FacesMessage(FacesMessage.SEVERITY_WARN,
                         "Warning:",
                         message));
+    }
+
+    /**
+     * Displays an informative message in the user interface.
+     *
+     * @param message The warning message to be shown.
+     */
+    public void showInfoMessage(String message) {
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
     }
 
     public List<Favorite> getFavorites() {

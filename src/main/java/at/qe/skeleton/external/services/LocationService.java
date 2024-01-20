@@ -56,9 +56,11 @@ public class LocationService {
         return locationRepository.findFirstByName(name);
     }
 
+
     public Location retrieveLocation(String name) throws EmptyLocationException, ApiQueryException {
         Location location =  locationRepository.findFirstByNameStartingWithIgnoreCase(name);
 
+        // if location is also null in the api call, EmptyLocationException is thrown
         if (location == null) {
             List<LocationDTO> locationDTOS =  locationApiRequestService.retrieveLocations(name, 1);
             return locationApiRequestService.convertLocationDTOtoLocation(locationDTOS.get(0));

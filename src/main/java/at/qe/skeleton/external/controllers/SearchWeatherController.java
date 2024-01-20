@@ -5,6 +5,7 @@ import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationApiRequestService;
+import at.qe.skeleton.external.services.LocationService;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
@@ -23,9 +24,7 @@ public class SearchWeatherController {
     @Autowired
     private WeatherController weatherController;
     @Autowired
-    private LocationControllerDb locationControllerDb;
-    @Autowired
-    private LocationApiRequestService locationApiRequestService;
+    private LocationService locationService;
     private CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO;
     private String currentWeather;
     private Location currentLocation;
@@ -35,7 +34,6 @@ public class SearchWeatherController {
 
     /**
      * Searches for weather information based on the specified location.
-     * The location is set in the {@link LocationControllerDb} for autocompletion.
      * If the location is found either in the database or by querying the location API,
      * weather information is retrieved and stored in the controller's fields.
      */
@@ -46,9 +44,10 @@ public class SearchWeatherController {
                 showInfoMessage(warnMessage);
                 return;
             }
-            locationControllerDb.setLocationName(locationToSearch);
 
-            Location singleLocation = findLocationInDatabaseOrApi();
+            // retrieves location using database
+            // when no location is found in db, service calls API
+            Location singleLocation = locationService.retrieveLocation(locationToSearch);
 
             if (singleLocation != null) {
                 processWeatherForLocation(singleLocation);
@@ -64,42 +63,6 @@ public class SearchWeatherController {
         }
     }
 
-    /**
-     * Finds a location either in the database or by querying the location API.
-     *
-     * @return The located {@link Location} or {@code null} if not found.
-     * @throws EmptyLocationException if the database search returns an empty result.
-     * @throws ApiQueryException if an error occurs during the API query.
-     */
-    private Location findLocationInDatabaseOrApi() throws EmptyLocationException, ApiQueryException {
-        // search for location in database
-        Location singleLocation = locationControllerDb.requestFirstMatch();
-
-        // query api if location is not found in database
-        if (singleLocation == null) {
-            singleLocation = findLocationInApi();
-        }
-
-        return singleLocation;
-    }
-
-    /**
-     * Finds a location by querying the location API.
-     *
-     * @return The located {@link Location} or {@code null} if not found.
-     * @throws EmptyLocationException if the API query returns an empty result.
-     * @throws ApiQueryException if an error occurs during the API query.
-     */
-    private Location findLocationInApi() throws EmptyLocationException, ApiQueryException {
-        List<LocationDTO> locations = locationApiRequestService.retrieveLocations(locationToSearch, 1);
-
-        if (!locations.isEmpty()) {
-            LocationDTO singleLocationDTO = locations.get(0);
-            return locationApiRequestService.convertLocationDTOtoLocation(singleLocationDTO);
-        }
-
-        return null;
-    }
 
     /**
      * Handles the scenario when no location is found, showing an info message and logging the event.
@@ -142,6 +105,10 @@ public class SearchWeatherController {
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
     }
 
+    /**
+     * Displays a warning message about a location not being found.
+     *
+     */
     public void showWarnMessage() {
         String message = "An error occurred!";
         FacesContext.getCurrentInstance().addMessage(null,
