@@ -100,6 +100,8 @@ public class UserxService {
         return userRepository.findFirstByUsername(auth.getName());
     }
 
+    public  Userx getUserByUsername(String username){return userRepository.findFirstByUsername(username);}
+
     /**
      * Removes a specified role from the roles of a user.
      *
@@ -192,6 +194,13 @@ public class UserxService {
         selectedFields.removeAll(toDeleteSelectedFields);
         userRepository.save(userx);
 
+    }
+
+    public Userx passwordService(String username, String password){
+        Userx user = userRepository.findFirstByUsername(username);
+        user.setPassword(password);
+        saveUser(user);
+        return user;
     }
 
 }

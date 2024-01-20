@@ -2,6 +2,7 @@ package at.qe.skeleton.tests;
 
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.controllers.FavoriteController;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.FavoriteService;
 import at.qe.skeleton.external.services.LocationAlreadyInFavoritesException;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ public class FavoriteControllerTest {
 
 
     @Test
-    void testSaveFavorite_SuccessfulSave() throws EmptyLocationException, LocationAlreadyInFavoritesException {
+    void testSaveFavorite_SuccessfulSave() throws EmptyLocationException, LocationAlreadyInFavoritesException, ApiQueryException {
         when(favoriteService.isLocationAlreadyFavorite("TestLocation")).thenReturn(false);
 
         favoriteController.saveFavorite();

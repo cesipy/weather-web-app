@@ -7,9 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.io.IOException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -24,18 +22,17 @@ public class UserDetailControllerTest {
     public void setUp() {MockitoAnnotations.initMocks(this);}
 
     @Test
-    public void testDoRegister() throws IOException {
+    public void testDoRegister(){
         Userx user = new Userx();
         user.setUsername("testUsername");
         user.setPassword("testPassword");
         user.setEmail("testEmail");
-        user.setPhone("testPhoneNumber");
         user.setFirstName("testFirstname");
         user.setLastName("testLastname");
 
         doNothing().when(userDetailController).redirectToLogin();
         when(userxService.loadUser("testUsername")).thenReturn(user);
-
+        when(userDetailController.doEncodePassword(user.getPassword())).thenReturn(user.getPassword());
 
         userDetailController.setUser(user);
 
@@ -43,12 +40,11 @@ public class UserDetailControllerTest {
 
         Userx saved = userDetailController.doRegister();
 
-        assertEquals("testUsername", user.getUsername());
-        assertEquals("testEmail", user.getEmail());
-        assertEquals("testPhoneNumber", user.getPhone());
-        assertEquals("testFirstname", user.getFirstName());
-        assertEquals("testLastname", user.getLastName());
+        assertEquals("testUsername", saved.getUsername());
+        assertEquals("testEmail", saved.getEmail());
+        assertEquals("testPassword", saved.getPassword());
+        assertEquals("testFirstname", saved.getFirstName());
+        assertEquals("testLastname", saved.getLastName());
         assertEquals(UserxRole.EMPLOYEE, user.getRoles().iterator().next());
     }
-
 }

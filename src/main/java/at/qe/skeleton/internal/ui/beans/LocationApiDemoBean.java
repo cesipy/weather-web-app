@@ -6,6 +6,7 @@ import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswer
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.services.WeatherDataService;
@@ -73,13 +74,15 @@ public class LocationApiDemoBean {
         if(getQuery_name()!= null) {
             try {
 
-                List<Location> answer = this.locationApiRequestService.retrieveLocations(getQuery_name(), getLIMIT());
+                List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(getQuery_name(), getLIMIT());
 
                 // Check if the list is not empty
                 if (!answer.isEmpty()) {
                     // only process first entry in List of LocationDTOs
 
-                    Location firstLocation = answer.get(0);
+
+                    Location firstLocation = locationApiRequestService.convertLocationDTOtoLocation(answer.get(0));
+
                     Pageable last_eight_entries = PageRequest.of(0, 8);
                     Pageable last_fourty_eight_entries = PageRequest.of(0, 2);
                     List<DailyWeatherData> latestData = dailyWeatherDataRepository.findLatestByLocation(firstLocation.getName(), last_eight_entries);

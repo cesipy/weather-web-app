@@ -28,6 +28,7 @@ public class FavoriteService {
     private LocationService locationService;
     private Userx currentUserx;
     private Location currentLocation;
+    private LocationApiRequestService locationApiRequestService;
 
 
     /**
@@ -161,7 +162,7 @@ public class FavoriteService {
         return locationService.autocomplete(query);
     }
 
-    public boolean isLocationAlreadyFavorite(String locationName) {
+    public boolean isLocationAlreadyFavorite(String locationName) throws EmptyLocationException, ApiQueryException {
         retrieveCurrentData(locationName);
 
         List<Favorite> favorites = favoriteRepository.findByUser(currentUserx);
@@ -179,7 +180,7 @@ public class FavoriteService {
      *
      * @param locationName The name of the location to retrieve data for.
      */
-    private void retrieveCurrentData(String locationName) {
+    private void retrieveCurrentData(String locationName) throws EmptyLocationException, ApiQueryException {
         currentUserx = userxService.getCurrentUser();
         currentLocation = locationService.retrieveLocation(locationName);
     }
@@ -189,7 +190,8 @@ public class FavoriteService {
      *
      * @param locationName The name of the location to be saved as a favorite.
      */
-    public void saveFavorite( String locationName) throws EmptyLocationException {
+
+    public void saveFavorite( String locationName) throws EmptyLocationException, ApiQueryException {
         retrieveCurrentData(locationName);
         if (currentLocation == null || currentUserx == null) {
             throw new EmptyLocationException("Location does not exist!");

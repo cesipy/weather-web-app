@@ -69,10 +69,16 @@ public class FavoriteController {
     public void saveFavorite() {
         try {
             validateAndSaveFavorite();
-        } catch (EmptyLocationException e) {
+        }
+        catch (EmptyLocationException e) {
             String warnMessage = "Cannot find city: %s".formatted(locationName);
+            showInfoMessage(warnMessage);
+        }
+        catch (ApiQueryException e) {
+            String warnMessage = "Error occurred while fetching weather data";
             showWarnMessage(warnMessage);
         }
+
         catch (Exception e) {
             showWarnMessage("An error occurred.");
             logger.error("Error saving favorite", e);
@@ -85,7 +91,9 @@ public class FavoriteController {
      *
      * @throws EmptyLocationException if the location name is null or empty after trimming.
      */
-    private void validateAndSaveFavorite() throws EmptyLocationException {
+
+    private void validateAndSaveFavorite() throws EmptyLocationException, ApiQueryException {
+
         if (locationName == null || locationName.trim().isEmpty()) {
             String warnMessage = "Please enter a city.";
             showWarnMessage(warnMessage);
@@ -189,7 +197,7 @@ public class FavoriteController {
      */
     public List<Location> autocomplete(String query) {
         try {
-            logger.info(query);
+
             return favoriteService.autocomplete(query);
         } catch (EmptyLocationException e) {
             logger.info("exception in autocomplete!");
@@ -207,6 +215,17 @@ public class FavoriteController {
                 new FacesMessage(FacesMessage.SEVERITY_WARN,
                         "Warning:",
                         message));
+
+    }
+
+    /**
+     * Displays an informative message in the user interface.
+     *
+     * @param message The warning message to be shown.
+     */
+    public void showInfoMessage(String message) {
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
     }
 
     public List<Favorite> getFavorites() {

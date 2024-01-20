@@ -2,15 +2,16 @@ package at.qe.skeleton.internal.ui.controllers;
 
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
+import at.qe.skeleton.internal.services.EmailService;
+import at.qe.skeleton.internal.services.UserxDetailsService;
 import at.qe.skeleton.internal.services.UserxService;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
-import jakarta.annotation.ManagedBean;
-import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
@@ -32,6 +33,12 @@ public class UserDetailController implements Serializable {
 
     @Autowired
     private UserxService userService;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private UserxDetailsService userxDetailsService;
+    public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private String tempPassword;
 
     /**
      * Attribute to cache the currently displayed user
@@ -49,6 +56,13 @@ public class UserDetailController implements Serializable {
     public void setUser(Userx user) {
         this.user = user;
         doReloadUser();
+    }
+    public String getTempPassword() {
+        return tempPassword;
+    }
+
+    public void setTempPassword(String tempPassword) {
+        this.tempPassword = tempPassword;
     }
 
     /**
@@ -77,19 +91,68 @@ public class UserDetailController implements Serializable {
      */
 
     public Userx doRegister(){
-        this.userService.saveUser(user);
+        try {
+            this.userService.saveUser(user);
 
-        Set<UserxRole> roles = new HashSet<>();
-        roles.add(UserxRole.EMPLOYEE);
-        user.setRoles(roles);
-        user.setPassword(doEncodePassword(user.getPassword()));
-        user.setEnabled(true);
-        user.setCreateUser(user);
-        Userx saved = this.userService.saveUser(user);
+            Set<UserxRole> roles = new HashSet<>();
+            roles.add(UserxRole.EMPLOYEE);
+            user.setRoles(roles);
+            user.setPassword(doEncodePassword(user.getPassword()));
+            user.setEnabled(true);
+            user.setCreateUser(user);
 
-        redirectToLogin();
-        return saved;
+            this.userService.saveUser(user);
+            Userx saved = this.userService.loadUser(user.getUsername());
+
+            redirectToLogin();
+            return saved;
+        } catch(Exception e){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", e.getMessage()));
+            return null;
+        }
     }
+
+
+    /**
+     * Action to delete the currently displayed user.
+     */
+    public void doDeleteUser() {
+        this.userService.deleteUser(user);
+        user = null;
+    }
+    public void resetOldPassword(){
+        if(user.getUsername()!=null){
+            tempPassword = generatePassword();
+            Userx user2 = userService.passwordService(user.getUsername(), doEncodePassword(tempPassword));
+
+            String sendTo = user2.getEmail();
+            String subject = "Reset password";
+            String body ="Redirect to this Page and Enter the new Passwort to reset the old one: http://localhost:8080/resetPassword.xhtml\n Your Temporary Passwort is: "+tempPassword;
+            emailService.sendEmail(sendTo, subject, body);
+        }
+    }
+
+   public String generatePassword() {
+        int passwordLength = 8;
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < passwordLength; i++) {
+            int digit = random.nextInt(10);
+            password.append(digit);
+        }
+        return password.toString();
+   }
+
+   public void saveResetPasswort(){
+        if(passwordEncoder.matches(tempPassword, userxDetailsService.loadUserByUsername(user.getUsername()).getPassword())){
+            userService.passwordService(user.getUsername(), doEncodePassword(user.getPassword()));
+            redirectToLogin();
+        }else{
+            //real Exception Handling is missing
+            System.out.println("Wrong Password");
+        }
+   }
+
     public void redirectToLogin(){
         FacesContext facesContext = FacesContext.getCurrentInstance();
         ExternalContext externalContext = facesContext.getExternalContext();
@@ -99,17 +162,6 @@ public class UserDetailController implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ve.getMessage(), null));
         }
     }
+    public String doEncodePassword(String password){return passwordEncoder.encode(password);}
 
-    private String doEncodePassword(String password){
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.encode(password);
-    }
-
-    /**
-     * Action to delete the currently displayed user.
-     */
-    public void doDeleteUser() {
-        this.userService.deleteUser(user);
-        user = null;
-    }
 }

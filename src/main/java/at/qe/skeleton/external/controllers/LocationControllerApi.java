@@ -1,6 +1,7 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,13 +47,15 @@ public class LocationControllerApi {
     private void searchLocation(String locationName) {
         try {
 
-            List<Location> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
+
+            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
 
             // Check if the list is not empty
             if (!answer.isEmpty()) {
 
                 // only process the first entry in the List of LocationDTOs
-                Location firstLocation = answer.get(0);
+
+                Location firstLocation = locationApiRequestService.convertLocationDTOtoLocation(answer.get(0));
 
                 ObjectMapper mapper = new ObjectMapper()
                         .findAndRegisterModules()
@@ -76,6 +79,8 @@ public class LocationControllerApi {
         } catch (JsonProcessingException e) {
             logger.error("Error in request in locationApi. {}", e.getMessage());
             throw new RuntimeException(e);
+        } catch (EmptyLocationException e) {
+            logger.info("Error in LocationApi. {}", e.getMessage());
         }
     }
 

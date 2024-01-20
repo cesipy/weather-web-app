@@ -3,6 +3,7 @@ package at.qe.skeleton.tests;
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.FavoriteService;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.internal.model.Userx;
@@ -43,7 +44,7 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
-    public void testGetFavorites() {
+    public void testGetFavorites() throws EmptyLocationException, ApiQueryException {
         Userx temp = userxService.getCurrentUser();
 
         String locationName = "Innsbruck";
@@ -64,7 +65,7 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "user1", authorities =  {"EMPLOYEE"})
-    public void testGetFavoritesNonAdmin() {
+    public void testGetFavoritesNonAdmin() throws EmptyLocationException, ApiQueryException {
         Userx temp = userxService.getCurrentUser();
 
         String locationName = "Innsbruck";
@@ -94,7 +95,8 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
-    public void testSaveFavorite() throws EmptyLocationException {
+
+    public void testSaveFavorite() throws EmptyLocationException, ApiQueryException {
         String query = "Vienna";
         favoriteService.saveFavorite(query);
 
@@ -106,7 +108,7 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "user1")
-    public void testIsLocationAlreadyFavorite() {
+    public void testIsLocationAlreadyFavorite() throws EmptyLocationException, ApiQueryException {
         String query1 = "Absam";
         Userx userx   = userxService.getCurrentUser();
         Location location = locationService.retrieveLocation(query1);
@@ -123,7 +125,7 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "user1")
-    public void testGetSortedFavoritesList() {
+    public void testGetSortedFavoritesList() throws EmptyLocationException, ApiQueryException {
         userx = userxService.getCurrentUser();
         String query1 = "Innsbruck";
         String query2 = "Vienna";
@@ -147,7 +149,8 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin")
-    public void testMoveFavoriteUp() throws EmptyLocationException {
+    public void testMoveFavoriteUp() throws EmptyLocationException, ApiQueryException {
+
         userx = userxService.getCurrentUser();
 
         String query1 = "Absam";
@@ -173,7 +176,8 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin")
-    public void testMoveFavoriteDown() throws EmptyLocationException {
+    public void testMoveFavoriteDown() throws EmptyLocationException, ApiQueryException {
+
         userx = userxService.getCurrentUser();
 
         String query1 = "Absam";
@@ -196,7 +200,7 @@ public class FavoriteServiceIntegrationTest {
         assertEquals(favorites.get(1).getId(), favorite1.getId());
     }
 
-    public Favorite createAndSaveFavorite(String locationName, int priority, Userx userx) {
+    public Favorite createAndSaveFavorite(String locationName, int priority, Userx userx) throws EmptyLocationException, ApiQueryException {
         Location location = locationService.retrieveLocation(locationName);
 
         Favorite favorite = new Favorite();

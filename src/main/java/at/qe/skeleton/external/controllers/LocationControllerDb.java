@@ -34,15 +34,9 @@ public class LocationControllerDb {
     public List<Location> autocomplete(String query)  {
         try {
 
-
-            if (Objects.equals(locationName, "")) {
-                logger.info("Query is null!");
-            }
-
             List<Location> locations = locationService.autocomplete(query);
 
             if (locations.isEmpty()) {
-                logger.info("empty location list in autocomplete!");
                 return Collections.emptyList();
             }
 

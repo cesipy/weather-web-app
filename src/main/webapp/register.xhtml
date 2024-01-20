@@ -7,9 +7,13 @@
                 template="/WEB-INF/templates/main.xhtml">
 
     <ui:define name="content">
-        <h:form  id="register_form" action="#{request.contextPath}/login" method="post">
-            <h:panelGrid columns="3">
-                <p:outputLabel for="username" value="Username::"/>
+        <h:form  id="register_form" action="#{request.contextPath}/login" method="post" style="text-align: center; margin-top: 10%;">
+            <div style="width: 400px; margin: auto; padding: 20px; background-color: #f0f0f0; border-radius: 5px;">
+
+                <h:outputText value="Please fill out to register!" style="font-size: 18px; font-weight: bold; margin-bottom: 20px; display: block;" />
+
+                <h:panelGrid columns="3">
+                <p:outputLabel for="username" value="Username:"/>
                 <p:inputText id="username" value="#{userDetailController.user.username}" required="true" />
                 <p:message for="username" style="color: red" />
 
@@ -25,17 +29,20 @@
                 <p:inputText id="email" value="#{userDetailController.user.email}" required="true" />
                 <p:message for="email" style="color: red" />
 
-                <p:outputLabel for="phone" value="Phone-Nr.::"/>
-                <p:inputText id="phone" value="#{userDetailController.user.phone}" required="true" />
+                <p:outputLabel for="phone" value="Phone-Nr.:"/>
+                <p:inputText id="phone" value="#{userDetailController.user.phone}"/>
                 <p:message for="phone" style="color: red" />
 
-                <p:outputLabel for="password" value="Passwort:"/>
-                <p:inputText id="password" type = "password" value="#{userDetailController.user.password}" required="true" />
+                <p:outputLabel for="password" value="Password:"/>
+                <p:password id="password" value="#{userDetailController.user.password}" required="true" feedback="true"/>
                 <p:message for="password" style="color: red" />
 
                 <p:commandButton value="Register" action="#{userDetailController.doRegister}" update="@form"  />
 
+                <h:messages id="messages" globalOnly="true" showDetail="true" />
+
             </h:panelGrid>
+            </div>
         </h:form>
     </ui:define>
 
