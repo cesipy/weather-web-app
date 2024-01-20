@@ -4,6 +4,7 @@ import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.services.UserxService;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,5 +37,12 @@ public class UserListController implements Serializable {
      public List<Userx> getPremiumUsers() {
         return new ArrayList<>(userService.findPremiumUser());
     }
+
+    public List<String> getAllRoles() {
+        List<String> allRoles = Arrays.asList("ADMIN", "MANAGER", "EMPLOYEE", "PREMIUM");
+        return allRoles;
+    }
+
+
 
 }

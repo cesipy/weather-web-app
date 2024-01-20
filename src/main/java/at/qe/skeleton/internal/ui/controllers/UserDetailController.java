@@ -40,6 +40,25 @@ public class UserDetailController implements Serializable {
     public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private String tempPassword;
 
+    public String getNewUsername() {
+        return newUsername;
+    }
+
+    public void setNewUsername(String newUsername) {
+        this.newUsername = newUsername;
+    }
+
+    public String getNewRole() {
+        return newRole;
+    }
+
+    public void setNewRole(String newRole) {
+        this.newRole = newRole;
+    }
+
+    private String newUsername;
+    private String newRole;
+
     /**
      * Attribute to cache the currently displayed user
      */
@@ -116,10 +135,7 @@ public class UserDetailController implements Serializable {
     /**
      * Action to delete the currently displayed user.
      */
-    public void doDeleteUser() {
-        this.userService.deleteUser(user);
-        user = null;
-    }
+
     public void resetOldPassword(){
         if(user.getUsername()!=null){
             tempPassword = generatePassword();
@@ -162,6 +178,22 @@ public class UserDetailController implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ve.getMessage(), null));
         }
     }
-    public String doEncodePassword(String password){return passwordEncoder.encode(password);}
 
+    private String doEncodePassword(String password){return passwordEncoder.encode(password);}
+
+    /**
+     * Action to delete the currently displayed user.
+     */
+    public void doDeleteUser() {
+        this.userService.deleteUser(user);
+        user = null;
+    }
+
+    public void doAddUserRole(){
+        userService.addUserRole(newUsername, UserxRole.valueOf(newRole));
+    }
+
+    public void doRemoveUserRole(){
+        userService.removeUserRole(newUsername, UserxRole.valueOf(newRole));
+    }
 }
