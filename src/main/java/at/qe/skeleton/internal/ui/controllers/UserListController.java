@@ -3,7 +3,10 @@ package at.qe.skeleton.internal.ui.controllers;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.services.UserxService;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -28,6 +31,10 @@ public class UserListController implements Serializable {
      */
     public Collection<Userx> getUsers() {
         return userService.getAllUsers();
+    }
+
+     public List<Userx> getPremiumUsers() {
+        return new ArrayList<>(userService.findPremiumUser());
     }
 
 }

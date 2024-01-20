@@ -23,7 +23,7 @@
                     -->
                     <p:submenu label="Manager Submenu" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
                         <p:menuitem value="Cash up!" url="/manager/cashUp.xhtml"/>
-                        <p:menuitem value="Manager Action 2"/>
+                        <p:menuitem value="Premium users" url="/manager/premiumUserView.xhtml"/>
                     </p:submenu>
                     <p:submenu label="Admin Submenu" rendered="#{sessionInfoBean.hasRole('ADMIN')}">
                         <p:menuitem value="Manage Users" url="/admin/users.xhtml"/>
@@ -40,14 +40,12 @@
                         <p:menuitem value="Manage Favorites" url="/common/favorites.xhtml"/>
                     </p:submenu>
 
-                    //neu
 
                     <p:submenu label="Premium Submenu" rendered="#{sessionInfoBean.loggedIn}" >
                         <p:menuitem value="(un)subscribe" url="/premium/abonnieren.xhtml" />
                         <p:menuitem value="payment information" url="/premium/paymentInfo.xhtml"/>
                     </p:submenu>
 
-                    //
                     
                     <p:menuitem value="Login" url="/login.xhtml" rendered="#{!sessionInfoBean.loggedIn}"/>
                     <p:menuitem value="Logout" url="/logout" rendered="#{sessionInfoBean.loggedIn}"/>                    
