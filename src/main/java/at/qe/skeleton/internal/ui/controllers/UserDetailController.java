@@ -33,6 +33,25 @@ public class UserDetailController implements Serializable {
     @Autowired
     private UserxService userService;
 
+    public String getNewUsername() {
+        return newUsername;
+    }
+
+    public void setNewUsername(String newUsername) {
+        this.newUsername = newUsername;
+    }
+
+    public String getNewRole() {
+        return newRole;
+    }
+
+    public void setNewRole(String newRole) {
+        this.newRole = newRole;
+    }
+
+    private String newUsername;
+    private String newRole;
+
     /**
      * Attribute to cache the currently displayed user
      */
@@ -111,5 +130,13 @@ public class UserDetailController implements Serializable {
     public void doDeleteUser() {
         this.userService.deleteUser(user);
         user = null;
+    }
+
+    public void doAddUserRole(){
+        userService.addUserRole(newUsername, UserxRole.valueOf(newRole));
+    }
+
+    public void doRemoveUserRole(){
+        userService.removeUserRole(newUsername, UserxRole.valueOf(newRole));
     }
 }
