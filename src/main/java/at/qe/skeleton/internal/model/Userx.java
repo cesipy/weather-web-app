@@ -192,6 +192,10 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
         this.updateDate = updateDate;
     }
 
+    public void setCreditCard(CreditCard creditCard) {
+        this.creditCard = creditCard;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;

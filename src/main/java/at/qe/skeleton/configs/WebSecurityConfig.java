@@ -54,6 +54,7 @@ public class WebSecurityConfig {
                             .requestMatchers(new AntPathRequestMatcher("/register/**")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/error/**")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAnyAuthority("ADMIN")
+                            .requestMatchers(new AntPathRequestMatcher("/manager/**")).hasAnyAuthority("MANAGER")
                             .requestMatchers(new AntPathRequestMatcher("/secured/**")).hasAnyAuthority(ADMIN, MANAGER, EMPLOYEE)
                             .anyRequest().authenticated()
                     )

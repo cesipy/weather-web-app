@@ -43,6 +43,10 @@ public class UserxService {
         return userRepository.findAll();
     }
 
+    @PreAuthorize("hasAuthority('MANAGER')")
+    public Collection<Userx> findPremiumUser() {
+        return userRepository.findByRole(UserxRole.PREMIUM);
+    }
     /**
      * Loads a single user identified by its username.
      *

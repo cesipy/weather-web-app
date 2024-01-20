@@ -13,6 +13,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,10 @@ public class SubscriptionBean implements Serializable {
     private UserReloadService userReloadService;
     @Autowired
     private CashUpBean cashUpBean;
+
+    //@Autowired
+    //private SessionInfoBean sessionInfoBean;
+    //kann nicht einfach da oben hin schreiben
 
     private String buttonText;
 
@@ -47,7 +52,7 @@ public class SubscriptionBean implements Serializable {
     }
 
     public boolean hasCreditCard() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getSecurityContext().getAuthentication();
 
         if (authentication != null) {
             Userx user = userxService.loadUser(authentication.getName());
@@ -56,8 +61,12 @@ public class SubscriptionBean implements Serializable {
         return false;
     }
 
+    protected SecurityContext getSecurityContext() {
+        return SecurityContextHolder.getContext();
+    }
+
     public void toggleSubscription() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getSecurityContext().getAuthentication();
         Userx user = userxService.loadUser(authentication.getName());
 
         try {
