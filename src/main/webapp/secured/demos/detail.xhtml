@@ -12,7 +12,7 @@
     <title>Weather Details</title>
 </h:head>
 <h:body>
-    <h:form>
+    <h:form id="allWeatherData">
         <f:metadata>
             <f:viewParam name="location" value="#{locationApiDemoBean.query_name}"/>
             <f:event type="preRenderView" listener="#{locationApiDemoBean.init}"/>
@@ -120,6 +120,58 @@
                 </p:dataTable>
             </p:tab>
         </p:tabView>
+        <!-- Date Selection -->
+        <h2>Select Date</h2>
+        <p:commandButton id="test" type="button"/>
+        <p:overlayPanel for="test">
+            <p:outputLabel styleClass="ui-grid ui-grid-responsive">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6">
+                        <p:calendar id="start" value="#{locationApiDemoBean.start_date}" navigator="true" pattern="dd/MM/yyyy" mode="inline" mindate="#{locationApiDemoBean.start_date}" maxdate="#{locationApiDemoBean.oneYearFromToday}">
+                            <p:ajax event="dateSelect" listener="#{locationApiDemoBean.onStartDateSelect}" update="end"/>
+                        </p:calendar>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p:calendar id="end" value="#{locationApiDemoBean.end_date}" navigator="true" pattern="dd/MM/yyyy" mode="inline" mindate="#{locationApiDemoBean.start_date}" maxdate="#{locationApiDemoBean.end_date_max}"/>
+                    </div>
+                </div>
+            </p:outputLabel>
+        </p:overlayPanel>
+        <p:commandButton value="Get holiday forecast" action="#{locationApiDemoBean.getHolidayForecast}" update="allWeatherData:holidayTabView"/>
+
+        <h2>Holiday</h2>
+        <p:tabView value="#{locationApiDemoBean.holidayWeatherList}" var="holidayWeather" scrollable="true" id="holidayTabView">
+            <p:tab title="#{holidayWeather.date()}">
+                <p:dataTable value="#{holidayWeather}">
+                    <p:column headerText="Minimum Temperature">
+                        <h:outputText value="#{holidayWeather.temperatureDTO().minimumDailyTemperature()} °C"/>
+                    </p:column>
+                    <p:column headerText="Maximum temperature">
+                        <h:outputText value="#{holidayWeather.temperatureDTO().maximumDailyTemperature()} °C"/>
+                    </p:column>
+                    <p:column headerText="Afternoon Temperature">
+                        <h:outputText value="#{holidayWeather.temperatureDTO().dayTemperature()} °C"/>
+                    </p:column>
+                    <p:column headerText="Night Temperature">
+                        <h:outputText value="#{holidayWeather.temperatureDTO().nightTemperature()} °C"/>
+                    </p:column>
+                    <p:column headerText="Evening Temperature">
+                        <h:outputText value="#{holidayWeather.temperatureDTO().eveningTemperature()} °C"/>
+                    </p:column>
+                    <p:column headerText="Morning Temperature">
+                        <h:outputText value="#{holidayWeather.temperatureDTO().morningTemperature()} °C"/>
+                    </p:column>
+                    <p:column headerText="Precipitation">
+                        <h:outputText value="#{holidayWeather.precipitationDTO().total()}"/>
+                    </p:column>
+                    <p:column headerText="Humidity">
+                        <h:outputText value="#{holidayWeather.humidityDTO().afternoon()} %"/>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+        </p:tabView>
+
+        <p:lineChart value="#{locationApiDemoBean.model}" title="Temperature Over Time" legendPosition="e" />
     </h:form>
 </h:body>
 </html>

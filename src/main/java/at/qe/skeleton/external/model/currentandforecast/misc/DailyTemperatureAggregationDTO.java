@@ -1,6 +1,7 @@
 package at.qe.skeleton.external.model.currentandforecast.misc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -20,9 +21,9 @@ import java.io.Serializable;
  * @see <a href="https://openweathermap.org/api/one-call-3#current">API Documentation</a>
  */
 public record DailyTemperatureAggregationDTO(
-        @JsonProperty("morn") double morningTemperature,
-        @JsonProperty("day") double dayTemperature,
-        @JsonProperty("eve") double eveningTemperature,
+        @JsonProperty("morn") @JsonAlias("morning") double morningTemperature,
+        @JsonProperty("day") @JsonAlias("afternoon") double dayTemperature,
+        @JsonProperty("eve") @JsonAlias("evening") double eveningTemperature,
         @JsonProperty("night") double nightTemperature,
         @JsonProperty("min") double minimumDailyTemperature,
         @JsonProperty("max") double maximumDailyTemperature
