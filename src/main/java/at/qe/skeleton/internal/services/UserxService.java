@@ -4,6 +4,8 @@ import at.qe.skeleton.external.model.WeatherDataField;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.repositories.UserxRepository;
+
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import org.slf4j.Logger;
@@ -129,6 +131,7 @@ public class UserxService {
     public void addUserRole(String username, UserxRole userxRole) {
         Userx userx = loadUser(username);
         Set<UserxRole> oldRoles = userx.getRoles();
+        userx.setPremiumSince(LocalDateTime.now());
 
         if (oldRoles.add(userxRole)) {
             userx.setRoles(oldRoles);

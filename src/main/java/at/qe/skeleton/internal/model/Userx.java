@@ -2,6 +2,7 @@ package at.qe.skeleton.internal.model;
 
 import at.qe.skeleton.external.model.WeatherDataField;
 import jakarta.persistence.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
@@ -69,6 +70,8 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
 
     private String phone;
 
+    private LocalDateTime premiumSince;
+
     @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
     private CreditCard creditCard;
 
@@ -95,6 +98,15 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @CollectionTable(name = "Userx_UserxRole")
     @Enumerated(EnumType.STRING)
     private Set<UserxRole> roles;
+
+    public LocalDateTime getPremiumSince() {
+        return premiumSince;
+    }
+
+    public void setPremiumSince(LocalDateTime premiumSince) {
+        this.premiumSince = premiumSince;
+    }
+
 
     public String getUsername() {
         return username;

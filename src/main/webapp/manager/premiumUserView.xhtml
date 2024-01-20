@@ -18,9 +18,15 @@
                 <p:column headerText="Last Name">
                     <h:outputText value="#{user.lastName}"/>
                 </p:column>
+                <!---->
                 <p:column headerText="Invoice Open">
                     <h:outputText value="#{user.getInvoice().isInvoiceOpen()}" />
                 </p:column>
+                <p:column headerText="Premium Since">
+                    <h:outputText value="#{user.getPremiumSince()}" />
+                </p:column>
+
+
             </p:dataTable>
         </h:form>
     </ui:define>
