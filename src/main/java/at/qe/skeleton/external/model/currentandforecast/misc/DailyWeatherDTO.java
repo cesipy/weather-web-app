@@ -3,12 +3,14 @@ package at.qe.skeleton.external.model.currentandforecast.misc;
 import at.qe.skeleton.external.model.shared.WeatherDTO;
 import at.qe.skeleton.external.model.deserialisation.WeatherDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 /**
  * This class is part of the skeleton project provided for students of the
@@ -65,5 +67,23 @@ public record DailyWeatherDTO(
 
     @Serial
     private static final long serialVersionUID = 1;
+
+    public String getFormattedDOW() {
+        // convert timestamp to ZonedDateTime to get weekday information
+        var zonedDateTime = timestamp.atZone(ZoneId.systemDefault());
+
+        // get and format weekday
+        return zonedDateTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
+    }
+
+    public String getFormattedTime() {
+        // convert timestamp to ZonedDateTime for formatting
+        var zonedDateTime = timestamp.atZone(ZoneId.systemDefault());
+
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return formatter.format(zonedDateTime);
+    }
+
 
 }

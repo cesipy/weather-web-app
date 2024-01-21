@@ -29,7 +29,7 @@ import java.util.List;
 @Controller
 @Scope("view")
 public class FavoriteOverviewController {
-    private static Logger logger = LoggerFactory.getLogger(FavoriteOverviewController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FavoriteOverviewController.class);
     @Autowired
     private FavoriteService favoriteService;
     @Autowired
@@ -72,10 +72,9 @@ public class FavoriteOverviewController {
             }
 
             fetchWeatherDataForFavorites();
-        }catch (ApiQueryException e) {
-            // TODO: show faceMessage in overview
+        }
+        catch (ApiQueryException e) {
             logger.info("Error occurred while requesting API");
-
             showWarnMessage();
         }
         catch (Exception e) {
