@@ -87,8 +87,8 @@ public class WeatherDataService {
                 data.getMoonset(),
                 data.getMoonPhase(),
                 data.getSummary(),
-                converDailyAggregationToDTO(data.getDailyTemperatureAggregation()), // assuming you have a similar method for this conversion
-                convertTempAggregationToDTO(data.getFeelsLikeTemperatureAggregation()), // assuming you have a similar method for this conversion
+                converDailyAggregationToDTO(data.getDailyTemperatureAggregation()),
+                convertTempAggregationToDTO(data.getFeelsLikeTemperatureAggregation()),
                 data.getPressure(),
                 data.getHumidity(),
                 data.getDewPoint(),

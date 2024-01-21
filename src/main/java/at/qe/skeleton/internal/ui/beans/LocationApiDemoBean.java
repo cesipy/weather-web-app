@@ -4,9 +4,12 @@ import at.qe.skeleton.external.domain.DailyWeatherData;
 import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.CurrentWeatherDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.DailyTemperatureAggregationDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.holiday.HolidayDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.holiday.HumidityDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.holiday.PrecipitationDTO;
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
@@ -80,6 +83,7 @@ public class LocationApiDemoBean {
     private List<HourlyWeatherDTO> hourlyWeatherList;
     private List<DailyWeatherDTO> dailyWeatherList;
     private List<HolidayDTO> holidayWeatherList;
+    private HolidayDTO pastAverage;
     private Date oneYearFromToday;
     private Date start_date;
     private Date end_date;
@@ -171,7 +175,7 @@ public class LocationApiDemoBean {
         Date startDate = (Date) event.getObject();
         Calendar c = Calendar.getInstance();
         c.setTime(startDate);
-        c.add(Calendar.DATE, 5);
+        c.add(Calendar.DATE, 14);
         this.setEnd_date_max(c.getTime());
     }
 
@@ -193,12 +197,13 @@ public class LocationApiDemoBean {
             try{
                 List<HolidayDTO> holidays = new ArrayList<>();
                 for(String i : chosenDates){
-                    HolidayDTO holiday = weatherApiRequestService.retrieveDailyHolidayForecast(this.currentLocation.latitude(), this.currentLocation.longitude(), i);
+                    HolidayDTO holiday = weatherApiRequestService.retrieveDailyHolidayForecast(this.getCurrentLocation().latitude(), this.getCurrentLocation().longitude(), i);
                     holidays.add(holiday);
                 }
                 this.setHolidayWeatherList(holidays);
                 int size = this.getHolidayWeatherList().size();
                 diagramBean.updateLineModel(this.getHolidayWeatherList(), this.getStart_date(), this.getEnd_date());
+                getPastAverageForDateRange();
             }catch (Exception e) {
                 LOGGER.error("error in request in WeatherApi", e);
                 throw new RuntimeException(e);
@@ -207,20 +212,85 @@ public class LocationApiDemoBean {
             LOGGER.warn("You left at least one date unchosen!");
         }
     }
-    public void getPastAverage(){
+    public void getPastAverageForDateRange(){
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
         long diffInMillies = Math.abs(getEnd_date().getTime() - getStart_date().getTime());
 
-        // Calculate the middle point
         long middlePoint = diffInMillies / 2;
 
-        // Create the middle date
         Date middleDate = new Date(getStart_date().getTime() + middlePoint);
 
-        // Format the middle date to a string
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String middleDateString = sdf.format(middleDate);
+        List<String> pastFiveYears = new ArrayList<>();
 
+        // Subtract one year for each of the past 5 years
+        for (int i = 1; i <= 5; i++) {
+            cal.setTime(middleDate);
+            cal.add(Calendar.YEAR, -i);
+            Date pastYearDate = cal.getTime();
+            pastFiveYears.add(sdf.format(pastYearDate));
+        }
 
+        List<HolidayDTO> pastAverage = new ArrayList<>();
+        for(String i : pastFiveYears){
+            HolidayDTO holiday = weatherApiRequestService.retrieveDailyHolidayForecast(this.getCurrentLocation().latitude(), this.getCurrentLocation().longitude(), i);
+            pastAverage.add(holiday);
+        }
+        double sumMinTemp = 0.0;
+        double sumMaxTemp = 0.0;
+        double sumMorningTemp = 0.0;
+        double sumAfternoonTemp = 0.0;
+        double sumEveningTemp = 0.0;
+        double sumNightTemp = 0.0;
+        int sumPrecipitation = 0;
+        int sumHumidity = 0;
+
+        for (HolidayDTO holiday : pastAverage){
+            sumMinTemp += holiday.temperatureDTO().minimumDailyTemperature();
+            sumMaxTemp += holiday.temperatureDTO().maximumDailyTemperature();
+            sumMorningTemp += holiday.temperatureDTO().morningTemperature();
+            sumAfternoonTemp += holiday.temperatureDTO().dayTemperature();
+            sumEveningTemp += holiday.temperatureDTO().eveningTemperature();
+            sumNightTemp += holiday.temperatureDTO().nightTemperature();
+            sumPrecipitation += holiday.precipitationDTO().total();
+            sumHumidity += holiday.humidityDTO().afternoon();
+        }
+        sumMinTemp = Math.round(sumMinTemp / pastAverage.size() * 100.0 / 100.0);
+        sumMaxTemp = Math.round(sumMaxTemp / pastAverage.size() * 100.0 / 100.0);
+        sumMorningTemp = Math.round(sumMorningTemp / pastAverage.size() * 100.0 / 100.0);
+        sumAfternoonTemp = Math.round(sumAfternoonTemp / pastAverage.size() * 100.0 / 100.0);
+        sumEveningTemp = Math.round(sumEveningTemp / pastAverage.size() * 100.0 / 100.0);
+        sumNightTemp = Math.round(sumNightTemp / pastAverage.size() * 100.0 / 100.0);
+        sumPrecipitation = sumPrecipitation / pastAverage.size();
+        sumHumidity = sumHumidity / pastAverage.size();
+
+        HolidayDTO pastAvg = new HolidayDTO(
+                this.getCurrentLocation().latitude(),
+                this.getCurrentLocation().longitude(),
+                null,
+                middleDate,
+                null,
+                null,
+                new HumidityDTO(
+                    sumHumidity
+                ),
+                new PrecipitationDTO(
+                        sumPrecipitation
+                ),
+                null,
+                new DailyTemperatureAggregationDTO(
+                        sumMorningTemp,
+                        sumAfternoonTemp,
+                        sumEveningTemp,
+                        sumNightTemp,
+                        sumMinTemp,
+                        sumMaxTemp
+                ),
+                null
+        );
+
+        this.setPastAverage(pastAvg);
     }
     public String getQuery_name() {
         return query_name;
@@ -249,6 +319,14 @@ public class LocationApiDemoBean {
 
     public Date getEnd_date_max() {
         return end_date_max;
+    }
+
+    public HolidayDTO getPastAverage() {
+        return pastAverage;
+    }
+
+    public void setPastAverage(HolidayDTO pastAverage) {
+        this.pastAverage = pastAverage;
     }
 
     public void setEnd_date_max(Date end_date_max) {
@@ -314,12 +392,18 @@ public class LocationApiDemoBean {
             return Collections.emptyList();
         }
     }
-
+    public List<HolidayDTO> getPastAverageAsList() {
+        if (pastAverage != null) {
+            return Collections.singletonList(pastAverage);
+        } else {
+            return Collections.emptyList();
+        }
+    }
     public List<HourlyWeatherDTO> getWeatherInOneHourAsList() {
         if (weatherInOneHour != null) {
             return Collections.singletonList(weatherInOneHour);
         } else {
-            return Collections.emptyList();
+            return null;
         }
     }
 
