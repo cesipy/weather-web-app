@@ -1,5 +1,6 @@
 package at.qe.skeleton.tests;
 
+import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.domain.DailyWeatherData;
 import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.model.currentandforecast.misc.*;
@@ -7,6 +8,7 @@ import at.qe.skeleton.external.model.currentandforecast.misc.holiday.*;
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
 import at.qe.skeleton.external.model.shared.WeatherDTO;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.services.WeatherDataService;
@@ -60,7 +62,7 @@ public class LocationApiDemoBeanTest {
     }
 
     @Test
-    public void testInit() {
+    public void testInit() throws ApiQueryException, EmptyLocationException {
         // Set up test data
         String queryName = "Innsbruck";
         locationApiDemoBean.setQuery_name(queryName);
