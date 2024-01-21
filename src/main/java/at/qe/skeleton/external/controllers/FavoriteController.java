@@ -42,6 +42,7 @@ public class FavoriteController {
         saveFavorite();
     }
 
+
     /**
      * Moves a favorite location up in priority.
      *
@@ -52,6 +53,7 @@ public class FavoriteController {
         favoriteService.moveFavoriteUpOrDown(favorite, up);
     }
 
+
     /**
      * Moves a favorite location down in priority.
      *
@@ -61,6 +63,7 @@ public class FavoriteController {
         boolean up = false;
         favoriteService.moveFavoriteUpOrDown(favorite, up);
     }
+
 
     /**
      * Saves a favorite location if it is not already in the list of favorites.
@@ -85,13 +88,13 @@ public class FavoriteController {
         }
     }
 
+
     /**
      * Validates the input location name and saves it as a favorite if it meets the criteria.
      * If the input location is not valid, a message is shown
      *
      * @throws EmptyLocationException if the location name is null or empty after trimming.
      */
-
     private void validateAndSaveFavorite() throws EmptyLocationException, ApiQueryException {
 
         if (locationName == null || locationName.trim().isEmpty()) {
@@ -110,6 +113,7 @@ public class FavoriteController {
             locationName = "";
         }
     }
+
 
     /**
      * Retrieves the list of favorite locations for the current user.
@@ -130,6 +134,7 @@ public class FavoriteController {
         }
     }
 
+
     /**
      * Deletes a favorite location and updates the list of favorites.
      *
@@ -146,6 +151,7 @@ public class FavoriteController {
             logger.error("Error deleting favorite", e);
         }
     }
+
 
     /**
      * Deletes a favorite location by its ID and updates the list of favorites.
@@ -164,26 +170,6 @@ public class FavoriteController {
         }
     }
 
-    /**
-     * Updates the priority of a favorite location.
-     *
-     * @param favorite The favorite location whose priority is to be updated.
-     * @param priority The new priority value.
-     */
-    public void updateFavoritePriority(Favorite favorite, int priority) {
-        // currently not in use, might be needed later
-        if (favorite != null) {
-
-            favoriteService.updateFavoritePriority(favorite, priority);
-
-            // clear selectedFavorite to avoid unintentional updates
-            selectedFavorite = null;
-            updatedPriority = 0;
-
-            logger.info("Successfully updated priority for favorite with ID: {} ", favorite.getId());
-            retrieveFavorites();
-        }
-    }
 
     /**
      * Retrieves a list of locations matching the given query for autocomplete suggestions.
@@ -201,6 +187,7 @@ public class FavoriteController {
         return null; // only temp
     }
 
+
     /**
      * Displays a warning message in the user interface.
      *
@@ -213,6 +200,7 @@ public class FavoriteController {
                         message));
 
     }
+
 
     /**
      * Displays an informative message in the user interface.

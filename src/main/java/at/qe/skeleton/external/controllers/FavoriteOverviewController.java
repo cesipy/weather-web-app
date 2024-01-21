@@ -48,7 +48,6 @@ public class FavoriteOverviewController {
     private List<WeatherDataField> selectedFieldList;
 
     // threshold to retrieve previously saved weather data, in seconds
-    private static final long STALE_WEATHER_DATA_THRESHOLD_SECONDS = 600;
 
 
     @PostConstruct
@@ -118,7 +117,6 @@ public class FavoriteOverviewController {
 
     /**
      * Redirects to the detail page for the specified location.
-     *
      * Retrieves the location ID from the request parameters, fetches the location details,
      * and redirects to the detail page.
      */
