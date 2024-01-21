@@ -22,7 +22,7 @@ import java.util.List;
 @Controller
 @Scope("view")
 public class FavoriteController {
-    private static Logger logger = LoggerFactory.getLogger(FavoriteController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FavoriteController.class);
     private String locationName;
     private int priority;
     @Autowired
@@ -42,6 +42,7 @@ public class FavoriteController {
         saveFavorite();
     }
 
+
     /**
      * Moves a favorite location up in priority.
      *
@@ -52,6 +53,7 @@ public class FavoriteController {
         favoriteService.moveFavoriteUpOrDown(favorite, up);
     }
 
+
     /**
      * Moves a favorite location down in priority.
      *
@@ -61,6 +63,7 @@ public class FavoriteController {
         boolean up = false;
         favoriteService.moveFavoriteUpOrDown(favorite, up);
     }
+
 
     /**
      * Saves a favorite location if it is not already in the list of favorites.
@@ -85,13 +88,13 @@ public class FavoriteController {
         }
     }
 
+
     /**
      * Validates the input location name and saves it as a favorite if it meets the criteria.
      * If the input location is not valid, a message is shown
      *
      * @throws EmptyLocationException if the location name is null or empty after trimming.
      */
-
     private void validateAndSaveFavorite() throws EmptyLocationException, ApiQueryException {
 
         if (locationName == null || locationName.trim().isEmpty()) {
@@ -103,7 +106,6 @@ public class FavoriteController {
         if (favoriteService.isLocationAlreadyFavorite(locationName)) {
             String warnMessage = "Location already in favorites: %s".formatted(locationName);
             showWarnMessage(warnMessage);
-            logger.info("location {} is already favorite!", locationName);
         } else {
             favoriteService.saveFavorite(locationName);
 
@@ -111,6 +113,7 @@ public class FavoriteController {
             locationName = "";
         }
     }
+
 
     /**
      * Retrieves the list of favorite locations for the current user.
@@ -120,9 +123,7 @@ public class FavoriteController {
             // Get favorites for the user
             favorites = favoriteService.getSortedFavoritesForUser();
 
-            // Log favorites
             for (Favorite favorite : favorites) {
-                logger.info(String.valueOf(favorite));
 
                 // load all locations
                 locations.add(favorite.getLocation());
@@ -132,6 +133,7 @@ public class FavoriteController {
             logger.error("Error retrieving favorites", e);
         }
     }
+
 
     /**
      * Deletes a favorite location and updates the list of favorites.
@@ -150,6 +152,7 @@ public class FavoriteController {
         }
     }
 
+
     /**
      * Deletes a favorite location by its ID and updates the list of favorites.
      *
@@ -159,7 +162,6 @@ public class FavoriteController {
         //currently not in use
         try {
             favoriteService.deleteFavoriteById(id);
-            logger.info("Successfully deleted favorite with id: " + id);
 
             // update favorite list
             retrieveFavorites();
@@ -168,26 +170,6 @@ public class FavoriteController {
         }
     }
 
-    /**
-     * Updates the priority of a favorite location.
-     *
-     * @param favorite The favorite location whose priority is to be updated.
-     * @param priority The new priority value.
-     */
-    public void updateFavoritePriority(Favorite favorite, int priority) {
-        // currently not in use, might be needed later
-        if (favorite != null) {
-
-            favoriteService.updateFavoritePriority(favorite, priority);
-
-            // clear selectedFavorite to avoid unintentional updates
-            selectedFavorite = null;
-            updatedPriority = 0;
-
-            logger.info("Successfully updated priority for favorite with ID: {} ", favorite.getId());
-            retrieveFavorites();
-        }
-    }
 
     /**
      * Retrieves a list of locations matching the given query for autocomplete suggestions.
@@ -205,6 +187,7 @@ public class FavoriteController {
         return null; // only temp
     }
 
+
     /**
      * Displays a warning message in the user interface.
      *
@@ -217,6 +200,7 @@ public class FavoriteController {
                         message));
 
     }
+
 
     /**
      * Displays an informative message in the user interface.

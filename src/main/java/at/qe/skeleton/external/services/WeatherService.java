@@ -20,11 +20,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Service class for processing weather information.
+ * This service handles the retrieval and storage of current and forecast weather data.
+ * It checks the freshness of the data and decides whether to fetch new data from an API or use the cached data.
+ *
+ * The class includes methods for processing weather data for a specific location,
+ * fetching current weather data, checking data staleness, and retrieving data from the API.
+ */
 @Service
 @Scope("application")
 public class WeatherService {
@@ -39,25 +49,40 @@ public class WeatherService {
     @Autowired
     private CurrentWeatherDataRepository currentWeatherDataRepository;
 
-
     private Location location;
     private HourlyWeatherDTO currentWeather;
     private HourlyWeatherDTO weatherInOneHour;
     private List<HourlyWeatherDTO> hourlyWeatherList;
     private List<DailyWeatherDTO> dailyWeatherList;
-    private List<CurrentWeatherDTO> currentWeatherDTOList;
 
 
     private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
 
+    /**
+     * Processes weather information for the specified location.
+     *
+     * Calls the {@link #fetchCurrentWeatherAndForecast(Location)} method to retrieve
+     * and process current and forecast weather data for the given location.
+     *
+     * @param location The location for which weather information is to be processed.
+     * @return A {@link CurrentlyHourlyDailyWeather} containing hourly and daily weather information.
+     * @throws ApiQueryException If there is an issue querying the weather API.
+     */
     public CurrentlyHourlyDailyWeather processWeatherForLocation(Location location) throws ApiQueryException {
-        logger.info("processing weather for {}", location);
-        CurrentlyHourlyDailyWeather currentlyHourlyDailyWeather = fetchCurrentWeatherAndForecast(location);
-        logger.info("processed info!");
 
-        return currentlyHourlyDailyWeather;
+        return fetchCurrentWeatherAndForecast(location);
     }
 
+    /**
+     * Fetches current weather and forecast for the specified location.
+     *
+     * The method first checks if the cached weather data is stale. If stale, it retrieves the latest data from the database.
+     * If not stale, it fetches new data from the weather API, updates the database, and returns the result.
+     *
+     * @param location The location for which weather data is to be fetched.
+     * @return A {@link CurrentlyHourlyDailyWeather} containing hourly and daily weather information.
+     * @throws ApiQueryException If there is an issue querying the weather API.
+     */
     private CurrentlyHourlyDailyWeather fetchCurrentWeatherAndForecast(Location location) throws ApiQueryException {
         Pageable lastEightEntries = PageRequest.of(0, 8);
         Pageable lastFortyEightEntries = PageRequest.of(0, 2);
@@ -67,10 +92,8 @@ public class WeatherService {
                 .findLatestByLocation(location.getName(), lastEightEntries);
         List<HourlyWeatherData> latestDataHourly = hourlyWeatherDataRepository
                 .findLatestByLocation(location.getName(), lastFortyEightEntries);
-        List<CurrentWeatherData> latestDataCurrently = currentWeatherDataRepository
-                .findLatestByLocation(location.getName(), lastEntry);
 
-        if (isWeatherDataStale(latestDataCurrently, latestData, latestDataHourly)) {
+        if (isWeatherDataStale(latestData, latestDataHourly)) {
             logger.info("taking weather data for {} from database", location.getName());
             // this.setLocation(location);         // temp
 
@@ -104,31 +127,86 @@ public class WeatherService {
         }
     }
 
+    /**
+     * Retrieves current and forecast weather data from the weather API for the specified location.
+     *
+     * @param location The location for which weather data is to be retrieved.
+     * @return A {@link CurrentAndForecastAnswerDTO} containing current and forecast weather information.
+     * @throws ApiQueryException If there is an issue querying the weather API.
+     */
     private CurrentAndForecastAnswerDTO retrieveWeatherDataApi(Location location) throws ApiQueryException {
 
         return weatherApiRequestService
                 .retrieveCurrentAndForecastWeather(location.getLatitude(), location.getLongitude());
     }
 
-    private boolean isWeatherDataStale(List<CurrentWeatherData> currentWeatherDataList,
-                                        List<DailyWeatherData> dailyWeatherDataList,
+
+    /**
+     * Checks if the provided weather data is considered stale based on the time elapsed since its addition.
+     *
+     * @param dailyWeatherDataList  The list of daily weather data entries.
+     * @param hourlyWeatherDataList The list of hourly weather data entries.
+     * @return {@code true} if the weather data is considered stale, {@code false} otherwise.
+     */
+    private boolean isWeatherDataStale(List<DailyWeatherData> dailyWeatherDataList,
                                         List<HourlyWeatherData> hourlyWeatherDataList) {
         Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
 
         if (!dailyWeatherDataList.isEmpty()
-                && !hourlyWeatherDataList.isEmpty()
-                && !currentWeatherDataList.isEmpty()) {
+                && !hourlyWeatherDataList.isEmpty()) {
 
             DailyWeatherData latestDailyWeatherData = dailyWeatherDataList.get(0);
             HourlyWeatherData latestHourlyWeatherData = hourlyWeatherDataList.get(0);
-            CurrentWeatherData latestCurrentWeatherData = currentWeatherDataList.get(0);
+
 
             return (latestDailyWeatherData.getAdditionTime().isAfter(oneHourAgo)
-                    && latestHourlyWeatherData.getAdditionTime().isAfter(oneHourAgo)
-                    && latestCurrentWeatherData.getAdditionTime().isAfter(oneHourAgo));
+                    && latestHourlyWeatherData.getAdditionTime().isAfter(oneHourAgo));
         }
-
         return false;
+    }
+
+    /**
+     * Fetches current weather data for the specified location.
+     *
+     * The method first checks if the cached current weather data is stale. If stale, it retrieves the latest data from the database.
+     * If not stale, it fetches new data from the weather API, updates the database, and returns the result.
+     *
+     * @param location The location for which current weather data is to be fetched.
+     * @return A {@link CurrentWeatherData} containing current weather information.
+     * @throws ApiQueryException If there is an issue querying the weather API.
+     */
+    public CurrentWeatherData fetchCurrentWeather(Location location) throws ApiQueryException {
+        List<CurrentWeatherData> currentWeatherDataList = currentWeatherDataRepository
+                .findByLocationOrderByAdditionTimeDesc(location);
+
+        // is data outdated or no data is saved?
+        if (currentWeatherDataList.isEmpty() || !isCurrentWeatherDataStale(currentWeatherDataList.get(0))) {
+            logger.info("fetching weather data from api: {}", location.getName());
+            CurrentAndForecastAnswerDTO weather = weatherApiRequestService
+                    .retrieveCurrentAndForecastWeather(location.getLatitude(), location.getLongitude());
+
+            weatherDataService.saveCurrentWeatherFromDTO(weather.currentWeather(), location);
+
+            return currentWeatherDataRepository
+                    .findByLocationOrderByAdditionTimeDesc(location).get(0);
+        } else {
+            logger.info("Taking weather data from database for location {}", location);
+            return currentWeatherDataList.get(0);
+        }
+    }
+
+
+    /**
+     * Checks if the provided weather data is considered stale based on the time elapsed since its addition.
+     *
+     * @param weatherData The weatherData to check for staleness.
+     * @return {@code true} if the weather data is considered stale, {@code false} otherwise.
+     */
+    private boolean isCurrentWeatherDataStale(CurrentWeatherData weatherData) {
+        Instant tenMinutesAgo = Instant.now().minus(10, ChronoUnit.MINUTES);
+        Instant additionTime = weatherData.getAdditionTime();
+
+        return additionTime.isAfter(tenMinutesAgo);
     }
 
     public Location getLocation() {

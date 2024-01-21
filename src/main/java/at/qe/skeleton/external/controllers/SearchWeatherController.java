@@ -37,8 +37,6 @@ public class SearchWeatherController {
     private String currentLocationString;
     private String locationToSearch;
 
-    @Autowired
-    private WeatherService weatherService;
     private HourlyWeatherDTO hourlyWeatherDTO;
     private HourlyWeatherDTO weatherInOneHour;
     private List<HourlyWeatherDTO> hourlyWeatherList;
@@ -58,6 +56,7 @@ public class SearchWeatherController {
             redirectToDetailPage();
         }
     }
+
 
     /**
      * Searches for weather information based on the specified location.
@@ -106,37 +105,6 @@ public class SearchWeatherController {
         logger.info("No location found for search: {}", locationToSearch);
     }
 
-    // NO LONGER IN USE
-    /**
-     * Processes weather information for a given location.
-     * The location details are set in the controller, and the weather is retrieved using the {@link WeatherController}.
-     *
-     * @param singleLocation location for which weather information is to be retrieved
-     */
-    public void processWeatherForLocation(Location singleLocation) {
-        setCurrentLocation(singleLocation);
-        setCurrentLocationString(singleLocation.toDebugString());
-
-        weatherController.setLatitude(singleLocation.getLatitude());
-        weatherController.setLongitude(singleLocation.getLongitude());
-
-        weatherController.requestWeather();
-        setCurrentAndForecastAnswerDTO(weatherController.getCurrentWeatherDTO());
-        setCurrentWeather(weatherController.getCurrentWeather());
-
-        logger.info(String.valueOf(currentAndForecastAnswerDTO));
-        try {
-            CurrentlyHourlyDailyWeather weatherData =  weatherService.processWeatherForLocation(singleLocation);
-            hourlyWeatherList = weatherData.getHourlyWeatherList();
-            dailyWeatherList  = weatherData.getDailyWeatherList();
-
-            logger.info(dailyWeatherList.toString());
-            logger.info(hourlyWeatherList.toString());
-        }
-        catch (Exception e) {
-            logger.info("exception in processWeather, {}", e.getMessage());
-        }
-    }
 
     private void redirectToDetailPage() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
@@ -148,6 +116,7 @@ public class SearchWeatherController {
             logger.error("Exception occurred in redirection: {}", e.getMessage());
         }
     }
+
 
     /**
      * Displays a warning message about a location not being found.

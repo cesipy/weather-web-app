@@ -52,6 +52,7 @@ public class DetailedWeatherController {
         }
     }
 
+    
     /**
      * Retrieves weather data for the given location query.
      * Handles exceptions and displays a warning message if an error occurs.
@@ -66,14 +67,14 @@ public class DetailedWeatherController {
 
             hourlyWeatherList = weatherData.getHourlyWeatherList();
             dailyWeatherList  = weatherData.getDailyWeatherList();
-            logger.info("in detailed weather controller: {}", dailyWeatherList.toString());
-            logger.info("in detailed weather controller: {}",hourlyWeatherList.toString());
+
 
         } catch (EmptyLocationException | ApiQueryException e) {
             displayWarningMessage();
             logger.error("An error occurred in detailed controller: {}", e.getMessage(), e);
         }
     }
+
 
     /**
      * Displays a warning message on the user interface.
@@ -83,6 +84,7 @@ public class DetailedWeatherController {
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
     }
+
 
     /**
      * Displays an informational message about a location not being found.

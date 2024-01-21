@@ -28,8 +28,6 @@ public class FavoriteService {
     private LocationService locationService;
     private Userx currentUserx;
     private Location currentLocation;
-    private LocationApiRequestService locationApiRequestService;
-
 
     /**
      * Moves a favorite location up or down in priority.
@@ -66,67 +64,6 @@ public class FavoriteService {
         else {
             logger.info("Error fetching favorites");
             // TODO: Proper exception
-        }
-    }
-
-    /**
-     * Updates the priority of a favorite location.
-     *
-     * @param favorite    The favorite location to be updated.
-     * @param newPriority The new priority value.
-     */
-    public void updateFavoritePriority(Favorite favorite, int newPriority) {
-        // currently not in use
-
-        if (newPriority < 0) {
-            return;
-        }
-        int oldPriority = favorite.getPriority();
-
-        // get current max priority for user
-        currentUserx = userxService.getCurrentUser();
-        int currentMaxPriority = calculatePriority(currentUserx);
-        List<Favorite>  favoritesByPriority = favoriteRepository.findByUserAndPriority(currentUserx, newPriority);
-        logger.info(" favorites with this priority" + favoritesByPriority.toString());
-
-        boolean isPriorityAlreadyTaken = !favoritesByPriority.isEmpty();
-
-        logger.info("currentMaxPriority for user "+ currentUserx  + ": " + currentMaxPriority);
-
-        if (newPriority > (currentMaxPriority)) {
-
-            return;
-        }
-        if (isPriorityAlreadyTaken) {
-
-            rebasePrioritiesFromPriority(newPriority, oldPriority);
-        }
-
-        favorite.setPriority(newPriority);      // update priority of favorite
-        favoriteRepository.save(favorite);
-
-        logger.info("Successfully updated priority for favorite with ID: " + favorite);
-        logger.info("Updated priority is now: " + newPriority);
-    }
-
-    /**
-     * Rebases the priorities of favorites starting from a specific priority to another priority.
-     *
-     * @param startingPriority The starting priority.
-     * @param endingPriority   The ending priority.
-     */
-    public void rebasePrioritiesFromPriority(int startingPriority, int endingPriority) {
-        // currently not in use
-        List<Favorite> favorites = favoriteRepository.findByUser(currentUserx);
-
-        // for all favorites with priority >= starting priority, all priorities are
-        // increased by one.
-        for (Favorite favorite : favorites) {
-            int priority = favorite.getPriority();
-            if (priority >= startingPriority && priority < endingPriority) {
-                favorite.setPriority(priority + 1);
-                favoriteRepository.save(favorite);
-            }
         }
     }
 
@@ -185,12 +122,12 @@ public class FavoriteService {
         currentLocation = locationService.retrieveLocation(locationName);
     }
 
+
     /**
      * Saves a new favorite location for the current user.
      *
      * @param locationName The name of the location to be saved as a favorite.
      */
-
     public void saveFavorite( String locationName) throws EmptyLocationException, ApiQueryException {
         retrieveCurrentData(locationName);
         if (currentLocation == null || currentUserx == null) {
@@ -206,6 +143,7 @@ public class FavoriteService {
 
         logger.info("successfully saved favorite {}  for  {}", favorite, currentUserx);
     }
+
 
     /**
      * Deletes the specified favorite from the repository.
@@ -248,9 +186,7 @@ public class FavoriteService {
     }
 
     public List<WeatherDataField> retrieveSelectedFields() {
-        List<WeatherDataField> selectedFields = userxService.getSelectedWeatherFieldsForUser();
-        logger.info("selected fields retrieved: " + selectedFields);
-        return selectedFields;
+        return userxService.getSelectedWeatherFieldsForUser();
     }
 
     public void setDefaultSelectedFields() {
