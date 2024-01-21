@@ -9,7 +9,9 @@ import at.qe.skeleton.external.services.*;
 import at.qe.skeleton.external.model.Favorite;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.Visibility;
 import org.slf4j.Logger;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -37,6 +40,8 @@ public class FavoriteOverviewController {
     private CurrentWeatherDataRepository currentWeatherDataRepository;
     @Autowired
     private WeatherService weatherService;
+    @Autowired
+    private LocationService locationService;
 
     private List<Favorite> favorites;
     private List<CurrentWeatherData> currentWeatherDataList;
@@ -109,6 +114,50 @@ public class FavoriteOverviewController {
             }
         }
         return false;
+    }
+
+    /**
+     * Redirects to the detail page for the specified location.
+     *
+     * Retrieves the location ID from the request parameters, fetches the location details,
+     * and redirects to the detail page.
+     */
+    public void onViewDetails() {
+        try {
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            String locationId = facesContext.getExternalContext().getRequestParameterMap().get("locationName");
+
+            if (locationId != null) {
+                Location location = locationService.retrieveLocation(locationId);
+
+                if (location != null) {
+                    redirectToDetailPage(location);
+                } else {
+                    // Handle the case where location details are not found
+                    facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Location details not found."));
+                }
+            }
+        }
+        // should not happen, as only valid locations are saved to favorites
+        catch (Exception e) {
+            logger.info("error occurred: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Redirects to the detail page for the specified location.
+     *
+     * @param location The location for which to redirect to the detail page.
+     */
+    private void redirectToDetailPage(Location location) {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        String url = externalContext.getRequestContextPath() + "/secured/detail.xhtml?location=" + location.getName();
+
+        try {
+            externalContext.redirect(url);
+        } catch (IOException e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Exception occurred in redirection: " + e.getMessage()));
+        }
     }
 
     /**

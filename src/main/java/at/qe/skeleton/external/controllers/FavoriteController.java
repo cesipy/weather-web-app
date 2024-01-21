@@ -22,7 +22,7 @@ import java.util.List;
 @Controller
 @Scope("view")
 public class FavoriteController {
-    private static Logger logger = LoggerFactory.getLogger(FavoriteController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FavoriteController.class);
     private String locationName;
     private int priority;
     @Autowired
@@ -103,7 +103,6 @@ public class FavoriteController {
         if (favoriteService.isLocationAlreadyFavorite(locationName)) {
             String warnMessage = "Location already in favorites: %s".formatted(locationName);
             showWarnMessage(warnMessage);
-            logger.info("location {} is already favorite!", locationName);
         } else {
             favoriteService.saveFavorite(locationName);
 
@@ -120,9 +119,7 @@ public class FavoriteController {
             // Get favorites for the user
             favorites = favoriteService.getSortedFavoritesForUser();
 
-            // Log favorites
             for (Favorite favorite : favorites) {
-                logger.info(String.valueOf(favorite));
 
                 // load all locations
                 locations.add(favorite.getLocation());
@@ -159,7 +156,6 @@ public class FavoriteController {
         //currently not in use
         try {
             favoriteService.deleteFavoriteById(id);
-            logger.info("Successfully deleted favorite with id: " + id);
 
             // update favorite list
             retrieveFavorites();

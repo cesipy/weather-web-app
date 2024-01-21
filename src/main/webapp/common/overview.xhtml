@@ -103,6 +103,13 @@
                     <h:outputText value="#{weather.description}"/>
                 </p:column>
 
+                <p:column headerText="Details">
+                    <p:commandLink value="view details" action="#{favoriteOverviewController.onViewDetails}">
+                        <f:param name="locationName" value="#{weather.location.name}" />
+                    </p:commandLink>
+                </p:column>
+
+
             </p:dataTable>
 
             <p:messages id="messages" showDetail="true" closable="true">
@@ -120,7 +127,6 @@
                                  update="refreshForm messages"
                                  style="margin-top: 10px;" />
             </div>
-
 
         </h:form>
     </ui:define>

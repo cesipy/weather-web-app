@@ -66,8 +66,7 @@ public class DetailedWeatherController {
 
             hourlyWeatherList = weatherData.getHourlyWeatherList();
             dailyWeatherList  = weatherData.getDailyWeatherList();
-            logger.info("in detailed weather controller: {}", dailyWeatherList.toString());
-            logger.info("in detailed weather controller: {}",hourlyWeatherList.toString());
+
 
         } catch (EmptyLocationException | ApiQueryException e) {
             displayWarningMessage();
