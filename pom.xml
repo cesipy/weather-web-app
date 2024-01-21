@@ -29,6 +29,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <joinfaces.version>5.2.0</joinfaces.version>
         <duplicate-finder-maven-plugin.version>2.0.1</duplicate-finder-maven-plugin.version>
+        <sonar.projectKey>informatik_qe_swapsws23_group1_g1t3_AY0ILkQhlVU4MgHyMN8J</sonar.projectKey>
+        <sonar.projectName>G1T3</sonar.projectName>
+        <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
     </properties>
 
     <dependencyManagement>
@@ -54,7 +57,7 @@
             <artifactId>security-spring-boot-starter</artifactId>
             <version>${joinfaces.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -105,6 +108,10 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.24</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
 
         <!-- special test dependencies -->
         <dependency>
@@ -131,7 +138,8 @@
 
 
 
-            <!-- TestNG -->
+
+        <!-- TestNG -->
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>

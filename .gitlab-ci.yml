@@ -10,7 +10,7 @@ stages:          # List of stages for jobs, and their order of execution
 
 unit-test-job:   # This job runs in the test stage.
   extends: .before_script_template
-  stage: test    
+  stage: test
   script:
     - echo "Running unit tests..."
     - mvn test
