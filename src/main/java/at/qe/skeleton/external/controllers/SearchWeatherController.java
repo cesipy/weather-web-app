@@ -45,43 +45,54 @@ public class SearchWeatherController {
     private List<DailyWeatherDTO> dailyWeatherList;
 
 
+    /**
+     * Initiates a weather search and redirection to the detail page based on user input.
+     *
+     * Calls the {@link #isLocationValid()} method to check if the entered location is valid.
+     * If a valid location is found, it redirects to the detail page using {@link #redirectToDetailPage()}.
+     */
     public void searchAndRedirect() {
-        searchWeatherByLocation();
+        boolean wasLocationFound = isLocationValid();
 
-        logger.info("before redirect");
-        redirectToDetailPage();
-        logger.info("after redircet");
+        if (wasLocationFound) {
+            redirectToDetailPage();
+        }
     }
 
     /**
      * Searches for weather information based on the specified location.
      * If the location is found either in the database or by querying the location API,
      * weather information is retrieved and stored in the controller's fields.
+     *
+     * @return True if a valid location is found; otherwise, false.
      */
-    public void searchWeatherByLocation() {
+    public boolean isLocationValid() {
         try {
             if (locationToSearch == null || locationToSearch.trim().isEmpty()) {
                 String warnMessage = "Please enter a city.";
                 showInfoMessage(warnMessage);
-                return;
+                return false;
             }
 
-            // retrieves location using database
+            // retrieves location using databasea
             // when no location is found in db, service calls API
             Location singleLocation = locationService.retrieveLocation(locationToSearch);
 
             if (singleLocation != null) {
                 currentLocation = singleLocation;
-                processWeatherForLocation(singleLocation);
+                return true;
             } else {
                 handleNoLocationFound();
+                return false;
             }
         } catch (ApiQueryException e) {
             logger.error("Error querying location API", e);
             showWarnMessage();
+            return false;
         } catch (EmptyLocationException e) {
             String message = "Cannot find city: %s".formatted(locationToSearch);
             showInfoMessage(message);
+            return false;
         }
     }
 
@@ -95,8 +106,7 @@ public class SearchWeatherController {
         logger.info("No location found for search: {}", locationToSearch);
     }
 
-
-    // TODO: wetter muss anders prozessiert werden, nicht von controller, sondern von weatherService
+    // NO LONGER IN USE
     /**
      * Processes weather information for a given location.
      * The location details are set in the controller, and the weather is retrieved using the {@link WeatherController}.
@@ -115,21 +125,17 @@ public class SearchWeatherController {
         setCurrentWeather(weatherController.getCurrentWeather());
 
         logger.info(String.valueOf(currentAndForecastAnswerDTO));
-        //todo: only temp exception handling here:
         try {
-
             CurrentlyHourlyDailyWeather weatherData =  weatherService.processWeatherForLocation(singleLocation);
             hourlyWeatherList = weatherData.getHourlyWeatherList();
             dailyWeatherList  = weatherData.getDailyWeatherList();
 
             logger.info(dailyWeatherList.toString());
             logger.info(hourlyWeatherList.toString());
-
         }
         catch (Exception e) {
             logger.info("exception in processWeather, {}", e.getMessage());
         }
-
     }
 
     private void redirectToDetailPage() {
@@ -142,8 +148,6 @@ public class SearchWeatherController {
             logger.error("Exception occurred in redirection: {}", e.getMessage());
         }
     }
-
-
 
     /**
      * Displays a warning message about a location not being found.

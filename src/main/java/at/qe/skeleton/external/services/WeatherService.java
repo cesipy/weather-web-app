@@ -67,17 +67,17 @@ public class WeatherService {
                 .findLatestByLocation(location.getName(), lastEightEntries);
         List<HourlyWeatherData> latestDataHourly = hourlyWeatherDataRepository
                 .findLatestByLocation(location.getName(), lastFortyEightEntries);
-        //List<CurrentWeatherData> latestDataCurrently = currentWeatherDataRepository
-        //        .findLatestByLocation(location.getName(), lastEntry);
+        List<CurrentWeatherData> latestDataCurrently = currentWeatherDataRepository
+                .findLatestByLocation(location.getName(), lastEntry);
 
-        if (isWeatherDataStale(latestData, latestDataHourly)) {
+        if (isWeatherDataStale(latestDataCurrently, latestData, latestDataHourly)) {
+            logger.info("taking weather data for {} from database", location.getName());
             // this.setLocation(location);         // temp
 
             ArrayList<HourlyWeatherDTO> latestHourlyWeather = new ArrayList<>();
             for(int n = latestDataHourly.size() - 1; n >= 0 ; n--){
                 latestHourlyWeather.add(weatherDataService.convertHourlyDataToDTO(latestDataHourly.get(n)));
             }
-
 
             ArrayList<DailyWeatherDTO> latestWeather = new ArrayList<>();
             for(int n = latestData.size() - 1; n >= 0 ; n--){
@@ -110,22 +110,22 @@ public class WeatherService {
                 .retrieveCurrentAndForecastWeather(location.getLatitude(), location.getLongitude());
     }
 
-    private boolean isWeatherDataStale(//List<CurrentWeatherData> currentWeatherDataList,
+    private boolean isWeatherDataStale(List<CurrentWeatherData> currentWeatherDataList,
                                         List<DailyWeatherData> dailyWeatherDataList,
                                         List<HourlyWeatherData> hourlyWeatherDataList) {
         Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
 
         if (!dailyWeatherDataList.isEmpty()
                 && !hourlyWeatherDataList.isEmpty()
-                //&& !currentWeatherDataList.isEmpty())
-        ){
+                && !currentWeatherDataList.isEmpty()) {
 
             DailyWeatherData latestDailyWeatherData = dailyWeatherDataList.get(0);
             HourlyWeatherData latestHourlyWeatherData = hourlyWeatherDataList.get(0);
-            //CurrentWeatherData latestCurrentWeatherData =
+            CurrentWeatherData latestCurrentWeatherData = currentWeatherDataList.get(0);
 
             return (latestDailyWeatherData.getAdditionTime().isAfter(oneHourAgo)
-                    && latestHourlyWeatherData.getAdditionTime().isAfter(oneHourAgo));
+                    && latestHourlyWeatherData.getAdditionTime().isAfter(oneHourAgo)
+                    && latestCurrentWeatherData.getAdditionTime().isAfter(oneHourAgo));
         }
 
         return false;
