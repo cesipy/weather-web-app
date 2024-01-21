@@ -179,7 +179,7 @@ public class UserDetailController implements Serializable {
         }
     }
 
-    private String doEncodePassword(String password){return passwordEncoder.encode(password);}
+    public String doEncodePassword(String password){return passwordEncoder.encode(password);}
 
     /**
      * Action to delete the currently displayed user.
