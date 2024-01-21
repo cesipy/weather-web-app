@@ -1,12 +1,9 @@
 package at.qe.skeleton.external.model.location;
 
-import at.qe.skeleton.external.model.Favorite;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 
@@ -21,6 +18,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true) // ignores other attributes in .json (like adminLevel1Short)
 public class Location implements Serializable {
         @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         @JsonProperty("owm_city_id") @Column(name = "id") Long id;
         @JsonProperty("owm_city_name") @Column(name = "name") String name;
         @JsonProperty("owm_latitude") @Column(name = "latitude") double latitude;

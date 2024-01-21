@@ -1,12 +1,12 @@
 package at.qe.skeleton.external.controllers;
 
+import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.location.LocationDTO;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationApiRequestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +21,11 @@ import java.util.List;
 @Scope("view")
 public class LocationControllerApi {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationControllerApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationControllerApi.class);
     private final int LIMIT = 1;        // we want to get only one result for a location
     private String locationName;
     private String currentLocation;
-    private LocationDTO currentLocationDTO;
+    private Location currentLocationEntity;
     @Autowired
     private LocationApiRequestService locationApiRequestService;
 
@@ -33,25 +33,29 @@ public class LocationControllerApi {
         try {
             searchLocation(locationName);           // perform searching for location
 
-            LocationDTO foundLocation = currentLocationDTO;
+            Location foundLocation = currentLocationEntity;
 
             //TODO: handling for no location found
             //TODO: handle other errors
 
         } catch (Exception e) {
-            LOGGER.error("Error in location search", e);
+            logger.error("Error in location search", e);
 
         }
     }
 
     private void searchLocation(String locationName) {
         try {
+
+
             List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
 
             // Check if the list is not empty
             if (!answer.isEmpty()) {
+
                 // only process the first entry in the List of LocationDTOs
-                LocationDTO firstLocation = answer.get(0);
+
+                Location firstLocation = locationApiRequestService.convertLocationDTOtoLocation(answer.get(0));
 
                 ObjectMapper mapper = new ObjectMapper()
                         .findAndRegisterModules()
@@ -62,17 +66,21 @@ public class LocationControllerApi {
                 String escapedHtmlAnswerWithLineBreaks = escapedHtmlAnswer.replace("\n", "<br>")
                         .replace(" ", "&nbsp;");
                 this.setCurrentLocation(escapedHtmlAnswerWithLineBreaks);
-                this.setCurrentLocationDTO(firstLocation);
+                this.setCurrentLocation(firstLocation);
 
-                LOGGER.info("current location: " + currentLocation);
 
             } else {
-                LOGGER.warn("The list of locations is empty.");
+                logger.warn("The list of locations is empty.");
                 // TODO: Error message when no location is found
             }
+        } catch (ApiQueryException e) {
+            logger.info("Error in LocationApi. {}", e.getMessage());
+            // TODO improve handling here or merge with locaton controllerDB
         } catch (JsonProcessingException e) {
-            LOGGER.error("Error in request in locationApi", e);
+            logger.error("Error in request in locationApi. {}", e.getMessage());
             throw new RuntimeException(e);
+        } catch (EmptyLocationException e) {
+            logger.info("Error in LocationApi. {}", e.getMessage());
         }
     }
 
@@ -96,19 +104,19 @@ public class LocationControllerApi {
         this.currentLocation = currentLocation;
     }
 
-    public LocationDTO getCurrentLocationDTO() {
-        return currentLocationDTO;
+    public Location getCurrentLocationEntity() {
+        return currentLocationEntity;
     }
 
-    public void setCurrentLocationDTO(LocationDTO locationDTO) {
-        this.currentLocationDTO = locationDTO;
+    public void setCurrentLocation(Location location) {
+        this.currentLocationEntity = location;
     }
 
     public double getLatitude() {
-        return currentLocationDTO.latitude();
+        return currentLocationEntity.getLatitude();
     }
 
     public double getLongitude() {
-        return currentLocationDTO.longitude();
+        return currentLocationEntity.getLongitude();
     }
 }

@@ -7,9 +7,15 @@
 
     <ui:define name="content">
         <h:form id="subscriptionForm">
-            <h:commandButton value="#{subscriptionBean.buttonText}" action="#{subscriptionBean.toggleSubscription}">
-                <f:ajax render="subscriptionForm" />
-            </h:commandButton>
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+
+            <p:commandButton value="#{subscriptionBean.buttonText}" action="#{subscriptionBean.toggleSubscription}" update="@form">
+                <p:ajax render="subscriptionForm messages" />
+            </p:commandButton>
+
+            <h:outputText value=" " style="margin-right: 10px;" />
+
+            <p:button value="Provide payment information" outcome="/premium/paymentInfo.xhtml" />
         </h:form>
     </ui:define>
 </ui:composition>

@@ -1,5 +1,6 @@
 package at.qe.skeleton.tests;
 
+
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.LocationService;
@@ -22,7 +23,7 @@ public class LocationServiceTest {
     private LocationService locationService;
 
     @Test
-    public void testAutocompleteInnsbruck() {
+    public void testAutocompleteInnsbruck() throws EmptyLocationException {
         String query = "Innsbruck";
         List<Location> locations = locationService.autocomplete(query);
         Location firstLocation = locations.get(0);
@@ -30,11 +31,12 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void testAutocompleteHall() {
-        String query = "Hall";  // for simply "Hall" "Hallau" is expected.
+    public void testAutocompleteHall() throws EmptyLocationException {
+
+        String query = "Hall";  // for simply "Hall" "Hall in Tirol" is expected.
         List<Location> locations = locationService.autocomplete(query);
         Location firstLocation = locations.get(0);
-        assertEquals(firstLocation.getName(), "Hallau");
+        assertEquals(firstLocation.getName(), "Hall in Tirol");
     }
 
     @Test
@@ -48,7 +50,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void testAutocompleteWithNonExistingLocation() {
+    public void testAutocompleteWithNonExistingLocation() throws EmptyLocationException {
         String query = "NonExistingLocation";
         List<Location> locations = locationService.autocomplete(query);
         assertTrue(locations.isEmpty(), "no locations should be found for a non-existing location");

@@ -34,7 +34,7 @@ public class WeatherApiRequestService {
     private static final String LATITUDE_PARAMETER = "lat";
     private static final String DATE_PARAMETER = "date";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherApiRequestService.class);
+    private static final Logger logger = LoggerFactory.getLogger(WeatherApiRequestService.class);
 
     @Autowired
     private RestClient restClient;
@@ -48,17 +48,20 @@ public class WeatherApiRequestService {
      * @return the current and forecast weather
      */
     public CurrentAndForecastAnswerDTO retrieveCurrentAndForecastWeather(@Min(-90) @Max(90) double latitude,
-                                                                         @Min(-180) @Max(180) double longitude) {
-
-        ResponseEntity<CurrentAndForecastAnswerDTO> responseEntity = this.restClient.get()
-                .uri(UriComponentsBuilder.fromPath(CURRENT_AND_FORECAST_URI)
-                        .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
-                        .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
-                        .build().toUriString())
-                .retrieve()
-                .toEntity(CurrentAndForecastAnswerDTO.class);
-        // todo introduce error handling using responseEntity.getStatusCode.isXXXError
-        return responseEntity.getBody();
+                                                                         @Min(-180) @Max(180) double longitude) throws ApiQueryException {
+        try {
+            ResponseEntity<CurrentAndForecastAnswerDTO> responseEntity = this.restClient.get()
+                    .uri(UriComponentsBuilder.fromPath(CURRENT_AND_FORECAST_URI)
+                            .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
+                            .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
+                            .build().toUriString())
+                    .retrieve()
+                    .toEntity(CurrentAndForecastAnswerDTO.class);
+            // todo introduce error handling using responseEntity.getStatusCode.isXXXError
+            return responseEntity.getBody();
+        } catch (Exception e) {
+            throw new ApiQueryException("Failed to retrieve weather data from API!");
+        }
     }
 
     /**
@@ -86,11 +89,11 @@ public class WeatherApiRequestService {
             if (firstElement != null) {
                 return firstElement.get("name").asText();
             } else {
-                LOGGER.error("No elements in the JSON array");
+                logger.error("No elements in the JSON array");
                 return null;
             }
         } catch (IOException e) {
-            LOGGER.error("Error parsing JSON response", e);
+            logger.error("Error parsing JSON response", e);
             return null;
         }
 

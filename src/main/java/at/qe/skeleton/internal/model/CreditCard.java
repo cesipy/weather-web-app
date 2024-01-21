@@ -1,6 +1,7 @@
 package at.qe.skeleton.internal.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.userdetails.User;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -19,43 +20,32 @@ public class CreditCard implements Serializable, Comparable<CreditCard> {
     @Id
     @Column(length = 100)
     private String creditCard;
+    @Column
+    private  double balance;
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "username")
+    private Userx userx;
 
-    //private LocalDateTime validFrom;
-
-    //private LocalDateTime validTo;
 
 
     public void setCreditCard(String creditCard) {
         this.creditCard = creditCard;
     }
 
-    //public void setValidFrom(LocalDateTime validFrom) {
-        //this.validFrom = validFrom;
-    //}
+    public void setBalance(double balance) {this.balance = balance;}
 
-    //public void setValidTo(LocalDateTime validTo) {
-        //this.validTo = validTo;
-    //}
+    public double getBalance() {return balance;}
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "username")
-    private Userx userx;
 
     public void setUserx(Userx userx) {
         this.userx = userx;
     }
+    public Userx getUserx(){return userx;}
 
     public String getCreditCard() {
         return creditCard;
     }
 
-    //public LocalDateTime getValidFrom() {
-        //return validFrom;
-    //}
-
-    //public LocalDateTime getValidTo() {
-        //return validTo;
-    //}
 
     @Override
     public int hashCode() {

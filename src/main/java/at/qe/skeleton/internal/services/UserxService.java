@@ -4,6 +4,8 @@ import at.qe.skeleton.external.model.WeatherDataField;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.repositories.UserxRepository;
+
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import org.slf4j.Logger;
@@ -43,6 +45,10 @@ public class UserxService {
         return userRepository.findAll();
     }
 
+    @PreAuthorize("hasAuthority('MANAGER')")
+    public Collection<Userx> findPremiumUser() {
+        return userRepository.findByRole(UserxRole.PREMIUM);
+    }
     /**
      * Loads a single user identified by its username.
      *
@@ -100,6 +106,8 @@ public class UserxService {
         return userRepository.findFirstByUsername(auth.getName());
     }
 
+    public  Userx getUserByUsername(String username){return userRepository.findFirstByUsername(username);}
+
     /**
      * Removes a specified role from the roles of a user.
      *
@@ -125,6 +133,7 @@ public class UserxService {
     public void addUserRole(String username, UserxRole userxRole) {
         Userx userx = loadUser(username);
         Set<UserxRole> oldRoles = userx.getRoles();
+        userx.setPremiumSince(LocalDateTime.now());
 
         if (oldRoles.add(userxRole)) {
             userx.setRoles(oldRoles);
@@ -192,6 +201,13 @@ public class UserxService {
         selectedFields.removeAll(toDeleteSelectedFields);
         userRepository.save(userx);
 
+    }
+
+    public Userx passwordService(String username, String password){
+        Userx user = userRepository.findFirstByUsername(username);
+        user.setPassword(password);
+        saveUser(user);
+        return user;
     }
 
 }

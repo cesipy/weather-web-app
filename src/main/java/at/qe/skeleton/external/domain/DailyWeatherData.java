@@ -1,7 +1,6 @@
 package at.qe.skeleton.external.domain;
 
-import at.qe.skeleton.external.domain.DailyAggregationData;
-import at.qe.skeleton.external.domain.TemperatureAggregationData;
+
 import jakarta.persistence.*;
 import java.time.Instant;
 

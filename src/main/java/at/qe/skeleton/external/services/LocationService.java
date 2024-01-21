@@ -2,6 +2,7 @@ package at.qe.skeleton.external.services;
 
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.repositories.LocationRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -25,10 +25,12 @@ import java.util.Objects;
 @Scope("application")
 public class LocationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationService.class);
 
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired
+    private LocationApiRequestService locationApiRequestService;
 
     // points to "src/main/resources/owm_city_list.json"
     // json file with cities is from: https://github.com/manifestinteractive/openweathermap-cities
@@ -42,16 +44,28 @@ public class LocationService {
      * @param name query for autocompletion.
      * @return list of locations matching the provided query.
      */
-    public List<Location> autocomplete(String name) {
-        return locationRepository.findByNameStartingWithIgnoreCase(name);
+    public List<Location> autocomplete(String name) throws EmptyLocationException {
+        if (name != null && !name.trim().isEmpty()) {
+            return locationRepository.findByNameStartingWithIgnoreCase(name);
+        }
+        String message = String.format("The given location: %s is empty!", name);
+        throw new EmptyLocationException(message);
     }
 
     public Location retrieveLocationByExactName(String name) {
         return locationRepository.findFirstByName(name);
     }
 
-    public Location retrieveLocation(String name) {
-        return locationRepository.findFirstByNameStartingWithIgnoreCase(name);
+
+    public Location retrieveLocation(String name) throws EmptyLocationException, ApiQueryException {
+        Location location =  locationRepository.findFirstByNameStartingWithIgnoreCase(name);
+
+        // if location is also null in the api call, EmptyLocationException is thrown
+        if (location == null) {
+            List<LocationDTO> locationDTOS =  locationApiRequestService.retrieveLocations(name, 1);
+            return locationApiRequestService.convertLocationDTOtoLocation(locationDTOS.get(0));
+        }
+        return location;
     }
 
     public List<Location> getAllLocations(){
@@ -79,9 +93,9 @@ public class LocationService {
      * Initializes the service by populating the database with location data.
      */
     public void init() {
-        LOGGER.info("starting population of database");
+        logger.info("Starting population of database");
         loadDataFromJson(filePath);
-        LOGGER.info("populated database");
+        logger.info("Populated database");
     }
 
     public String getFilePath() {

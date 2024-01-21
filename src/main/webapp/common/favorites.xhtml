@@ -18,8 +18,12 @@
                                  action = "#{favoriteController.saveFavorite}"
                                  update="messages"
                 />
-                <p:messages id="messages" showDetail="true" showSummary="true"
-                style="color: red; margin-left: 10px;" />
+                <p:messages id="messages"
+                            showDetail="true"
+                            showSummary="true"
+                            closable="true" >
+                    <p:autoUpdate/>
+                </p:messages>
 
             </p:panel>
             <p:panel header="Favorite Locations" id="favoriteSearchPanel">

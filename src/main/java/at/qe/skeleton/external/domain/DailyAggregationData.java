@@ -1,10 +1,8 @@
 package at.qe.skeleton.external.domain;
 
-import at.qe.skeleton.external.model.currentandforecast.misc.DailyTemperatureAggregationDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.TemperatureAggregationDTO;
 
 import jakarta.persistence.*;
-import java.time.Instant;
+
 
 /**
  * Represents the daily temperature aggregation data.

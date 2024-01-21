@@ -1,7 +1,10 @@
 package at.qe.skeleton.internal.ui.beans;
 
+import at.qe.skeleton.internal.model.*;
+import at.qe.skeleton.internal.services.*;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
+import at.qe.skeleton.internal.services.UserReloadService;
 import at.qe.skeleton.internal.services.UserxService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -10,6 +13,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -21,29 +25,26 @@ public class SubscriptionBean implements Serializable {
 
     @Autowired
     private UserxService userxService;
+    @Autowired
+    private UserReloadService userReloadService;
+    @Autowired
+    private CashUpBean cashUpBean;
+
+    //@Autowired
+    //private SessionInfoBean sessionInfoBean;
+    //kann nicht einfach da oben hin schreiben
 
     private String buttonText;
 
     @PostConstruct
     public void init() {
         updateButtonText();
+
     }
 
     public String getButtonText() {
         return buttonText;
     }
-
-    /**public boolean isPremium() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null) {
-            // Überprüfe, ob die Rolle "PREMIUM" in den Authorities vorhanden ist
-            return authentication.getAuthorities().stream()
-                    .anyMatch(authority -> authority.getAuthority().equals(UserxRole.PREMIUM.name()));
-        }
-
-        return false;
-    }**/
 
     public boolean isPremium() {
         SessionInfoBean sessionInfoBean = new SessionInfoBean();
@@ -51,48 +52,54 @@ public class SubscriptionBean implements Serializable {
     }
 
     public boolean hasCreditCard() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getSecurityContext().getAuthentication();
 
         if (authentication != null) {
             Userx user = userxService.loadUser(authentication.getName());
             return user.getCreditCard() != null;
         }
-
         return false;
     }
 
+    protected SecurityContext getSecurityContext() {
+        return SecurityContextHolder.getContext();
+    }
+
     public void toggleSubscription() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getSecurityContext().getAuthentication();
+        Userx user = userxService.loadUser(authentication.getName());
 
-        if (authentication != null) {
-            String username = authentication.getName();
-
-            // Überprüfe, ob der Benutzer die Rolle "PREMIUM" hat
-            if (isPremium()) {
-                // Der Benutzer hat die Rolle "PREMIUM", entferne sie
-                userxService.removeUserRole(username, UserxRole.PREMIUM);
-            } else {
-                // Der Benutzer hat die Rolle "PREMIUM" nicht, füge sie hinzu
-                userxService.addUserRole(username, UserxRole.PREMIUM);
+        try {
+            if (!hasCreditCard()) {
+                throw new ValidationException();
             }
 
-            //neues login
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            ExternalContext externalContext = facesContext.getExternalContext();
-            try {
-                externalContext.redirect(externalContext.getRequestContextPath() + "/login.xhtml");
-            } catch (ValidationException | IOException ve) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ve.getMessage(), null));
+            if (authentication != null) {
+                String username = authentication.getName();
+
+                if (isPremium()) {
+                    userxService.removeUserRole(username, UserxRole.PREMIUM);
+                    cashUpBean.offSet(user);
+                } else {
+                    userxService.addUserRole(username, UserxRole.PREMIUM);
+                    cashUpBean.generateInvoice(user);
+                }
+                userReloadService.reloadUserAuthentication();
+                updateButtonText();
             }
+        } catch (ValidationException e) {
+            // Loggen?
+            //e.printStackTrace();
 
-            // Aktualisiere den Button-Text nach dem Umschalten
-            updateButtonText();
-
+            FacesContext.getCurrentInstance().addMessage(
+                    null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please provide payment information", e.getMessage())
+            );
         }
     }
 
+
     private void updateButtonText() {
-        buttonText = isPremium() ? "Deabonnieren" : (hasCreditCard() ? "Abonnieren" : "Bitte Zahlungsinformation hinterlegen");
-        System.out.println(isPremium());
+        buttonText = isPremium() ? "Unsubscribe" : "Subscribe" ;
     }
 }

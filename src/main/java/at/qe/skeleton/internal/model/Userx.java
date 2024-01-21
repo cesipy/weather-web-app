@@ -2,6 +2,7 @@ package at.qe.skeleton.internal.model;
 
 import at.qe.skeleton.external.model.WeatherDataField;
 import jakarta.persistence.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
@@ -54,7 +55,7 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     private LocalDateTime updateDate;
 
     @NotEmpty
-    @Size(min = 8, max = 64)
+    @Size(min = 5, max = 64)
     private String password;
 
     @NotEmpty
@@ -66,14 +67,16 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @NotEmpty
     private String email;
 
-    @NotEmpty
+
     private String phone;
+
+    private LocalDateTime premiumSince;
 
     @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
     private CreditCard creditCard;
 
-    @OneToMany(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Invoice> invoices = new ArrayList<>();
+    @OneToOne(mappedBy = "userx", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Invoice invoice;
 
     @ElementCollection
     @CollectionTable(name = "USERX_SELECTEDFIELDS", joinColumns = @JoinColumn(name = "USERX_USERNAME"))
@@ -81,13 +84,9 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @Enumerated(EnumType.STRING)
     private List<WeatherDataField> selectedFields;
 
-    public List<Invoice> getInvoices() {
-        return invoices;
-    }
+    public Invoice getInvoice() {return this.invoice;}
 
-    public void setInvoices(List<Invoice> invoices) {
-        this.invoices = invoices;
-    }
+    public void setInvoice(Invoice invoices) {this.invoice = invoice;}
 
     public CreditCard getCreditCard() {
         return creditCard;
@@ -99,6 +98,15 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     @CollectionTable(name = "Userx_UserxRole")
     @Enumerated(EnumType.STRING)
     private Set<UserxRole> roles;
+
+    public LocalDateTime getPremiumSince() {
+        return premiumSince;
+    }
+
+    public void setPremiumSince(LocalDateTime premiumSince) {
+        this.premiumSince = premiumSince;
+    }
+
 
     public String getUsername() {
         return username;
@@ -194,6 +202,10 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
 
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public void setCreditCard(CreditCard creditCard) {
+        this.creditCard = creditCard;
     }
 
     @Override

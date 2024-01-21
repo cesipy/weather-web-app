@@ -5,31 +5,32 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/WEB-INF/templates/main.xhtml">
 
     <ui:define name="content">
         <h:form>
             <p:panel header="Location Search">
+                <f:facet name="header">
+                    Search
+                </f:facet>
                 <p:autoComplete value="#{searchWeatherController.locationToSearch}"
                                 completeMethod="#{locationControllerDb.autocomplete}"
                                 maxResults="5"
                                 minQueryLength="3"
                 />
-                <!-- `weatherResponsePanel` is needed to identify each search and receive a result -->
-                <p:commandButton value="Search" action="#{searchWeatherController.searchWeatherByLocation}" update="weatherResponsePanel"/>
-            </p:panel>
-            <p:panel header="Weather Response" id="weatherResponsePanel">
-                <div>
-                    <h:panelGroup rendered="#{not empty searchWeatherController.currentWeather}" >
-                        <h:outputText escape="false" value="#{searchWeatherController.currentWeather}"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{empty searchWeatherController.currentWeather}">
-                        <h:outputText value="No favorites found."/>
-                    </h:panelGroup>
 
-                    <!-- <h:outputText escape="false" value="#{searchWeatherController.currentWeather}"/> -->
+                <p:commandButton value="Search"
+                                 action="#{searchWeatherController.searchAndRedirect}"
+                                 update="messages"/>
+                <div>
+                    <br/>
                 </div>
-            </p:panel>
+                <p:messages id="messages" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+
+           </p:panel>
         </h:form>
     </ui:define>
 
