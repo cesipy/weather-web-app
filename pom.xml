@@ -108,7 +108,10 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.24</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
 
         <!-- special test dependencies -->
         <dependency>
@@ -135,7 +138,8 @@
 
 
 
-            <!-- TestNG -->
+
+        <!-- TestNG -->
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
