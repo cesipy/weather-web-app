@@ -24,39 +24,31 @@ class InvoiceServiceTest {
 
     @Test
     void saveInvoice() {
-        // Arrange
         Invoice invoice = new Invoice();
 
-        // Act
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
         Invoice savedInvoice = invoiceService.saveInvoice(invoice);
 
-        // Assert
+
         assertNotNull(savedInvoice);
         assertEquals(invoice, savedInvoice);
     }
 
     @Test
     void deleteInvoice() {
-        // Arrange
         Invoice invoice = new Invoice();
 
-        // Act
         invoiceService.deleteInvoice(invoice);
 
-        // Assert
         Mockito.verify(invoiceRepository, Mockito.times(1)).delete(invoice);
     }
 
     @Test
     void updateInvoiceStatus() {
-        // Arrange
         Invoice invoice = new Invoice();
 
-        // Act
         invoiceService.setInvoiceOpen(invoice, false);
 
-        // Assert
         assertFalse(invoice.isInvoiceOpen());
         Mockito.verify(invoiceRepository, Mockito.times(1)).save(invoice);
     }

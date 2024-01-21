@@ -66,7 +66,7 @@ public class CreditCardController implements Serializable {
      * Action to delete the current CreditCard.
      */
     public void doDeleteCreditCard() {
-        this.creditCardService.deleteCreditCard(creditCard);
+        this.creditCardService.deleteCreditCard(creditCard.getCreditCard());
         creditCard = null;
     }
 
