@@ -18,7 +18,7 @@ import java.util.Objects;
 @Controller
 @Scope("view")
 public class LocationControllerDb {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationControllerDb.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationControllerDb.class);
     @Autowired
     private LocationService locationService;
     private String locationName;
@@ -33,21 +33,20 @@ public class LocationControllerDb {
      */
     public List<Location> autocomplete(String query)  {
         try {
-            if (Objects.equals(locationName, "")) {
-                LOGGER.info("Query is null!");
+
+            List<Location> locations = locationService.autocomplete(query);
+
+            if (locations.isEmpty()) {
+                return Collections.emptyList();
             }
 
-            List <Location> locations = locationService.autocomplete(query);
-
             logLocations(locations);
-
             return locations;
-        }
-        catch (EmptyLocationException e) {
-            LOGGER.info("empty location list in autocomplete!");
+        } catch (EmptyLocationException e) {
+            logger.info("in locationcontrollerDB: {} ", e.getMessage());
         }
 
-        return Collections.emptyList();
+        return null; // only temp
     }
 
 
@@ -64,15 +63,19 @@ public class LocationControllerDb {
             String extractedLocationName = locationName.split(",")[0];
 
             List<Location> locations = locationService.autocomplete(extractedLocationName);
+
+            if (locations.isEmpty()) {
+                logger.info("no location found");
+                currentLocation = null;
+                return null;
+            }
+
             Location firstLocation = locations.get(0);
             currentLocation = firstLocation;
-            LOGGER.info(firstLocation.toDebugString());
-            return firstLocation;
 
-        }
-        catch (EmptyLocationException e) {
-            LOGGER.info("no location found");
-            currentLocation = null;
+            return firstLocation;
+        } catch (EmptyLocationException e) {
+            logger.info("no location found! {}", e.getMessage());
         }
         return null;
     }
@@ -115,7 +118,8 @@ public class LocationControllerDb {
      */
     private void logLocations(List<Location> locations) {
         for (Location location : locations) {
-            LOGGER.info(location.toDebugString());
+            logger.info(location.toDebugString());
         }
     }
+
 }

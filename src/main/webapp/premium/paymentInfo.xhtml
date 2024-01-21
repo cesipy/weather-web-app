@@ -7,28 +7,25 @@
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name="content">
         <h:form>
+
             <div style="margin-bottom: 10px;">
-                <h:outputLabel for="cardNumber" value="Card Number:" />
-                <h:inputText id="cardNumber" value="#{creditCardController.creditCard.creditCard}" required="true" />
-            </div>
-<!--
-            <div style="margin-bottom: 10px;">
-                <h:outputLabel for="validFrom" value="Valid from:" />
-                <h:inputText id="validFrom" value="#{creditCardController.creditCard.validFrom}" required="true">
-                    <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
-                </h:inputText>
+                <p:outputLabel for="cardNumber" value="Card Number:" />
+                <p:inputText id="cardNumber" value="#{creditCardController.creditCard.creditCard}" required="true" />
+                <p:message for="cardNumber" style="color: red" />
             </div>
 
             <div style="margin-bottom: 10px;">
-                <h:outputLabel for="validTo" value="Valid to:" />
-                <h:inputText id="validTo" value="#{creditCardController.creditCard.validTo}" required="true">
-                    <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm:ss" />
-                </h:inputText>
+                <p:outputLabel for="balance" value="Balance:" />
+                <p:inputText id="balance" value="#{creditCardController.creditCard.balance}" required="true"/>
+                <p:message for="balance" style="color: red" />
             </div>
--->
+
             <div>
-                <p:commandButton value="Save" action="#{creditCardController.doSaveCreditCard}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" />
+                <p:commandButton value="Save" action="#{creditCardController.doSaveCreditCard}" update="@form"/>
             </div>
+
+
+
         </h:form>
     </ui:define>
 </ui:composition>

@@ -1,73 +1,142 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.location.Location;
+
+import at.qe.skeleton.external.services.ApiQueryException;
+import at.qe.skeleton.external.services.LocationService;
+import at.qe.skeleton.external.services.WeatherService;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller             // @Controller is a specification of @Component
 @Scope("view")
 public class SearchWeatherController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchWeatherController.class);
+    private static final Logger logger = LoggerFactory.getLogger(SearchWeatherController.class);
     @Autowired
     private WeatherController weatherController;
     @Autowired
-    private LocationControllerDb locationControllerDb;
+    private LocationService locationService;
     private CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO;
     private String currentWeather;
     private Location currentLocation;
     private String currentLocationString;
     private String locationToSearch;
 
+    private HourlyWeatherDTO hourlyWeatherDTO;
+    private HourlyWeatherDTO weatherInOneHour;
+    private List<HourlyWeatherDTO> hourlyWeatherList;
+    private List<DailyWeatherDTO> dailyWeatherList;
+
+
     /**
-     * Starts a weather search based on the specified location.
-     * The location is set in the {@link LocationControllerDb} to facilitate autocompletion.
-     * The search is performed using the database, and if a location is found, weather information is retrieved
-     * and stored in the controller's fields.
-     * If no location is found, the current weather is set to "No location found."
+     * Initiates a weather search and redirection to the detail page based on user input.
+     *
+     * Calls the {@link #isLocationValid()} method to check if the entered location is valid.
+     * If a valid location is found, it redirects to the detail page using {@link #redirectToDetailPage()}.
      */
-    public void searchWeatherByLocation() {
-        locationControllerDb.setLocationName(locationToSearch);
+    public void searchAndRedirect() {
+        boolean wasLocationFound = isLocationValid();
 
-        // currently all locations are processed by database and not the geocoding api. this makes autocompletion much
-        // easier. however, there are cities missing. example:
-        // query in database= "inns" result: only innsbruck
-        // query in api    = "inns" result: Inns quay B, Inns quay A, Inns quay C, Inns
-
-        //locationControllerDb.getFirstMatch();
-        //Location singleLocation = locationControllerDb.getSingleLocation();
-        Location singleLocation = locationControllerDb.requestFirstMatch();
-
-        if (singleLocation != null) {
-            processWeatherForLocation(singleLocation);
-        }
-        else {
-            // TODO: improve error handling
-            LOGGER.info("in searchWeatherByLocation: no location found");
-            setCurrentWeather("No location found.");
+        if (wasLocationFound) {
+            redirectToDetailPage();
         }
     }
 
+
     /**
-     * Processes weather information for a given location.
-     * The location details are set in the controller, and the weather is retrieved using the {@link WeatherController}.
+     * Searches for weather information based on the specified location.
+     * If the location is found either in the database or by querying the location API,
+     * weather information is retrieved and stored in the controller's fields.
      *
-     * @param singleLocation location for which weather information is to be retrieved
+     * @return True if a valid location is found; otherwise, false.
      */
-    private void processWeatherForLocation(Location singleLocation) {
-        setCurrentLocation(singleLocation);
-        setCurrentLocationString(singleLocation.toDebugString());
+    public boolean isLocationValid() {
+        try {
+            if (locationToSearch == null || locationToSearch.trim().isEmpty()) {
+                String warnMessage = "Please enter a city.";
+                showInfoMessage(warnMessage);
+                return false;
+            }
 
-        weatherController.setLatitude(singleLocation.getLatitude());
-        weatherController.setLongitude(singleLocation.getLongitude());
+            // retrieves location using databasea
+            // when no location is found in db, service calls API
+            Location singleLocation = locationService.retrieveLocation(locationToSearch);
 
-        weatherController.requestWeather();
-        setCurrentAndForecastAnswerDTO(weatherController.getCurrentWeatherDTO());
-        setCurrentWeather(weatherController.getCurrentWeather());
+            if (singleLocation != null) {
+                currentLocation = singleLocation;
+                return true;
+            } else {
+                handleNoLocationFound();
+                return false;
+            }
+        } catch (ApiQueryException e) {
+            logger.error("Error querying location API", e);
+            showWarnMessage();
+            return false;
+        } catch (EmptyLocationException e) {
+            String message = "Cannot find city: %s".formatted(locationToSearch);
+            showInfoMessage(message);
+            return false;
+        }
+    }
+
+
+    /**
+     * Handles the scenario when no location is found, showing an info message and logging the event.
+     */
+    private void handleNoLocationFound() {
+        String message = String.format("Cannot find city: %s", locationToSearch);
+        showInfoMessage(message);
+        logger.info("No location found for search: {}", locationToSearch);
+    }
+
+
+    private void redirectToDetailPage() {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        String url = externalContext.getRequestContextPath() + "/secured/detail.xhtml?location=" + currentLocation.getName();
+        logger.info(url);
+        try {
+            externalContext.redirect(url);
+        } catch (Exception e) {
+            logger.error("Exception occurred in redirection: {}", e.getMessage());
+        }
+    }
+
+
+    /**
+     * Displays a warning message about a location not being found.
+     *
+     */
+    public void showWarnMessage() {
+        String message = "An error occurred!";
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
+    }
+
+    /**
+     * Displays an informational message about a location not being found.
+     *
+     * @param locationName The name of the location for which the message is generated.
+     */
+    public void showInfoMessage(String locationName) {
+        String message = String.format("Location '%s' not found!", locationName);
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
     }
 
     public CurrentAndForecastAnswerDTO getCurrentAndForecastAnswerDTO() {
@@ -106,7 +175,41 @@ public class SearchWeatherController {
         return locationToSearch;
     }
 
-    public void setLocationToSearch(String locationToSearch) {
+    @RequestMapping(value = "/secured/detail.xhtml", method = RequestMethod.GET)
+    public void setLocationToSearch(@RequestParam("location") String locationToSearch) {
         this.locationToSearch = locationToSearch;
+    }
+
+    public HourlyWeatherDTO getHourlyWeatherDTO() {
+        return hourlyWeatherDTO;
+    }
+
+    public void setHourlyWeatherDTO(HourlyWeatherDTO hourlyWeatherDTO) {
+        this.hourlyWeatherDTO = hourlyWeatherDTO;
+    }
+
+    public HourlyWeatherDTO getWeatherInOneHour() {
+        return weatherInOneHour;
+    }
+
+    public void setWeatherInOneHour(HourlyWeatherDTO weatherInOneHour) {
+        this.weatherInOneHour = weatherInOneHour;
+    }
+
+    public List<HourlyWeatherDTO> getHourlyWeatherList() {
+        logger.info("in detailed view: {}", hourlyWeatherList);
+        return hourlyWeatherList;
+    }
+
+    public void setHourlyWeatherList(List<HourlyWeatherDTO> hourlyWeatherList) {
+        this.hourlyWeatherList = hourlyWeatherList;
+    }
+
+    public List<DailyWeatherDTO> getDailyWeatherList() {
+        return dailyWeatherList;
+    }
+
+    public void setDailyWeatherList(List<DailyWeatherDTO> dailyWeatherList) {
+        this.dailyWeatherList = dailyWeatherList;
     }
 }

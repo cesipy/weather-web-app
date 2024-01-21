@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 @Scope("view")
 public class LocationAutocompleteDemoBean {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationAutocompleteDemoBean.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationAutocompleteDemoBean.class);
     @Autowired
     private LocationService locationService;
     private final String PATH_NAME = "src/main/resources/owm_city_list.json";
@@ -32,17 +32,17 @@ public class LocationAutocompleteDemoBean {
     public void demo() {
         try {
             if (locationName == null) {
-                LOGGER.info("query is null!");
+                logger.info("query is null!");
             }
             locations = locationService.autocomplete(locationName);
-            LOGGER.info("successfully autocomplete");
+            logger.info("successfully autocomplete");
 
             for (Location location : locations) {
-                LOGGER.info(String.valueOf(location));
+                logger.info(String.valueOf(location));
             }
-        }
-        catch (EmptyLocationException e) {
-            LOGGER.info("no location found!");
+        } catch (EmptyLocationException e) {
+            logger.info("empty location! {}", e.getMessage());
         }
     }
+
 }

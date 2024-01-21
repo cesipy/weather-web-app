@@ -1,14 +1,14 @@
 package at.qe.skeleton.external.services;
 
-import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.domain.DailyAggregationData;
 import at.qe.skeleton.external.domain.DailyWeatherData;
 import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.domain.TemperatureAggregationData;
-import at.qe.skeleton.external.model.currentandforecast.misc.DailyTemperatureAggregationDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.TemperatureAggregationDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.*;
+import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.model.shared.WeatherDTO;
+import at.qe.skeleton.external.model.weather.CurrentWeatherData;
+import at.qe.skeleton.external.repositories.CurrentWeatherDataRepository;
 import at.qe.skeleton.internal.repositories.DailyAggregationDataRepository;
 import at.qe.skeleton.internal.repositories.DailyWeatherDataRepository;
 import at.qe.skeleton.internal.repositories.HourlyWeatherDataRepository;
@@ -36,6 +36,8 @@ public class WeatherDataService {
     private TemperatureAggregationDataRepository temperatureAggregationDataRepository;
     @Autowired
     private HourlyWeatherDataRepository hourlyWeatherDataRepository;
+    @Autowired
+    private CurrentWeatherDataRepository currentWeatherDataRepository;
 
     /**
      * Converts a DailyWeatherDTO to a dailyWeatherData entity and saves it into the database.
@@ -85,8 +87,8 @@ public class WeatherDataService {
                 data.getMoonset(),
                 data.getMoonPhase(),
                 data.getSummary(),
-                converDailyAggregationToDTO(data.getDailyTemperatureAggregation()), // assuming you have a similar method for this conversion
-                convertTempAggregationToDTO(data.getFeelsLikeTemperatureAggregation()), // assuming you have a similar method for this conversion
+                converDailyAggregationToDTO(data.getDailyTemperatureAggregation()),
+                convertTempAggregationToDTO(data.getFeelsLikeTemperatureAggregation()),
                 data.getPressure(),
                 data.getHumidity(),
                 data.getDewPoint(),
@@ -216,4 +218,64 @@ public class WeatherDataService {
 
         hourlyWeatherDataRepository.save(hourlyWeatherData);
     }
+
+    public void saveCurrentWeatherFromDTO(CurrentWeatherDTO currentWeatherDTO, Location location) {
+        CurrentWeatherData currentWeatherData = new CurrentWeatherData();
+        currentWeatherData.setTimestamp(currentWeatherDTO.timestamp());
+        currentWeatherData.setLocation(location);
+        currentWeatherData.setSunrise(currentWeatherDTO.sunrise());
+        currentWeatherData.setSunset(currentWeatherDTO.sunset());
+        currentWeatherData.setTemperature(currentWeatherDTO.temperature());
+        currentWeatherData.setFeelsLikeTemperature(currentWeatherDTO.feelsLikeTemperature());
+        currentWeatherData.setPressure(currentWeatherDTO.pressure());
+        currentWeatherData.setHumidity(currentWeatherDTO.humidity());
+        currentWeatherData.setDewPoint(currentWeatherDTO.dewPoint());
+        currentWeatherData.setClouds(currentWeatherDTO.clouds());
+        currentWeatherData.setUvi(currentWeatherDTO.uvi());
+        currentWeatherData.setVisibility(currentWeatherDTO.visibility());
+        currentWeatherData.setRain(currentWeatherDTO.rain());
+        currentWeatherData.setSnow(currentWeatherDTO.snow());
+        currentWeatherData.setWindSpeed(currentWeatherDTO.windSpeed());
+        currentWeatherData.setWindGust(currentWeatherDTO.windGust());
+        currentWeatherData.setWindDirection(currentWeatherDTO.windDirection());
+
+        // weatherDTO objects
+        currentWeatherData.setMain(currentWeatherDTO.weather().title());
+        currentWeatherData.setDescription(currentWeatherDTO.weather().description());
+        currentWeatherData.setIcon(currentWeatherData.getIcon());
+
+        currentWeatherData.setAdditionTime(Instant.now());
+
+        currentWeatherDataRepository.save(currentWeatherData);
+    }
+
+    public CurrentWeatherDTO convertCurrentDataToDTO(CurrentWeatherData currentWeatherData) {
+        WeatherDTO weatherDTO = new WeatherDTO(1,           // temp value of 1 for id
+                currentWeatherData.getMain(),
+                currentWeatherData.getDescription(),
+                currentWeatherData.getIcon());
+
+        return new CurrentWeatherDTO(
+                currentWeatherData.getTimestamp(),
+                currentWeatherData.getSunrise(),
+                currentWeatherData.getSunset(),
+                currentWeatherData.getTemperature(),
+                currentWeatherData.getFeelsLikeTemperature(),
+                currentWeatherData.getPressure(),
+                currentWeatherData.getHumidity(),
+                currentWeatherData.getDewPoint(),
+                currentWeatherData.getClouds(),
+                currentWeatherData.getUvi(),
+                currentWeatherData.getVisibility(),
+                currentWeatherData.getRain(),
+                currentWeatherData.getSnow(),
+                currentWeatherData.getWindSpeed(),
+                currentWeatherData.getWindGust(),
+                currentWeatherData.getWindDirection(),
+                weatherDTO
+        );
+    }
+
+
 }
+

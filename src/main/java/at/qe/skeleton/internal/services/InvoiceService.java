@@ -19,4 +19,8 @@ public class InvoiceService {
     public void deleteInvoice(Invoice invoice) {
         invoiceRepository.delete(invoice);
     }
+    public void setInvoiceOpen(Invoice invoice, boolean isOpen){
+        invoice.setInvoiceOpen(isOpen);
+        saveInvoice(invoice);
+    }
 }

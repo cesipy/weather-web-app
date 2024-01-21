@@ -50,4 +50,8 @@ public class WeatherApiDemoBean {
     public List<Location> getLocations() {
         return locations;
     }
+
+    public void setLocations(List<Location> locations) {
+        this.locations = locations;
+    }
 }

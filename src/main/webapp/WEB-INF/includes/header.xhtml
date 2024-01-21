@@ -9,6 +9,9 @@
         <ui:composition>
             <h:form>
                 <p:menubar>
+                    <p:menuitem value="Home" url="/common/overview.xhtml"
+                                rendered="#{sessionInfoBean.hasRole('EMPLOYEE')}"/>
+                    <!--
                     <p:submenu label="Employee Submenu 1" rendered="#{sessionInfoBean.hasRole('EMPLOYEE')}">
                         <p:menuitem value="Employee Action 1 - 1"/>
                         <p:menuitem value="Employee Action 1 - 2"/>
@@ -17,32 +20,36 @@
                         <p:menuitem value="Employee Action 2 - 1"/>
                         <p:menuitem value="Employee Action 2 - 2"/>
                     </p:submenu>
+                    -->
                     <p:submenu label="Manager Submenu" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-                        <p:menuitem value="Manager Action 1"/>
-                        <p:menuitem value="Manager Action 2"/>
+                        <p:menuitem value="Cash up!" url="/manager/cashUp.xhtml"/>
+                        <p:menuitem value="Premium users" url="/manager/premiumUserView.xhtml"/>
                     </p:submenu>
                     <p:submenu label="Admin Submenu" rendered="#{sessionInfoBean.hasRole('ADMIN')}">
                         <p:menuitem value="Manage Users" url="/admin/users.xhtml"/>
+
+                        <p:menuitem value="Manage UserRoles" url="/admin/changeUserRoles.xhtml"/>
+
+
                     </p:submenu>
                     <p:submenu label="Test Submenu" rendered="#{sessionInfoBean.loggedIn}">
                         <p:menuitem value="Security Test" url="/secured/test.xhtml"/>
                         <p:menuitem value="Weather API Demo" url="/secured/demos/weather_api_demo.xhtml"/>
                         <p:menuitem value="Location API Demo" url="/secured/demos/location_api_demo.xhtml"/>
                         <p:menuitem value="Location Searching Demo" url="/secured/demos/location_searching_demo.xhtml"/>
-                        <p:menuitem value="AutocompleteDemo" url="/secured/demos/location_autocomplete_demo.xhtml"/>
+                        <p:menuitem value="Autocomplete Demo" url="/secured/demos/location_autocomplete_demo.xhtml"/>
                     </p:submenu>
-                    <p:submenu label="Weather" rendered="#{sessionInfoBean.loggedIn}">
+                    <p:submenu label="Weather" rendered="#{sessionInfoBean.loggedIn}" >
                         <p:menuitem value="Weather Searching" url="/common/searching.xhtml"/>
+                        <p:menuitem value="Manage Favorites" url="/common/favorites.xhtml"/>
                     </p:submenu>
 
-                    //neu
 
-                    <p:submenu label="Premium Submenu" rendered="#{sessionInfoBean.loggedIn}">
-                        <p:menuitem value="(de)abonnieren" url="/premium/abonnieren.xhtml"/>
+                    <p:submenu label="Premium Submenu" rendered="#{sessionInfoBean.loggedIn}" >
+                        <p:menuitem value="(un)subscribe" url="/premium/abonnieren.xhtml" />
                         <p:menuitem value="payment information" url="/premium/paymentInfo.xhtml"/>
                     </p:submenu>
 
-                    //
                     
                     <p:menuitem value="Login" url="/login.xhtml" rendered="#{!sessionInfoBean.loggedIn}"/>
                     <p:menuitem value="Logout" url="/logout" rendered="#{sessionInfoBean.loggedIn}"/>                    

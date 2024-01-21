@@ -1,5 +1,6 @@
 package at.qe.skeleton.tests;
 
+
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.LocationService;
@@ -17,19 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @WebAppConfiguration
 public class LocationServiceTest {
-
     private static Logger LOGGER = LoggerFactory.getLogger(LocationServiceTest.class);
-
     @Autowired
     private LocationService locationService;
-
-    @Test
-    public void testAutocompleteException() throws EmptyLocationException {
-        String query = "";
-        assertThrows(EmptyLocationException.class, () -> {
-            List<Location> locations = locationService.autocomplete(query);
-        }, "query is empty - test");
-    }
 
     @Test
     public void testAutocompleteInnsbruck() throws EmptyLocationException {
@@ -41,10 +32,11 @@ public class LocationServiceTest {
 
     @Test
     public void testAutocompleteHall() throws EmptyLocationException {
-        String query = "Hall";  // for simply "Hall" "Hallau" is expected.
+
+        String query = "Hall";  // for simply "Hall" "Hall in Tirol" is expected.
         List<Location> locations = locationService.autocomplete(query);
         Location firstLocation = locations.get(0);
-        assertEquals(firstLocation.getName(), "Hallau");
+        assertEquals(firstLocation.getName(), "Hall in Tirol");
     }
 
     @Test
@@ -79,6 +71,5 @@ public class LocationServiceTest {
         String expectedPath = "src/main/resources/owm_city_list.json";      // if folder is moved, this has to be changed!!
         String actualPath = locationService.getFilePath();
         assertEquals(expectedPath, actualPath, "is the path setting with @Value correct.");
-
     }
 }

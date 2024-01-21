@@ -1,7 +1,12 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
+import at.qe.skeleton.external.model.location.Location;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
+import at.qe.skeleton.external.services.WeatherService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.text.StringEscapeUtils;
@@ -10,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
 
 /**
 Weather Controller for managing the weather forecast retrieved from the api.
@@ -28,7 +35,18 @@ public class WeatherController {
     @Autowired
     private WeatherApiRequestService weatherApiRequestService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherController.class);
+    @Autowired
+    private WeatherService weatherService;
+
+    private String queryName;
+
+    private HourlyWeatherDTO hourlyWeatherDTO;
+    private HourlyWeatherDTO weatherInOneHour;
+    private List<HourlyWeatherDTO> hourlyWeatherList;
+    private List<DailyWeatherDTO> dailyWeatherList;
+    private Location location;
+
+    private static final Logger logger = LoggerFactory.getLogger(WeatherController.class);
 
     /**
      * Retrieves the current and forecast weather for the specified location,
@@ -48,10 +66,19 @@ public class WeatherController {
                     .replace(" ", "&nbsp;");
             this.setCurrentWeather(escapedHtmlAnswerWithLineBreaks);
 
-        } catch (final Exception e) {
-            LOGGER.error("error in request", e);
+        } catch (ApiQueryException e) {
+            logger.info("error occurred in weather controller");
+            // TODO: proper handling here
+
+        }
+        catch (RuntimeException e) {
+            logger.info("unknownhost exception");
+        }
+        catch (Exception e) {
+            logger.error("error in request", e);
         }
     }
+
 
     public double getLatitude() {
         return latitude;

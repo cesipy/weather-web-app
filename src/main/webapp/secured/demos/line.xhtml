@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xml:lang="en">
+<h:head>
+    <link rel="stylesheet" th:href="@{/css/theme.css}"/>
+    <title>AAAAA sdasdasd</title>
+</h:head>
+
+<h:body>
+    <h:form id="form">
+        <div class="card">
+            <p:lineChart id="chart" model="#{diagramBean.lineModel}" style="width: 100%; height: 500px;"/>
+        </div>
+        <p:commandButton value="Get holiday forecast" action="#{diagramBean.updateLineModel}" update="form:chart"/>
+    </h:form>
+
+</h:body>
+</html>

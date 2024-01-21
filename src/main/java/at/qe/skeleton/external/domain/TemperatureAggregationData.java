@@ -1,6 +1,8 @@
 package at.qe.skeleton.external.domain;
+
 import jakarta.persistence.*;
-import java.time.Instant;
+
+
 /**
  * Represents the temperature aggregation data.
  * <p>

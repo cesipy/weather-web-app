@@ -1,8 +1,5 @@
 package at.qe.skeleton.external.domain;
 
-import at.qe.skeleton.external.domain.DailyAggregationData;
-import at.qe.skeleton.external.domain.TemperatureAggregationData;
-import at.qe.skeleton.external.model.deserialisation.PrecipitationDeserializer;
 import jakarta.persistence.*;
 import java.time.Instant;
 /**
