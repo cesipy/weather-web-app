@@ -1,17 +1,24 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.location.Location;
 
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
+import at.qe.skeleton.external.services.WeatherService;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -30,6 +37,21 @@ public class SearchWeatherController {
     private String currentLocationString;
     private String locationToSearch;
 
+    @Autowired
+    private WeatherService weatherService;
+    private HourlyWeatherDTO hourlyWeatherDTO;
+    private HourlyWeatherDTO weatherInOneHour;
+    private List<HourlyWeatherDTO> hourlyWeatherList;
+    private List<DailyWeatherDTO> dailyWeatherList;
+
+
+    public void searchAndRedirect() {
+        searchWeatherByLocation();
+
+        logger.info("before redirect");
+        redirectToDetailPage();
+        logger.info("after redircet");
+    }
 
     /**
      * Searches for weather information based on the specified location.
@@ -44,12 +66,12 @@ public class SearchWeatherController {
                 return;
             }
 
-
             // retrieves location using database
             // when no location is found in db, service calls API
             Location singleLocation = locationService.retrieveLocation(locationToSearch);
 
             if (singleLocation != null) {
+                currentLocation = singleLocation;
                 processWeatherForLocation(singleLocation);
             } else {
                 handleNoLocationFound();
@@ -74,13 +96,14 @@ public class SearchWeatherController {
     }
 
 
+    // TODO: wetter muss anders prozessiert werden, nicht von controller, sondern von weatherService
     /**
      * Processes weather information for a given location.
      * The location details are set in the controller, and the weather is retrieved using the {@link WeatherController}.
      *
      * @param singleLocation location for which weather information is to be retrieved
      */
-    private void processWeatherForLocation(Location singleLocation) {
+    public void processWeatherForLocation(Location singleLocation) {
         setCurrentLocation(singleLocation);
         setCurrentLocationString(singleLocation.toDebugString());
 
@@ -92,7 +115,34 @@ public class SearchWeatherController {
         setCurrentWeather(weatherController.getCurrentWeather());
 
         logger.info(String.valueOf(currentAndForecastAnswerDTO));
+        //todo: only temp exception handling here:
+        try {
+
+            CurrentlyHourlyDailyWeather weatherData =  weatherService.processWeatherForLocation(singleLocation);
+            hourlyWeatherList = weatherData.getHourlyWeatherList();
+            dailyWeatherList  = weatherData.getDailyWeatherList();
+
+            logger.info(dailyWeatherList.toString());
+            logger.info(hourlyWeatherList.toString());
+
+        }
+        catch (Exception e) {
+            logger.info("exception in processWeather, {}", e.getMessage());
+        }
+
     }
+
+    private void redirectToDetailPage() {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        String url = externalContext.getRequestContextPath() + "/secured/detail.xhtml?location=" + currentLocation.getName();
+        logger.info(url);
+        try {
+            externalContext.redirect(url);
+        } catch (Exception e) {
+            logger.error("Exception occurred in redirection: {}", e.getMessage());
+        }
+    }
+
 
 
     /**
@@ -152,7 +202,41 @@ public class SearchWeatherController {
         return locationToSearch;
     }
 
-    public void setLocationToSearch(String locationToSearch) {
+    @RequestMapping(value = "/secured/detail.xhtml", method = RequestMethod.GET)
+    public void setLocationToSearch(@RequestParam("location") String locationToSearch) {
         this.locationToSearch = locationToSearch;
+    }
+
+    public HourlyWeatherDTO getHourlyWeatherDTO() {
+        return hourlyWeatherDTO;
+    }
+
+    public void setHourlyWeatherDTO(HourlyWeatherDTO hourlyWeatherDTO) {
+        this.hourlyWeatherDTO = hourlyWeatherDTO;
+    }
+
+    public HourlyWeatherDTO getWeatherInOneHour() {
+        return weatherInOneHour;
+    }
+
+    public void setWeatherInOneHour(HourlyWeatherDTO weatherInOneHour) {
+        this.weatherInOneHour = weatherInOneHour;
+    }
+
+    public List<HourlyWeatherDTO> getHourlyWeatherList() {
+        logger.info("in detailed view: {}", hourlyWeatherList);
+        return hourlyWeatherList;
+    }
+
+    public void setHourlyWeatherList(List<HourlyWeatherDTO> hourlyWeatherList) {
+        this.hourlyWeatherList = hourlyWeatherList;
+    }
+
+    public List<DailyWeatherDTO> getDailyWeatherList() {
+        return dailyWeatherList;
+    }
+
+    public void setDailyWeatherList(List<DailyWeatherDTO> dailyWeatherList) {
+        this.dailyWeatherList = dailyWeatherList;
     }
 }
