@@ -5,11 +5,8 @@ import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswer
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.repositories.CurrentWeatherDataRepository;
-import at.qe.skeleton.external.services.ApiQueryException;
-import at.qe.skeleton.external.services.FavoriteService;
-import at.qe.skeleton.external.services.WeatherApiRequestService;
+import at.qe.skeleton.external.services.*;
 import at.qe.skeleton.external.model.Favorite;
-import at.qe.skeleton.external.services.WeatherDataService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -38,13 +35,15 @@ public class FavoriteOverviewController {
     private WeatherDataService weatherDataService;
     @Autowired
     private CurrentWeatherDataRepository currentWeatherDataRepository;
+    @Autowired
+    private WeatherService weatherService;
+
     private List<Favorite> favorites;
     private List<CurrentWeatherData> currentWeatherDataList;
     private List<WeatherDataField> selectedFieldList;
 
     // threshold to retrieve previously saved weather data, in seconds
     private static final long STALE_WEATHER_DATA_THRESHOLD_SECONDS = 600;
-
 
 
     @PostConstruct
@@ -87,54 +86,14 @@ public class FavoriteOverviewController {
      * If the weather data is not present in the local database, an API request is made
      * to retrieve the current weather information.
      *
-     * @see #fetchCurrentWeather(Location)
      */
     private void fetchWeatherDataForFavorites() throws ApiQueryException {
         for (Favorite favorite : favorites) {
             Location location = favorite.getLocation();
-            CurrentWeatherData currentWeatherData = fetchCurrentWeather(location);
+            CurrentWeatherData currentWeatherData = weatherService.fetchCurrentWeather(location);
             currentWeatherDataList.add(currentWeatherData);
         }
     }
-
-    /**
-     * Fetches current weather data for a given location, either from the database or by making an API request.
-     *
-     * @param location The location for which to fetch weather data.
-     * @return The current weather data for the specified location.
-     */
-    private CurrentWeatherData fetchCurrentWeather(Location location) throws ApiQueryException {
-        List<CurrentWeatherData> currentWeatherDataList = currentWeatherDataRepository
-                .findByLocationOrderByAdditionTimeDesc(location);
-
-        // is data outdated or no data is saved?
-        if (currentWeatherDataList.isEmpty() || isWeatherDataStale(currentWeatherDataList.get(0))) {
-            CurrentAndForecastAnswerDTO weather = weatherApiRequestService
-                    .retrieveCurrentAndForecastWeather(location.getLatitude(), location.getLongitude());
-
-            weatherDataService.saveCurrentWeatherFromDTO(weather.currentWeather(), location);
-
-            return currentWeatherDataRepository
-                    .findByLocationOrderByAdditionTimeDesc(location).get(0);
-        } else {
-            logger.info("Taking weather data from database for location {}", location);
-            return currentWeatherDataList.get(0);
-        }
-    }
-
-    /**
-     * Checks if the provided weather data is considered stale based on the time elapsed since its addition.
-     *
-     * @param weatherData The weatherData to check for staleness.
-     * @return {@code true} if the weather data is considered stale, {@code false} otherwise.
-     */
-    private boolean isWeatherDataStale(CurrentWeatherData weatherData) {
-        Instant additionTime = weatherData.getAdditionTime();
-        Instant nowTime = Instant.now();
-        Duration timeElapsed = Duration.between(additionTime, nowTime);
-        return timeElapsed.getSeconds() >= STALE_WEATHER_DATA_THRESHOLD_SECONDS;
-    }
-
 
     /**
      * Checks if a field is selected by the user
@@ -226,10 +185,9 @@ public class FavoriteOverviewController {
      */
     private void updateSelectedField(WeatherDataField weatherDataField, Visibility visibility) {
         if (visibility == Visibility.VISIBLE) {
-            logger.info("set visibility for {}  to visible", weatherDataField );
             favoriteService.addSelectedFields(List.of(weatherDataField));
-        } else if (visibility == Visibility.HIDDEN) {
-            logger.info("set visibility for {} to hidden", weatherDataField );
+        }
+        else if (visibility == Visibility.HIDDEN) {
             favoriteService.deleteSelectedFields(List.of(weatherDataField));
         }
         else {

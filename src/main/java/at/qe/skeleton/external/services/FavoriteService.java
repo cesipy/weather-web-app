@@ -190,7 +190,6 @@ public class FavoriteService {
      *
      * @param locationName The name of the location to be saved as a favorite.
      */
-
     public void saveFavorite( String locationName) throws EmptyLocationException, ApiQueryException {
         retrieveCurrentData(locationName);
         if (currentLocation == null || currentUserx == null) {
@@ -248,9 +247,7 @@ public class FavoriteService {
     }
 
     public List<WeatherDataField> retrieveSelectedFields() {
-        List<WeatherDataField> selectedFields = userxService.getSelectedWeatherFieldsForUser();
-        logger.info("selected fields retrieved: " + selectedFields);
-        return selectedFields;
+        return userxService.getSelectedWeatherFieldsForUser();
     }
 
     public void setDefaultSelectedFields() {
