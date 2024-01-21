@@ -17,7 +17,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.annotation.PostConstruct;
+import jakarta.inject.Named;
 import org.apache.commons.text.StringEscapeUtils;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.axes.cartesian.CartesianScales;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
+import org.primefaces.model.charts.line.LineChartDataSet;
+import org.primefaces.model.charts.line.LineChartModel;
+import org.primefaces.model.charts.line.LineChartOptions;
+import org.primefaces.model.charts.optionconfig.title.Title;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.primefaces.PrimeFaces;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -34,8 +43,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.chart.*;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -47,6 +54,7 @@ import java.text.SimpleDateFormat;
 /**
  * Bean class for displaying in-depth weather data retrieved by the API for a certain location.
  */
+
 
 @Component
 @Scope("view")
@@ -64,6 +72,8 @@ public class LocationApiDemoBean {
     private WeatherApiRequestService weatherApiRequestService;
     @Autowired
     private WeatherDataService weatherDataService;
+    @Autowired
+    private DiagramBean diagramBean;
     private LocationDTO currentLocation;
     private HourlyWeatherDTO currentWeather;
     private HourlyWeatherDTO weatherInOneHour;
@@ -75,7 +85,8 @@ public class LocationApiDemoBean {
     private Date end_date;
     private Date end_date_max;
     private String query_name;
-    private LineChartModel model = new LineChartModel();
+    private LineChartModel model;
+    private boolean modelReady;
     private final int LIMIT = 1;
 
     /**
@@ -86,6 +97,7 @@ public class LocationApiDemoBean {
      */
     @PostConstruct
     public void init() {
+        model = new LineChartModel();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, 1);
         this.setOneYearFromToday(cal.getTime());
@@ -182,13 +194,11 @@ public class LocationApiDemoBean {
                 List<HolidayDTO> holidays = new ArrayList<>();
                 for(String i : chosenDates){
                     HolidayDTO holiday = weatherApiRequestService.retrieveDailyHolidayForecast(this.currentLocation.latitude(), this.currentLocation.longitude(), i);
-                    LOGGER.info(holiday.date() + " " + holiday.temperatureDTO().dayTemperature() + " " + holiday.humidityDTO().afternoon());
                     holidays.add(holiday);
                 }
                 this.setHolidayWeatherList(holidays);
                 int size = this.getHolidayWeatherList().size();
-                LOGGER.info("Size: "+size);
-                updateDiagram();
+                diagramBean.updateLineModel(this.getHolidayWeatherList(), this.getStart_date(), this.getEnd_date());
             }catch (Exception e) {
                 LOGGER.error("error in request in WeatherApi", e);
                 throw new RuntimeException(e);
@@ -197,32 +207,19 @@ public class LocationApiDemoBean {
             LOGGER.warn("You left at least one date unchosen!");
         }
     }
+    public void getPastAverage(){
+        long diffInMillies = Math.abs(getEnd_date().getTime() - getStart_date().getTime());
 
-    public void updateDiagram(){
-        LineChartSeries seriesMin, seriesMax, seriesDay, seriesMorn, seriesNight, seriesEve;
-        seriesMin = seriesMax = seriesDay = seriesMorn = seriesNight = seriesEve = new LineChartSeries();
+        // Calculate the middle point
+        long middlePoint = diffInMillies / 2;
 
-        seriesMin.setLabel("Minimum Temperature");
-        seriesMax.setLabel("Maximum Temperature");
-        seriesDay.setLabel("Afternoon Temperature");
-        seriesMorn.setLabel("Morning Temperature");
-        seriesNight.setLabel("Night Temperature");
-        seriesEve.setLabel("Evening Temperature");
-        for (HolidayDTO holiday : this.getHolidayWeatherList()) {
-            seriesMin.set(holiday.date(), holiday.temperatureDTO().minimumDailyTemperature());
-            seriesMax.set(holiday.date(), holiday.temperatureDTO().maximumDailyTemperature());
-            seriesDay.set(holiday.date(), holiday.temperatureDTO().dayTemperature());
-            seriesMorn.set(holiday.date(), holiday.temperatureDTO().morningTemperature());
-            seriesNight.set(holiday.date(), holiday.temperatureDTO().nightTemperature());
-            seriesEve.set(holiday.date(), holiday.temperatureDTO().eveningTemperature());
-        }
+        // Create the middle date
+        Date middleDate = new Date(getStart_date().getTime() + middlePoint);
 
-        model.addSeries(seriesMin);
-        model.addSeries(seriesMax);
-        model.addSeries(seriesDay);
-        model.addSeries(seriesMorn);
-        model.addSeries(seriesNight);
-        model.addSeries(seriesEve);
+        // Format the middle date to a string
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String middleDateString = sdf.format(middleDate);
+
 
     }
     public String getQuery_name() {
@@ -242,12 +239,12 @@ public class LocationApiDemoBean {
         this.start_date = selected_date;
     }
 
-    public LineChartModel getModel() {
-        return model;
+    public boolean getModelReady() {
+        return modelReady;
     }
 
-    public void setModel(LineChartModel model) {
-        this.model = model;
+    public void setModelReady(boolean modelReady) {
+        this.modelReady = modelReady;
     }
 
     public Date getEnd_date_max() {

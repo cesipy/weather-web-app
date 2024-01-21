@@ -11,6 +11,7 @@
     <link rel="stylesheet" th:href="@{/css/theme.css}"/>
     <title>Weather Details</title>
 </h:head>
+
 <h:body>
     <h:form id="allWeatherData">
         <f:metadata>
@@ -137,8 +138,7 @@
                 </div>
             </p:outputLabel>
         </p:overlayPanel>
-        <p:commandButton value="Get holiday forecast" action="#{locationApiDemoBean.getHolidayForecast}" update="allWeatherData:holidayTabView"/>
-
+        <p:commandButton value="Get holiday forecast" action="#{locationApiDemoBean.getHolidayForecast}" update="allWeatherData:holidayTabView diagram:holidayChart"/>
         <h2>Holiday</h2>
         <p:tabView value="#{locationApiDemoBean.holidayWeatherList}" var="holidayWeather" scrollable="true" id="holidayTabView">
             <p:tab title="#{holidayWeather.date()}">
@@ -170,8 +170,11 @@
                 </p:dataTable>
             </p:tab>
         </p:tabView>
-
-        <p:lineChart value="#{locationApiDemoBean.model}" title="Temperature Over Time" legendPosition="e" />
+    </h:form>
+    <h:form id="diagram">
+        <div class="card">
+            <p:lineChart id="holidayChart" model="#{diagramBean.lineModel}" style="width: 100%; height: 500px;" />
+        </div>
     </h:form>
 </h:body>
 </html>
