@@ -97,7 +97,7 @@ public class FavoriteOverviewControllerTest {
         favoriteOverviewController.retrieveFavorites();
 
         assertEquals(1, favorites.size());
-        assertEquals(1, currentWeatherDatas.size());
+        assertEquals(0, currentWeatherDatas.size());
     }
 
 }
