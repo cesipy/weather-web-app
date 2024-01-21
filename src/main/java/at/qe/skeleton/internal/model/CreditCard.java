@@ -1,6 +1,7 @@
 package at.qe.skeleton.internal.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.userdetails.User;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -39,6 +40,7 @@ public class CreditCard implements Serializable, Comparable<CreditCard> {
     public void setUserx(Userx userx) {
         this.userx = userx;
     }
+    public Userx getUserx(){return userx;}
 
     public String getCreditCard() {
         return creditCard;
