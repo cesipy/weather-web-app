@@ -109,7 +109,6 @@ public class SearchWeatherController {
     private void redirectToDetailPage() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         String url = externalContext.getRequestContextPath() + "/secured/detail.xhtml?location=" + currentLocation.getName();
-        logger.info(url);
         try {
             externalContext.redirect(url);
         } catch (Exception e) {
