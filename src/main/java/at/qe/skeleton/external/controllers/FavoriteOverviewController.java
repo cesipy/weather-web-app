@@ -1,17 +1,14 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.WeatherDataField;
-import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.repositories.CurrentWeatherDataRepository;
 import at.qe.skeleton.external.services.*;
 import at.qe.skeleton.external.model.Favorite;
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.event.ActionEvent;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.Visibility;
 import org.slf4j.Logger;
@@ -21,8 +18,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +37,8 @@ public class FavoriteOverviewController {
     private WeatherService weatherService;
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private MessageService messageService;
 
     private List<Favorite> favorites;
     private List<CurrentWeatherData> currentWeatherDataList;
@@ -78,7 +75,8 @@ public class FavoriteOverviewController {
         }
         catch (ApiQueryException e) {
             logger.info("Error occurred while requesting API");
-            showWarnMessage();
+            String message = "Could not fetch weather data!";
+            messageService.showWarnMessage(message);
         }
         catch (Exception e) {
             logger.info("error occurred!");
@@ -132,7 +130,8 @@ public class FavoriteOverviewController {
                     redirectToDetailPage(location);
                 } else {
                     // Handle the case where location details are not found
-                    facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Location details not found."));
+                    String message = "Location details not found.";
+                    messageService.showWarnMessage(message);
                 }
             }
         }
@@ -154,7 +153,7 @@ public class FavoriteOverviewController {
         try {
             externalContext.redirect(url);
         } catch (IOException e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Exception occurred in redirection: " + e.getMessage()));
+            messageService.showWarnMessage("An error occurred!");
         }
     }
 
@@ -219,8 +218,6 @@ public class FavoriteOverviewController {
             case 16:
                 updateSelectedField(WeatherDataField.DESCRIPTION, visibility);
                 break;
-            default:
-                logger.warn("Unexpected value in onToggle: {} ", columnIndex);
         }
     }
 
@@ -237,16 +234,8 @@ public class FavoriteOverviewController {
         else if (visibility == Visibility.HIDDEN) {
             favoriteService.deleteSelectedFields(List.of(weatherDataField));
         }
-        else {
-            logger.info("Error occurred!");
-        }
     }
 
-    private void showWarnMessage() {
-        String message = "Could not fetch weather data!";
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
-    }
 
     public List<CurrentWeatherData> getCurrentWeatherDataList() {
         return currentWeatherDataList;
@@ -262,5 +251,13 @@ public class FavoriteOverviewController {
 
     public void setFavorites(List<Favorite> favorites) {
         this.favorites = favorites;
+    }
+
+    public List<WeatherDataField> getSelectedFieldList() {
+        return selectedFieldList;
+    }
+
+    public void setSelectedFieldList(List<WeatherDataField> selectedFieldList) {
+        this.selectedFieldList = selectedFieldList;
     }
 }

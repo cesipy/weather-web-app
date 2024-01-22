@@ -7,8 +7,6 @@ import at.qe.skeleton.external.model.location.Location;
 
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
-import at.qe.skeleton.external.services.WeatherService;
-import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
@@ -31,6 +29,8 @@ public class SearchWeatherController {
     private WeatherController weatherController;
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private MessageService messageService;
     private CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO;
     private String currentWeather;
     private Location currentLocation;
@@ -69,7 +69,7 @@ public class SearchWeatherController {
         try {
             if (locationToSearch == null || locationToSearch.trim().isEmpty()) {
                 String warnMessage = "Please enter a city.";
-                showInfoMessage(warnMessage);
+                messageService.showInfoMessage(warnMessage);
                 return false;
             }
 
@@ -86,11 +86,12 @@ public class SearchWeatherController {
             }
         } catch (ApiQueryException e) {
             logger.error("Error querying location API", e);
-            showWarnMessage();
+            String message = "An error occurred!";
+            messageService.showWarnMessage(message);
             return false;
         } catch (EmptyLocationException e) {
-            String message = "Cannot find city: %s".formatted(locationToSearch);
-            showInfoMessage(message);
+            String message = String.format("Location '%s' not found!", locationToSearch);
+            messageService.showInfoMessage(message);
             return false;
         }
     }
@@ -101,7 +102,7 @@ public class SearchWeatherController {
      */
     private void handleNoLocationFound() {
         String message = String.format("Cannot find city: %s", locationToSearch);
-        showInfoMessage(message);
+        messageService.showInfoMessage(message);
         logger.info("No location found for search: {}", locationToSearch);
     }
 
@@ -116,27 +117,6 @@ public class SearchWeatherController {
         }
     }
 
-
-    /**
-     * Displays a warning message about a location not being found.
-     *
-     */
-    public void showWarnMessage() {
-        String message = "An error occurred!";
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
-    }
-
-    /**
-     * Displays an informational message about a location not being found.
-     *
-     * @param locationName The name of the location for which the message is generated.
-     */
-    public void showInfoMessage(String locationName) {
-        String message = String.format("Location '%s' not found!", locationName);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
-    }
 
     public CurrentAndForecastAnswerDTO getCurrentAndForecastAnswerDTO() {
         return currentAndForecastAnswerDTO;
