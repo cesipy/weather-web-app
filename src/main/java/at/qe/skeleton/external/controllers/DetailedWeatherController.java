@@ -30,6 +30,8 @@ public class DetailedWeatherController {
 
     private List<HourlyWeatherDTO> hourlyWeatherList;
     private List<DailyWeatherDTO> dailyWeatherList;
+    private List<HourlyWeatherDTO> limitedHourlyWeatherList;
+    private List<DailyWeatherDTO> limitedDailyWeatherList;
     private String locationQuery;
     private final String ERROR_MESSAGE = "An error occurred!";
     private static final Logger logger = LoggerFactory.getLogger(DetailedWeatherController.class);
@@ -74,6 +76,10 @@ public class DetailedWeatherController {
             setHourlyWeatherList(weatherData.getHourlyWeatherList());
             setDailyWeatherList(weatherData.getDailyWeatherList());
 
+            // save limited date for users without premium
+            setLimitedDailyWeatherList(weatherData.getDailyWeatherList().subList(0, 3));
+            setLimitedHourlyWeatherList(weatherData.getHourlyWeatherList().subList(0, 24));
+
 
         } catch (EmptyLocationException | ApiQueryException e) {
 
@@ -81,6 +87,7 @@ public class DetailedWeatherController {
             logger.error("An error occurred in detailed controller: {}", e.getMessage(), e);
         }
     }
+
 
     public List<HourlyWeatherDTO> getHourlyWeatherList() {
         return hourlyWeatherList;
@@ -104,5 +111,21 @@ public class DetailedWeatherController {
 
     public void setLocationQuery(String locationQuery) {
         this.locationQuery = locationQuery;
+    }
+
+    public void setLimitedHourlyWeatherList(List<HourlyWeatherDTO> limitedHourlyWeatherList) {
+        this.limitedHourlyWeatherList = limitedHourlyWeatherList;
+    }
+
+    public void setLimitedDailyWeatherList(List<DailyWeatherDTO> limitedDailyWeatherList) {
+        this.limitedDailyWeatherList = limitedDailyWeatherList;
+    }
+
+    public List<HourlyWeatherDTO> getLimitedHourlyWeatherList() {
+        return limitedHourlyWeatherList;
+    }
+
+    public List<DailyWeatherDTO> getLimitedDailyWeatherList() {
+        return limitedDailyWeatherList;
     }
 }

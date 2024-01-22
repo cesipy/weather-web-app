@@ -57,9 +57,9 @@ public class WebSecurityConfig {
                             .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAnyAuthority("ADMIN")
                             .requestMatchers(new AntPathRequestMatcher("/manager/**")).hasAnyAuthority("MANAGER")
                             .requestMatchers(new AntPathRequestMatcher("/secured/**")).hasAnyAuthority(ADMIN, MANAGER, EMPLOYEE)
-                            .requestMatchers(new AntPathRequestMatcher("/landing.xhtml")).permitAll() // This line allows public access to landing.xhtml
-                            .requestMatchers(new AntPathRequestMatcher("/common/searching.xhtml")).permitAll() // This line allows public access to searching.xhtml
-                            //.requestMatchers(new AntPathRequestMatcher("/common/detail.xhtml")).permitAll() // This line allows public access to booking.xhtml
+                            .requestMatchers(new AntPathRequestMatcher("/landing.xhtml")).permitAll() // allows public access to landing.xhtml
+                            .requestMatchers(new AntPathRequestMatcher("/common/searching.xhtml")).permitAll() // allows public access to searching.xhtml
+                            .requestMatchers(new AntPathRequestMatcher("/common/detail.xhtml/**")).permitAll() // allows public access to booking.xhtml
                             .anyRequest().authenticated()
                     )
 

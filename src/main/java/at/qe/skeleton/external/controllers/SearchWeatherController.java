@@ -99,7 +99,7 @@ public class SearchWeatherController {
 
     private void redirectToDetailPage() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        String url = externalContext.getRequestContextPath() + "/secured/detail.xhtml?location=" + currentLocation.getName();
+        String url = externalContext.getRequestContextPath() + "/common/detail.xhtml?location=" + currentLocation.getName();
         try {
             externalContext.redirect(url);
         } catch (Exception e) {
@@ -121,7 +121,7 @@ public class SearchWeatherController {
         return locationToSearch;
     }
 
-    @RequestMapping(value = "/secured/detail.xhtml", method = RequestMethod.GET)
+    @RequestMapping(value = "/common/detail.xhtml", method = RequestMethod.GET)
     public void setLocationToSearch(@RequestParam("location") String locationToSearch) {
         this.locationToSearch = locationToSearch;
     }
