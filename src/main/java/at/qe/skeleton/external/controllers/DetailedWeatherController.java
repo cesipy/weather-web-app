@@ -54,6 +54,7 @@ public class DetailedWeatherController {
             }
         }
         catch (Exception e) {
+            System.out.println("error init"+ e.getMessage());
             String message = "An error occurred!";
             messageService.showWarnMessage(message);
         }
@@ -72,13 +73,15 @@ public class DetailedWeatherController {
             Location location = locationService.retrieveLocation(locationQuery);
             CurrentlyHourlyDailyWeather weatherData =  weatherService.processWeatherForLocation(location);
 
-            hourlyWeatherList = weatherData.getHourlyWeatherList();
-            dailyWeatherList  = weatherData.getDailyWeatherList();
+            setHourlyWeatherList(weatherData.getHourlyWeatherList());
+            setDailyWeatherList(weatherData.getDailyWeatherList());
+            System.out.println("reach");
 
 
         } catch (EmptyLocationException | ApiQueryException e) {
             String message = "An error occurred!";
             messageService.showWarnMessage(message);
+            System.out.println("error");
             logger.error("An error occurred in detailed controller: {}", e.getMessage(), e);
         }
     }

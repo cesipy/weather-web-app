@@ -1,8 +1,5 @@
 package at.qe.skeleton.external.controllers;
 
-import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.location.Location;
 
 import at.qe.skeleton.external.services.ApiQueryException;
@@ -18,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+
 
 @Controller             // @Controller is a specification of @Component
 @Scope("view")
@@ -31,16 +28,9 @@ public class SearchWeatherController {
     private LocationService locationService;
     @Autowired
     private MessageService messageService;
-    private CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO;
-    private String currentWeather;
     private Location currentLocation;
-    private String currentLocationString;
-    private String locationToSearch;
 
-    private HourlyWeatherDTO hourlyWeatherDTO;
-    private HourlyWeatherDTO weatherInOneHour;
-    private List<HourlyWeatherDTO> hourlyWeatherList;
-    private List<DailyWeatherDTO> dailyWeatherList;
+    private String locationToSearch;
 
 
     /**
@@ -118,22 +108,6 @@ public class SearchWeatherController {
     }
 
 
-    public CurrentAndForecastAnswerDTO getCurrentAndForecastAnswerDTO() {
-        return currentAndForecastAnswerDTO;
-    }
-
-    public void setCurrentAndForecastAnswerDTO(CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO) {
-        this.currentAndForecastAnswerDTO = currentAndForecastAnswerDTO;
-    }
-
-    public String getCurrentWeather() {
-        return currentWeather;
-    }
-
-    public void setCurrentWeather(String currentWeatherString) {
-        this.currentWeather = currentWeatherString;
-    }
-
     public Location getCurrentLocation() {
         return currentLocation;
     }
@@ -142,13 +116,6 @@ public class SearchWeatherController {
         this.currentLocation = currentLocation;
     }
 
-    public String getCurrentLocationString() {
-        return (currentLocationString == null) ? "no location found" : currentLocationString;
-    }
-
-    public void setCurrentLocationString(String currentLocationString) {
-        this.currentLocationString = currentLocationString;
-    }
 
     public String getLocationToSearch() {
         return locationToSearch;
@@ -157,38 +124,5 @@ public class SearchWeatherController {
     @RequestMapping(value = "/secured/detail.xhtml", method = RequestMethod.GET)
     public void setLocationToSearch(@RequestParam("location") String locationToSearch) {
         this.locationToSearch = locationToSearch;
-    }
-
-    public HourlyWeatherDTO getHourlyWeatherDTO() {
-        return hourlyWeatherDTO;
-    }
-
-    public void setHourlyWeatherDTO(HourlyWeatherDTO hourlyWeatherDTO) {
-        this.hourlyWeatherDTO = hourlyWeatherDTO;
-    }
-
-    public HourlyWeatherDTO getWeatherInOneHour() {
-        return weatherInOneHour;
-    }
-
-    public void setWeatherInOneHour(HourlyWeatherDTO weatherInOneHour) {
-        this.weatherInOneHour = weatherInOneHour;
-    }
-
-    public List<HourlyWeatherDTO> getHourlyWeatherList() {
-        logger.info("in detailed view: {}", hourlyWeatherList);
-        return hourlyWeatherList;
-    }
-
-    public void setHourlyWeatherList(List<HourlyWeatherDTO> hourlyWeatherList) {
-        this.hourlyWeatherList = hourlyWeatherList;
-    }
-
-    public List<DailyWeatherDTO> getDailyWeatherList() {
-        return dailyWeatherList;
-    }
-
-    public void setDailyWeatherList(List<DailyWeatherDTO> dailyWeatherList) {
-        this.dailyWeatherList = dailyWeatherList;
     }
 }
