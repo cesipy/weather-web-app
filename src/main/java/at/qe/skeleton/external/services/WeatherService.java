@@ -49,12 +49,6 @@ public class WeatherService {
     @Autowired
     private CurrentWeatherDataRepository currentWeatherDataRepository;
 
-    private Location location;
-    private HourlyWeatherDTO currentWeather;
-    private HourlyWeatherDTO weatherInOneHour;
-    private List<HourlyWeatherDTO> hourlyWeatherList;
-    private List<DailyWeatherDTO> dailyWeatherList;
-
 
     private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
 
@@ -83,7 +77,7 @@ public class WeatherService {
      * @return A {@link CurrentlyHourlyDailyWeather} containing hourly and daily weather information.
      * @throws ApiQueryException If there is an issue querying the weather API.
      */
-    private CurrentlyHourlyDailyWeather fetchCurrentWeatherAndForecast(Location location) throws ApiQueryException {
+    public CurrentlyHourlyDailyWeather fetchCurrentWeatherAndForecast(Location location) throws ApiQueryException {
         Pageable lastEightEntries = PageRequest.of(0, 8);
         Pageable lastFortyEightEntries = PageRequest.of(0, 2);
         Pageable lastEntry = PageRequest.of(0, 1);
@@ -114,14 +108,15 @@ public class WeatherService {
             CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO = retrieveWeatherDataApi(location);
 
             logger.info("retrieve new data");
-            this.setHourlyWeatherList(currentAndForecastAnswerDTO.hourlyWeather());
-            for(int n = 0; n < getHourlyWeatherList().size(); n++){
-                weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherList.get(n), location.getName());
+            List<HourlyWeatherDTO> hourlyWeatherList = currentAndForecastAnswerDTO.hourlyWeather();
+
+            for (HourlyWeatherDTO hourlyWeatherDTO : hourlyWeatherList) {
+                weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherDTO, location.getName());
             }
 
-            this.setDailyWeatherList(currentAndForecastAnswerDTO.dailyWeather());
-            for(int n = 0; n < getDailyWeatherList().size(); n++){
-                weatherDataService.saveDailyWeatherFromDTO(getDailyWeatherList().get(n), location.getName());
+            List<DailyWeatherDTO> dailyWeatherList = currentAndForecastAnswerDTO.dailyWeather();
+            for (DailyWeatherDTO dailyWeatherDTO : dailyWeatherList) {
+                weatherDataService.saveDailyWeatherFromDTO(dailyWeatherDTO, location.getName());
             }
             return new CurrentlyHourlyDailyWeather(currentAndForecastAnswerDTO.hourlyWeather(), currentAndForecastAnswerDTO.dailyWeather());
         }
@@ -209,43 +204,5 @@ public class WeatherService {
         return additionTime.isAfter(tenMinutesAgo);
     }
 
-    public Location getLocation() {
-        return location;
-    }
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public HourlyWeatherDTO getCurrentWeather() {
-        return currentWeather;
-    }
-
-    public void setCurrentWeather(HourlyWeatherDTO currentWeather) {
-        this.currentWeather = currentWeather;
-    }
-
-    public HourlyWeatherDTO getWeatherInOneHour() {
-        return weatherInOneHour;
-    }
-
-    public void setWeatherInOneHour(HourlyWeatherDTO weatherInOneHour) {
-        this.weatherInOneHour = weatherInOneHour;
-    }
-
-    public List<HourlyWeatherDTO> getHourlyWeatherList() {
-        return hourlyWeatherList;
-    }
-
-    public void setHourlyWeatherList(List<HourlyWeatherDTO> hourlyWeatherList) {
-        this.hourlyWeatherList = hourlyWeatherList;
-    }
-
-    public List<DailyWeatherDTO> getDailyWeatherList() {
-        return dailyWeatherList;
-    }
-
-    public void setDailyWeatherList(List<DailyWeatherDTO> dailyWeatherList) {
-        this.dailyWeatherList = dailyWeatherList;
-    }
 }

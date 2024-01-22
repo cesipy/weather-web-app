@@ -1,7 +1,6 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.ApiQueryException;
@@ -42,8 +41,6 @@ public class WeatherController {
 
     private HourlyWeatherDTO hourlyWeatherDTO;
     private HourlyWeatherDTO weatherInOneHour;
-    private List<HourlyWeatherDTO> hourlyWeatherList;
-    private List<DailyWeatherDTO> dailyWeatherList;
     private Location location;
 
     private static final Logger logger = LoggerFactory.getLogger(WeatherController.class);
@@ -69,7 +66,6 @@ public class WeatherController {
         } catch (ApiQueryException e) {
             logger.info("error occurred in weather controller");
             // TODO: proper handling here
-
         }
         catch (RuntimeException e) {
             logger.info("unknownhost exception");

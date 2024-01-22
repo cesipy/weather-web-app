@@ -7,7 +7,6 @@ import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.external.services.WeatherService;
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
@@ -25,6 +24,8 @@ public class DetailedWeatherController {
     private WeatherService weatherService;
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private MessageService messageService;
 
 
     private List<HourlyWeatherDTO> hourlyWeatherList;
@@ -40,15 +41,22 @@ public class DetailedWeatherController {
      */
     @PostConstruct
     public void init() {
-        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        locationQuery = externalContext.getRequestParameterMap().get("location");
+        try {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            locationQuery = externalContext.getRequestParameterMap().get("location");
 
-        if (locationQuery != null) {
-            retrieveWeatherData(locationQuery);
+            if (locationQuery != null) {
+                retrieveWeatherData(locationQuery);
+            } else {
+                String message = "An error occurred!";
+                messageService.showWarnMessage(message);
+                logger.info("init did not work");
+            }
         }
-        else {
-            displayWarningMessage();
-            logger.info("init did not work");
+        catch (Exception e) {
+            System.out.println("error init"+ e.getMessage());
+            String message = "An error occurred!";
+            messageService.showWarnMessage(message);
         }
     }
 
@@ -65,36 +73,17 @@ public class DetailedWeatherController {
             Location location = locationService.retrieveLocation(locationQuery);
             CurrentlyHourlyDailyWeather weatherData =  weatherService.processWeatherForLocation(location);
 
-            hourlyWeatherList = weatherData.getHourlyWeatherList();
-            dailyWeatherList  = weatherData.getDailyWeatherList();
+            setHourlyWeatherList(weatherData.getHourlyWeatherList());
+            setDailyWeatherList(weatherData.getDailyWeatherList());
+            System.out.println("reach");
 
 
         } catch (EmptyLocationException | ApiQueryException e) {
-            displayWarningMessage();
+            String message = "An error occurred!";
+            messageService.showWarnMessage(message);
+            System.out.println("error");
             logger.error("An error occurred in detailed controller: {}", e.getMessage(), e);
         }
-    }
-
-
-    /**
-     * Displays a warning message on the user interface.
-     */
-    public void displayWarningMessage() {
-        String message = "An error occurred!";
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
-    }
-
-
-    /**
-     * Displays an informational message about a location not being found.
-     *
-     * @param locationName The name of the location for which the message is generated.
-     */
-    public void displayInfoMessage(String locationName) {
-        String message = String.format("Location '%s' not found!", locationName);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
     }
 
     public List<HourlyWeatherDTO> getHourlyWeatherList() {

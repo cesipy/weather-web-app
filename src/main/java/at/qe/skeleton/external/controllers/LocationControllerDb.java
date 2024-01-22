@@ -60,9 +60,9 @@ public class LocationControllerDb {
         try {
             // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
             // only locationName has to be extracted
-            String extractedLocationName = locationName.split(",")[0];
+            //String extractedLocationName = locationName.split(",")[0];
 
-            List<Location> locations = locationService.autocomplete(extractedLocationName);
+            List<Location> locations = locationService.autocomplete(locationName);
 
             if (locations.isEmpty()) {
                 logger.info("no location found");
@@ -73,14 +73,19 @@ public class LocationControllerDb {
             Location firstLocation = locations.get(0);
             currentLocation = firstLocation;
 
+            // clear locationName
+            locationName = "";
+
             return firstLocation;
         } catch (EmptyLocationException e) {
             logger.info("no location found! {}", e.getMessage());
         }
+        catch (Exception e) {
+            logger.info("An error occurred!");
+        }
         return null;
     }
 
-    //TODO: convert LocationEntity to .json string
 
     public void setLocationName(String locationName) {
         this.locationName = locationName;

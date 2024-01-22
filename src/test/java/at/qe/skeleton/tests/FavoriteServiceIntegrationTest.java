@@ -2,6 +2,7 @@ package at.qe.skeleton.tests;
 
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.Favorite;
+import at.qe.skeleton.external.model.WeatherDataField;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.FavoriteService;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -95,15 +97,14 @@ public class FavoriteServiceIntegrationTest {
 
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
-
     public void testSaveFavorite() throws EmptyLocationException, ApiQueryException {
         String query = "Vienna";
         favoriteService.saveFavorite(query);
 
         Location location =  locationService.retrieveLocation(query);
+        Userx user = userxService.getCurrentUser();
 
-        assertEquals(favoriteService.getCurrentUserx().getUsername(), "admin");
-        assertEquals(favoriteService.getCurrentLocation(), location);
+        assertEquals(favoriteService.getSortedFavoritesList(user).get(0).getLocation(), location);
     }
 
     @Test
