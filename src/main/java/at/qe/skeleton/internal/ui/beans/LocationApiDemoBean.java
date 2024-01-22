@@ -3,7 +3,7 @@ package at.qe.skeleton.internal.ui.beans;
 import at.qe.skeleton.external.domain.DailyWeatherData;
 import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.CurrentWeatherDTO;
+
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyTemperatureAggregationDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
@@ -16,19 +16,10 @@ import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.services.WeatherDataService;
 import at.qe.skeleton.internal.repositories.DailyWeatherDataRepository;
 import at.qe.skeleton.internal.repositories.HourlyWeatherDataRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+
 import jakarta.annotation.PostConstruct;
-import jakarta.inject.Named;
-import org.apache.commons.text.StringEscapeUtils;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.axes.cartesian.CartesianScales;
-import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
-import org.primefaces.model.charts.line.LineChartDataSet;
 import org.primefaces.model.charts.line.LineChartModel;
-import org.primefaces.model.charts.line.LineChartOptions;
-import org.primefaces.model.charts.optionconfig.title.Title;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,12 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
-import org.primefaces.PrimeFaces;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

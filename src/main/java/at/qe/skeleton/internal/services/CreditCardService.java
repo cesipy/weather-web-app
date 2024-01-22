@@ -18,8 +18,8 @@ public class CreditCardService {
     }
     @Transactional
     public void deleteCreditCard(String creditCard) {
-        System.out.println("kreditkarte wird gelöscht mit der nummer" + creditCard);
-        creditCardRepository.deleteByCreditCard(creditCard);;
+
+        creditCardRepository.deleteByCreditCard(creditCard);
     }
     public void updateBalance(double price, CreditCard creditCard){
         creditCard.setBalance(creditCard.getBalance()-price);

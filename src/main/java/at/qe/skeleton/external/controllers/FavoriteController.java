@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,7 +23,6 @@ import java.util.List;
 public class FavoriteController {
     private static final Logger logger = LoggerFactory.getLogger(FavoriteController.class);
     private String locationName;
-    private int priority;
     @Autowired
     private FavoriteService favoriteService;
     @Autowired
@@ -76,18 +76,18 @@ public class FavoriteController {
         catch (EmptyLocationException e) {
             String warnMessage = "Cannot find city: %s".formatted(locationName);
             messageService.showInfoMessage(warnMessage);
-            logger.info("Error saving favorite", e);
+            logger.info("Error saving favorite, location is not known", e);
         }
         catch (ApiQueryException e) {
             String warnMessage = "Error occurred while fetching weather data";
             messageService.showWarnMessage(warnMessage);
-            logger.info("Error saving favorite", e);
+            logger.info("Error occurred while saving favorite, API didn't work", e);
         }
 
         catch (Exception e) {
             String message = "An error occurred!";
             messageService.showWarnMessage(message);
-            logger.error("Error saving favorite", e);
+            logger.error("Error occurred saving favorite", e);
         }
     }
 
@@ -168,7 +168,7 @@ public class FavoriteController {
         } catch (EmptyLocationException e) {
             logger.info("exception in autocomplete!");
         }
-        return null; // only temp
+        return Collections.emptyList();
     }
 
     public List<Favorite> getFavorites() {

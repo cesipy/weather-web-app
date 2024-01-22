@@ -28,7 +28,7 @@ import java.util.List;
 public class LocationController {
 
     private static final Logger logger = LoggerFactory.getLogger(LocationController.class);
-    private final int LIMIT = 1;        // we want to get only one result for a location
+    private static final int limit = 1;        // we want to get only one result for a location
     private String locationName;
     private String currentLocation;
     private Location currentLocationEntity;
@@ -46,10 +46,6 @@ public class LocationController {
         try {
             searchLocation(locationName);           // perform searching for location
 
-            Location foundLocation = currentLocationEntity;
-
-            //TODO: handling for no location found
-            //TODO: handle other errors
 
         } catch (Exception e) {
             logger.error("Error in location search", e);
@@ -58,7 +54,7 @@ public class LocationController {
 
     private void searchLocation(String locationName) {
         try {
-            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(locationName, LIMIT);
+            List<LocationDTO> answer = this.locationApiRequestService.retrieveLocations(locationName, limit);
 
             // Check if the list is not empty
             if (!answer.isEmpty()) {
@@ -79,13 +75,11 @@ public class LocationController {
                 this.setCurrentLocationEntity(firstLocation);
 
             } else {
-                logger.warn("The list of locations is empty.");
-                // TODO: Error message when no location is found
+                logger.error("The list of locations is empty.");
+
             }
         } catch (JsonProcessingException e) {
             logger.error("Error in request in locationApi", e);
-            // TODO better handling of Exception
-            throw new RuntimeException(e);
 
         } catch (ApiQueryException | EmptyLocationException e) {
             logger.info(e.getMessage());
@@ -113,8 +107,8 @@ public class LocationController {
         this.locationName = locationName;
     }
 
-    public int getLIMIT() {
-        return LIMIT;
+    public int getLimit() {
+        return limit;
     }
 
     public String getCurrentLocation() {

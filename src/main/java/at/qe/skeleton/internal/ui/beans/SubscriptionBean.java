@@ -1,14 +1,13 @@
 package at.qe.skeleton.internal.ui.beans;
 
-import at.qe.skeleton.internal.model.*;
-import at.qe.skeleton.internal.services.*;
+
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.services.UserReloadService;
 import at.qe.skeleton.internal.services.UserxService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.ExternalContext;
+
 import jakarta.faces.context.FacesContext;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 @Component

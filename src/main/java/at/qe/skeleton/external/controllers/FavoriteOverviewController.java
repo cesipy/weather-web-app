@@ -218,6 +218,8 @@ public class FavoriteOverviewController {
             case 16:
                 updateSelectedField(WeatherDataField.DESCRIPTION, visibility);
                 break;
+            default:
+                logger.info("Column index not found!");
         }
     }
 

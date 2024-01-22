@@ -1,7 +1,6 @@
 package at.qe.skeleton.internal.model;
 
 import jakarta.persistence.*;
-import org.springframework.security.core.userdetails.User;
 
 import java.io.Serializable;
 import java.util.Objects;

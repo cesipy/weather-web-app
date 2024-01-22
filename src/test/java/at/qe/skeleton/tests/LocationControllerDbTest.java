@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class LocationControllerDbTest {
         List<Location> resultLocations = locationControllerDb.autocomplete(query);
 
 
-        assertNull(resultLocations);
+        assertEquals(resultLocations, Collections.emptyList());
 
     }
 

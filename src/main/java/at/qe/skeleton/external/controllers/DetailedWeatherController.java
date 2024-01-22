@@ -31,6 +31,7 @@ public class DetailedWeatherController {
     private List<HourlyWeatherDTO> hourlyWeatherList;
     private List<DailyWeatherDTO> dailyWeatherList;
     private String locationQuery;
+    private final String ERROR_MESSAGE = "An error occurred!";
     private static final Logger logger = LoggerFactory.getLogger(DetailedWeatherController.class);
 
 
@@ -48,15 +49,12 @@ public class DetailedWeatherController {
             if (locationQuery != null) {
                 retrieveWeatherData(locationQuery);
             } else {
-                String message = "An error occurred!";
-                messageService.showWarnMessage(message);
+                messageService.showWarnMessage(ERROR_MESSAGE);
                 logger.info("init did not work");
             }
         }
         catch (Exception e) {
-            System.out.println("error init"+ e.getMessage());
-            String message = "An error occurred!";
-            messageService.showWarnMessage(message);
+            messageService.showWarnMessage(ERROR_MESSAGE);
         }
     }
 
@@ -75,13 +73,11 @@ public class DetailedWeatherController {
 
             setHourlyWeatherList(weatherData.getHourlyWeatherList());
             setDailyWeatherList(weatherData.getDailyWeatherList());
-            System.out.println("reach");
 
 
         } catch (EmptyLocationException | ApiQueryException e) {
-            String message = "An error occurred!";
-            messageService.showWarnMessage(message);
-            System.out.println("error");
+
+            messageService.showWarnMessage(ERROR_MESSAGE);
             logger.error("An error occurred in detailed controller: {}", e.getMessage(), e);
         }
     }

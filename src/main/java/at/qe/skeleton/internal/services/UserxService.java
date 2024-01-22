@@ -23,7 +23,6 @@ import java.util.Set;
 
 /**
  * Service for accessing and manipulating user data.
- *
  * This class is part of the skeleton project provided for students of the
  * course "Software Architecture" offered by Innsbruck University.
  */
@@ -31,14 +30,13 @@ import java.util.Set;
 @Scope("application")
 public class UserxService {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(UserxService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserxService.class);
     @Autowired
     private UserxRepository userRepository;
 
     /**
      * Returns a collection of all users.
      *
-     * @return
      */
     @PreAuthorize("hasAuthority('ADMIN')")
     public Collection<Userx> getAllUsers() {

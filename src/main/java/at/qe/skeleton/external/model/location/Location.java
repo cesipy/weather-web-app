@@ -114,7 +114,7 @@ public class Location implements Serializable {
 
         @Override
         public String toString() {
-                return name; //+ ", " + country;
+                return name;
         }
 
         @Override
@@ -129,6 +129,11 @@ public class Location implements Serializable {
                 Location loc = (Location) obj;
 
                 return loc.getId().equals(this.id);
+        }
+
+        @Override
+        public int hashCode() {
+                return id.hashCode();
         }
 }
 

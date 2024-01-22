@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CurrentWeatherDataRepository extends JpaRepository<CurrentWeatherData, Long> {
-    List<CurrentWeatherData> findByLocation_id(Long locationId);
+    List<CurrentWeatherData> findByLocationId(Long locationId);
 
     List<CurrentWeatherData> findByLocationOrderByAdditionTimeDesc(Location location);
 
