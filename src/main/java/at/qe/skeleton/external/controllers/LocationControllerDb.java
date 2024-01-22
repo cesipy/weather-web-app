@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+
 
 /**
  * Controller class for managing locations retrieved from the database.
@@ -40,13 +40,12 @@ public class LocationControllerDb {
                 return Collections.emptyList();
             }
 
-            logLocations(locations);
             return locations;
         } catch (EmptyLocationException e) {
             logger.info("in locationcontrollerDB: {} ", e.getMessage());
         }
 
-        return null; // only temp
+        return Collections.emptyList();
     }
 
 
@@ -58,10 +57,6 @@ public class LocationControllerDb {
      */
     public Location requestFirstMatch() {
         try {
-            // as autocompletion saves locationName to the form  <locationName, abbreviatedCountry>
-            // only locationName has to be extracted
-            //String extractedLocationName = locationName.split(",")[0];
-
             List<Location> locations = locationService.autocomplete(locationName);
 
             if (locations.isEmpty()) {
@@ -114,17 +109,6 @@ public class LocationControllerDb {
             return "";
         }
         return currentLocation.toDebugString();
-    }
-
-    /**
-     * Logs the provided list of locations.
-     *
-     * @param locations The list of locations to be logged.
-     */
-    private void logLocations(List<Location> locations) {
-        for (Location location : locations) {
-            logger.info(location.toDebugString());
-        }
     }
 
 }

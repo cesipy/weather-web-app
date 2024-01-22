@@ -41,11 +41,7 @@ public class FavoriteService {
         int newPriority = (up) ? oldPriority - 1 : oldPriority + 1;
         int currentMaxPriority = calculatePriority(userx);
 
-        if (oldPriority <= 1 && up) {
-            // favorite cannot be moved up
-            return;
-        } else if (oldPriority >= currentMaxPriority && !up) {
-            // favorite cannot be moved down
+        if ((oldPriority <= 1 && up) || (oldPriority >= currentMaxPriority && !up)) {
             return;
         }
 

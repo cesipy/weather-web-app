@@ -4,7 +4,6 @@ import at.qe.skeleton.external.controllers.CurrentlyHourlyDailyWeather;
 import at.qe.skeleton.external.domain.DailyWeatherData;
 import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.CurrentWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.location.Location;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -80,7 +78,6 @@ public class WeatherService {
     public CurrentlyHourlyDailyWeather fetchCurrentWeatherAndForecast(Location location) throws ApiQueryException {
         Pageable lastEightEntries = PageRequest.of(0, 8);
         Pageable lastFortyEightEntries = PageRequest.of(0, 2);
-        Pageable lastEntry = PageRequest.of(0, 1);
 
         List<DailyWeatherData> latestData = dailyWeatherDataRepository
                 .findLatestByLocation(location.getName(), lastEightEntries);

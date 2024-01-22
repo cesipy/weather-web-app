@@ -2,23 +2,15 @@ package at.qe.skeleton.internal.ui.beans;
 
 import at.qe.skeleton.external.model.currentandforecast.misc.holiday.HolidayDTO;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.faces.annotation.View;
+
 import jakarta.inject.Named;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.CartesianScales;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
-import org.primefaces.model.charts.bar.BarChartModel;
-import org.primefaces.model.charts.bubble.BubbleChartModel;
-import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
+
 import org.primefaces.model.charts.line.LineChartDataSet;
 import org.primefaces.model.charts.line.LineChartModel;
 import org.primefaces.model.charts.line.LineChartOptions;
-import org.primefaces.model.charts.optionconfig.title.Title;
-import org.primefaces.model.charts.pie.PieChartDataSet;
-import org.primefaces.model.charts.pie.PieChartModel;
-import org.primefaces.model.charts.polar.PolarAreaChartModel;
-import org.primefaces.model.charts.radar.RadarChartModel;
 import org.springframework.context.annotation.Scope;
 
 import java.io.Serializable;

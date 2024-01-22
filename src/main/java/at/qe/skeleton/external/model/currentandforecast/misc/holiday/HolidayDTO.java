@@ -1,16 +1,11 @@
 package at.qe.skeleton.external.model.currentandforecast.misc.holiday;
 
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyTemperatureAggregationDTO;
-import at.qe.skeleton.external.model.shared.WeatherDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.holiday.CloudDTO;
-import at.qe.skeleton.external.model.deserialisation.PrecipitationDeserializer;
-import at.qe.skeleton.external.model.deserialisation.WeatherDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Date;
 
 /**

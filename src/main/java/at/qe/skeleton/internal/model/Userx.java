@@ -2,14 +2,14 @@ package at.qe.skeleton.internal.model;
 
 import at.qe.skeleton.external.model.WeatherDataField;
 import jakarta.persistence.*;
-import org.apache.commons.lang3.tuple.Pair;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -24,9 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.domain.Persistable;
+
 
 /**
  * Entity representing users.
@@ -86,7 +84,7 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
 
     public Invoice getInvoice() {return this.invoice;}
 
-    public void setInvoice(Invoice invoices) {this.invoice = invoice;}
+    public void setInvoice(Invoice invoices) {this.invoice = invoices;}
 
     public CreditCard getCreditCard() {
         return creditCard;

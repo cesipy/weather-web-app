@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -136,7 +137,7 @@ public class FavoriteControllerTest {
 
         List<Location> locations = favoriteController.autocomplete(query);
 
-        assertNull(locations);
+        assertEquals(Collections.emptyList(), locations);
     }
 
     @Test
