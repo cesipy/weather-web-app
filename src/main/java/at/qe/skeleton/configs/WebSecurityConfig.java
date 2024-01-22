@@ -57,6 +57,9 @@ public class WebSecurityConfig {
                             .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAnyAuthority("ADMIN")
                             .requestMatchers(new AntPathRequestMatcher("/manager/**")).hasAnyAuthority("MANAGER")
                             .requestMatchers(new AntPathRequestMatcher("/secured/**")).hasAnyAuthority(ADMIN, MANAGER, EMPLOYEE)
+                            .requestMatchers(new AntPathRequestMatcher("/landing.xhtml")).permitAll() // This line allows public access to landing.xhtml
+                            .requestMatchers(new AntPathRequestMatcher("/common/searching.xhtml")).permitAll() // This line allows public access to searching.xhtml
+                            //.requestMatchers(new AntPathRequestMatcher("/common/detail.xhtml")).permitAll() // This line allows public access to booking.xhtml
                             .anyRequest().authenticated()
                     )
 
@@ -64,7 +67,8 @@ public class WebSecurityConfig {
                     .formLogin(form -> form
                             .loginPage(LOGIN)
                             .permitAll()
-                            .defaultSuccessUrl("/secured/welcome.xhtml")
+                            //.defaultSuccessUrl("/secured/welcome.xhtml")
+                            .defaultSuccessUrl("/landing.xhtml") // Set the default success URL to /landing.xhtml
                             .loginProcessingUrl("/login")
                             .successForwardUrl("/secured/welcome.xhtml")
                             .failureUrl("/login.xhtml?error")
@@ -78,7 +82,8 @@ public class WebSecurityConfig {
                             .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                     )
                     .sessionManagement(session -> session
-                            .invalidSessionUrl("/error/invalid_session.xhtml")
+                            //.invalidSessionUrl("/error/invalid_session.xhtml")
+                            .invalidSessionUrl("/landing.xhtml") // Set the invalid session URL to /landing.xhtml
                     );
 
             return http.build();

@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="content">
+
+        <div id="landing_page">
+            <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+
+                <p:outputLabel value="Welcome to Our Website!"
+                               styleClass="ui-outputlabel ui-widget ui-state-default ui-corner-all"
+                               style="font-size: 24px; text-align: center;"/>
+                <p:outputLabel value="This is our weather app."
+                               styleClass="ui-outputlabel ui-widget ui-state-default ui-corner-all"
+                               style="font-size: 16px; text-align: center;"/>
+                <i class="pi pi-cloud" style="font-size: 4rem"></i>
+            </p:panelGrid>
+        </div>
+    </ui:define>
+
+</ui:composition>
