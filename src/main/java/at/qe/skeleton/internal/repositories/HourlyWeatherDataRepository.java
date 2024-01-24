@@ -11,6 +11,6 @@ import java.util.List;
  * Provides basic functionality to find the last x database entries for a specific location.
  */
 public interface HourlyWeatherDataRepository extends AbstractRepository<HourlyWeatherData, Long> {
-    @Query("SELECT d FROM HourlyWeatherData d WHERE d.location = :location ORDER BY d.additionTime DESC")
+    @Query("SELECT d FROM HourlyWeatherData d WHERE d.location = :location ORDER BY d.timestamp DESC")
     List<HourlyWeatherData> findLatestByLocation(@Param("location") String location, Pageable pageable);
 }

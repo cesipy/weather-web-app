@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface DailyWeatherDataRepository extends AbstractRepository<DailyWeatherData, Long> {
 
-    @Query("SELECT d FROM DailyWeatherData d WHERE d.location = :location ORDER BY d.additionTime DESC")
+    @Query("SELECT d FROM DailyWeatherData d WHERE d.location = :location ORDER BY d.timestamp DESC")
     List<DailyWeatherData> findLatestByLocation(@Param("location") String location, Pageable pageable);
 
 }

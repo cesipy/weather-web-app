@@ -92,7 +92,7 @@ public class WeatherService {
      */
     private CurrentlyHourlyDailyWeather fetchCurrentWeatherAndForecast(Location location) throws ApiQueryException {
         Pageable lastEightEntries = PageRequest.of(0, 8);
-        Pageable lastFortyEightEntries = PageRequest.of(0, 2);
+        Pageable lastFortyEightEntries = PageRequest.of(0, 48);
 
         List<DailyWeatherData> latestData = dailyWeatherDataRepository
                 .findLatestByLocation(location.getName(), lastEightEntries);
@@ -126,7 +126,7 @@ public class WeatherService {
             }
 
             this.setDailyWeatherList(currentAndForecastAnswerDTO.dailyWeather());
-            for(int n = 0; n < 8; n++){
+            for(int n = 0; n < getDailyWeatherList().size(); n++){
                 weatherDataService.saveDailyWeatherFromDTO(getDailyWeatherList().get(n), location.getName());
             }
             return new CurrentlyHourlyDailyWeather(currentAndForecastAnswerDTO.hourlyWeather(), currentAndForecastAnswerDTO.dailyWeather());

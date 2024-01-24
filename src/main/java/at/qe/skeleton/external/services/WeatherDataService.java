@@ -47,6 +47,7 @@ public class WeatherDataService {
      */
     public void saveDailyWeatherFromDTO(DailyWeatherDTO dailyWeatherDTO, String location) {
         DailyWeatherData dailyWeatherData = new DailyWeatherData();
+        dailyWeatherData.setTimestamp(dailyWeatherDTO.timestamp());
         dailyWeatherData.setSunrise(dailyWeatherDTO.sunrise());
         dailyWeatherData.setSunset(dailyWeatherDTO.sunset());
         dailyWeatherData.setMoonrise(dailyWeatherDTO.moonrise());
@@ -200,6 +201,7 @@ public class WeatherDataService {
      */
     public void saveHourlyWeatherFromDTO(HourlyWeatherDTO hourlyWeatherDTO, String location) {
         HourlyWeatherData hourlyWeatherData = new HourlyWeatherData();
+        hourlyWeatherData.setTimestamp(hourlyWeatherDTO.timestamp());
         hourlyWeatherData.setTemperature(hourlyWeatherDTO.temperature());
         hourlyWeatherData.setFeelsLikeTemperature(hourlyWeatherDTO.feelsLikeTemperature());
         hourlyWeatherData.setPressure(hourlyWeatherDTO.pressure());

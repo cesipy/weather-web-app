@@ -258,5 +258,6 @@ public class DailyWeatherData {
     public void setSnow(Double snow) {
         this.snow = snow;
     }
+
 }
 
