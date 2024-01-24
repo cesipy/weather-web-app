@@ -57,7 +57,6 @@ public class WeatherApiRequestService {
                             .build().toUriString())
                     .retrieve()
                     .toEntity(CurrentAndForecastAnswerDTO.class);
-            // todo introduce error handling using responseEntity.getStatusCode.isXXXError
             return responseEntity.getBody();
         } catch (Exception e) {
             throw new ApiQueryException("Failed to retrieve weather data from API!");
