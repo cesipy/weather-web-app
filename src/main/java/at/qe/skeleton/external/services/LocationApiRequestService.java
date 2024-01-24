@@ -29,7 +29,6 @@ import java.util.List;
 @Component
 @Validated
 public class LocationApiRequestService {
-    private static final Logger logger = LoggerFactory.getLogger(LocationApiRequestService.class);
 
     private static final String CITY_NAME_PARAMETER = "q";
 

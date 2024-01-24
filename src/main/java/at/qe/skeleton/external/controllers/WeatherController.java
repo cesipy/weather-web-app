@@ -1,7 +1,6 @@
 package at.qe.skeleton.external.controllers;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.ApiQueryException;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
 
 /**
 Weather Controller for managing the weather forecast retrieved from the api.
@@ -38,12 +36,6 @@ public class WeatherController {
     @Autowired
     private WeatherService weatherService;
 
-    private String queryName;
-
-    private HourlyWeatherDTO hourlyWeatherDTO;
-    private HourlyWeatherDTO weatherInOneHour;
-    private List<HourlyWeatherDTO> hourlyWeatherList;
-    private List<DailyWeatherDTO> dailyWeatherList;
     private Location location;
 
     private static final Logger logger = LoggerFactory.getLogger(WeatherController.class);
@@ -68,8 +60,6 @@ public class WeatherController {
 
         } catch (ApiQueryException e) {
             logger.info("error occurred in weather controller");
-            // TODO: proper handling here
-
         }
         catch (RuntimeException e) {
             logger.info("unknownhost exception");

@@ -6,6 +6,7 @@ import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.repositories.CreditCardRepository;
 import at.qe.skeleton.internal.services.CreditCardService;
 import at.qe.skeleton.internal.services.UserxService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,10 @@ public class CreditCardServiceTest {
 
     @Autowired
     private UserxService userxService;
+    
 
     @Test
-    @WithMockUser(username = "user", authorities = {"ADMIN"})
+    @WithMockUser(username = "user1", authorities = {"ADMIN"})
     public void testCreditCardService() {
         Userx user = new Userx();
         user.setUsername("user");
@@ -60,5 +62,6 @@ public class CreditCardServiceTest {
         creditCardService.deleteCreditCard("1234567890123456");
         CreditCard deletedCreditCard = creditCardService.getCreditCardById(creditCardId);
         //Assertions.assertNull(deletedCreditCard);
+        userxService.deleteUser(user);
     }
 }

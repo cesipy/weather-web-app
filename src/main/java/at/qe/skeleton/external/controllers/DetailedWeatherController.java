@@ -7,7 +7,6 @@ import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.external.services.WeatherService;
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
@@ -25,11 +24,16 @@ public class DetailedWeatherController {
     private WeatherService weatherService;
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private MessageService messageService;
 
 
     private List<HourlyWeatherDTO> hourlyWeatherList;
     private List<DailyWeatherDTO> dailyWeatherList;
+    private List<HourlyWeatherDTO> limitedHourlyWeatherList;
+    private List<DailyWeatherDTO> limitedDailyWeatherList;
     private String locationQuery;
+    private final String ERROR_MESSAGE = "An error occurred!";
     private static final Logger logger = LoggerFactory.getLogger(DetailedWeatherController.class);
 
 
@@ -40,15 +44,19 @@ public class DetailedWeatherController {
      */
     @PostConstruct
     public void init() {
-        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        locationQuery = externalContext.getRequestParameterMap().get("location");
+        try {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            locationQuery = externalContext.getRequestParameterMap().get("location");
 
-        if (locationQuery != null) {
-            retrieveWeatherData(locationQuery);
+            if (locationQuery != null) {
+                retrieveWeatherData(locationQuery);
+            } else {
+                messageService.showWarnMessage(ERROR_MESSAGE);
+                logger.info("init did not work");
+            }
         }
-        else {
-            displayWarningMessage();
-            logger.info("init did not work");
+        catch (Exception e) {
+            messageService.showWarnMessage(ERROR_MESSAGE);
         }
     }
 
@@ -65,37 +73,21 @@ public class DetailedWeatherController {
             Location location = locationService.retrieveLocation(locationQuery);
             CurrentlyHourlyDailyWeather weatherData =  weatherService.processWeatherForLocation(location);
 
-            hourlyWeatherList = weatherData.getHourlyWeatherList();
-            dailyWeatherList  = weatherData.getDailyWeatherList();
+            setHourlyWeatherList(weatherData.getHourlyWeatherList());
+            setDailyWeatherList(weatherData.getDailyWeatherList());
+
+            // save limited date for users without premium
+            setLimitedDailyWeatherList(weatherData.getDailyWeatherList().subList(0, 3));
+            setLimitedHourlyWeatherList(weatherData.getHourlyWeatherList().subList(0, 24));
 
 
         } catch (EmptyLocationException | ApiQueryException e) {
-            displayWarningMessage();
+
+            messageService.showWarnMessage(ERROR_MESSAGE);
             logger.error("An error occurred in detailed controller: {}", e.getMessage(), e);
         }
     }
 
-
-    /**
-     * Displays a warning message on the user interface.
-     */
-    public void displayWarningMessage() {
-        String message = "An error occurred!";
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
-    }
-
-
-    /**
-     * Displays an informational message about a location not being found.
-     *
-     * @param locationName The name of the location for which the message is generated.
-     */
-    public void displayInfoMessage(String locationName) {
-        String message = String.format("Location '%s' not found!", locationName);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
-    }
 
     public List<HourlyWeatherDTO> getHourlyWeatherList() {
         return hourlyWeatherList;
@@ -119,5 +111,21 @@ public class DetailedWeatherController {
 
     public void setLocationQuery(String locationQuery) {
         this.locationQuery = locationQuery;
+    }
+
+    public void setLimitedHourlyWeatherList(List<HourlyWeatherDTO> limitedHourlyWeatherList) {
+        this.limitedHourlyWeatherList = limitedHourlyWeatherList;
+    }
+
+    public void setLimitedDailyWeatherList(List<DailyWeatherDTO> limitedDailyWeatherList) {
+        this.limitedDailyWeatherList = limitedDailyWeatherList;
+    }
+
+    public List<HourlyWeatherDTO> getLimitedHourlyWeatherList() {
+        return limitedHourlyWeatherList;
+    }
+
+    public List<DailyWeatherDTO> getLimitedDailyWeatherList() {
+        return limitedDailyWeatherList;
     }
 }

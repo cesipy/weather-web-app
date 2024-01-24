@@ -5,8 +5,6 @@ import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.FavoriteService;
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,17 +23,18 @@ import java.util.List;
 public class FavoriteController {
     private static final Logger logger = LoggerFactory.getLogger(FavoriteController.class);
     private String locationName;
-    private int priority;
     @Autowired
     private FavoriteService favoriteService;
+    @Autowired
+    private MessageService messageService;
     private List<Favorite> favorites;
     private List<Location> locations;
-    private int updatedPriority;
-    private Favorite selectedFavorite;
+
 
     @PostConstruct
     public void init() {
         locations = new ArrayList<>();
+        favorites = new ArrayList<>();
         // temporary for debugging
         locationName = "Vienna";
         saveFavorite();
@@ -75,16 +75,19 @@ public class FavoriteController {
         }
         catch (EmptyLocationException e) {
             String warnMessage = "Cannot find city: %s".formatted(locationName);
-            showInfoMessage(warnMessage);
+            messageService.showInfoMessage(warnMessage);
+            logger.info("Error saving favorite, location is not known", e);
         }
         catch (ApiQueryException e) {
             String warnMessage = "Error occurred while fetching weather data";
-            showWarnMessage(warnMessage);
+            messageService.showWarnMessage(warnMessage);
+            logger.info("Error occurred while saving favorite, API didn't work", e);
         }
 
         catch (Exception e) {
-            showWarnMessage("An error occurred.");
-            logger.error("Error saving favorite", e);
+            String message = "An error occurred!";
+            messageService.showWarnMessage(message);
+            logger.error("Error occurred saving favorite", e);
         }
     }
 
@@ -95,20 +98,18 @@ public class FavoriteController {
      *
      * @throws EmptyLocationException if the location name is null or empty after trimming.
      */
-    private void validateAndSaveFavorite() throws EmptyLocationException, ApiQueryException {
-
+    public void validateAndSaveFavorite() throws EmptyLocationException, ApiQueryException {
         if (locationName == null || locationName.trim().isEmpty()) {
             String warnMessage = "Please enter a city.";
-            showWarnMessage(warnMessage);
+            messageService.showWarnMessage(warnMessage);
             return;
         }
 
         if (favoriteService.isLocationAlreadyFavorite(locationName)) {
             String warnMessage = "Location already in favorites: %s".formatted(locationName);
-            showWarnMessage(warnMessage);
+            messageService.showWarnMessage(warnMessage);
         } else {
             favoriteService.saveFavorite(locationName);
-
             // clear locationName after save
             locationName = "";
         }
@@ -120,11 +121,14 @@ public class FavoriteController {
      */
     public void retrieveFavorites() {
         try {
+
+            if (locations == null) {
+                locations = new ArrayList<>();
+            }
             // Get favorites for the user
             favorites = favoriteService.getSortedFavoritesForUser();
 
             for (Favorite favorite : favorites) {
-
                 // load all locations
                 locations.add(favorite.getLocation());
             }
@@ -141,33 +145,13 @@ public class FavoriteController {
      * @param favorite The favorite location to be deleted.
      */
     public void deleteFavorite(Favorite favorite) {
-        try {
-            favoriteService.deleteFavorite(favorite);
-            logger.info("Successfully deleted favorite: {}" , favorite.getLocation().getName());
 
-            // update favorite list
-            retrieveFavorites();
-        } catch (Exception e) {
-            logger.error("Error deleting favorite", e);
-        }
-    }
+        favoriteService.deleteFavorite(favorite);
+        logger.info("Successfully deleted favorite: {}" , favorite.getLocation().getName());
 
+        // update favorite list
+        retrieveFavorites();
 
-    /**
-     * Deletes a favorite location by its ID and updates the list of favorites.
-     *
-     * @param id The ID of the favorite location to be deleted.
-     */
-    public void deleteFavoriteById(Long id) {
-        //currently not in use
-        try {
-            favoriteService.deleteFavoriteById(id);
-
-            // update favorite list
-            retrieveFavorites();
-        } catch (Exception e) {
-            logger.error("Error deleting favorite", e);
-        }
     }
 
 
@@ -184,32 +168,7 @@ public class FavoriteController {
         } catch (EmptyLocationException e) {
             logger.info("exception in autocomplete!");
         }
-        return null; // only temp
-    }
-
-
-    /**
-     * Displays a warning message in the user interface.
-     *
-     * @param message The warning message to be shown.
-     */
-    public void showWarnMessage(String message) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Warning:",
-                        message));
-
-    }
-
-
-    /**
-     * Displays an informative message in the user interface.
-     *
-     * @param message The warning message to be shown.
-     */
-    public void showInfoMessage(String message) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
+        return Collections.emptyList();
     }
 
     public List<Favorite> getFavorites() {
@@ -224,27 +183,8 @@ public class FavoriteController {
         this.locationName = locationName;
     }
 
-    public int getPriority() {
-        return priority;
+    public List<Location> getLocations() {
+        return locations;
     }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
-    public int getUpdatedPriority() {
-        return updatedPriority;
-    }
-
-    public void setUpdatedPriority(int updatedPriority) {
-        this.updatedPriority = updatedPriority;
-    }
-
-    public Favorite getSelectedFavorite() {
-        return selectedFavorite;
-    }
-
-    public void setSelectedFavorite(Favorite selectedFavorite) {
-        this.selectedFavorite = selectedFavorite;
-    }
 }

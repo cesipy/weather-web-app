@@ -39,9 +39,23 @@ public class LocationServiceTest {
         assertEquals(firstLocation.getName(), "Hall in Tirol");
     }
 
+
+    @Test
+    public void testAutocompleteWithWhitespaceName() {
+        // Arrange
+        String whitespaceName = "   ";
+
+        // Act and Assert
+        EmptyLocationException exception = assertThrows(EmptyLocationException.class, () -> {
+            locationService.autocomplete(whitespaceName);
+        });
+
+        assertEquals("The given location:     is empty!", exception.getMessage());
+    }
+
+
     @Test
     public void testLoadDataFromJsonWithIOException() {
-        // Provide a non-existing path to simulate an IOException
         String nonExistingPath = "non-existing-path";
 
         assertThrows(RuntimeException.class, () -> {
@@ -71,5 +85,41 @@ public class LocationServiceTest {
         String expectedPath = "src/main/resources/owm_city_list.json";      // if folder is moved, this has to be changed!!
         String actualPath = locationService.getFilePath();
         assertEquals(expectedPath, actualPath, "is the path setting with @Value correct.");
+    }
+
+    @Test
+    public void testGetAllLocations() {
+        // Assuming you have a known number of locations in your test environment
+        int expectedSize = 74048;  // Replace this with the expected size
+
+        List<Location> allLocations = locationService.getAllLocations();
+
+        assertNotNull(allLocations, "List of locations should not be null");
+        assertEquals(expectedSize, allLocations.size(), "List size should match the expected size");
+    }
+
+    @Test
+    public void testRetrieveLocationByExactName() {
+        // Arrange
+        String locationName = "Innsbruck";
+
+        // Act
+        Location result = locationService.retrieveLocationByExactName(locationName);
+
+        // Assert
+        assertNotNull(result, "Location should not be null");
+        assertEquals(locationName, result.getName(), "Location name should match");
+    }
+
+    @Test
+    public void testRetrieveLocationByExactNameNotFound() {
+        // Arrange
+        String locationName = "NonExistentLocation";
+
+        // Act
+        Location result = locationService.retrieveLocationByExactName(locationName);
+
+        // Assert
+        assertNull(result, "Location should be null for a non-existent location");
     }
 }

@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
  */
 @Entity
 public class CurrentWeatherData {
-    private static Logger LOGGER = LoggerFactory.getLogger(CurrentWeatherData.class);
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -169,7 +169,6 @@ public class CurrentWeatherData {
     }
 
     public Double getRain() {
-        // LOGGER.info(String.valueOf(rain));
         return rain;
     }
 

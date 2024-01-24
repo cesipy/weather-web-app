@@ -18,7 +18,7 @@
 
 
                 <!--Hourly forecasts -->
-                <p:tabView rendered="#{not empty detailedWeatherController.hourlyWeatherList}"
+                <p:tabView rendered="#{not empty detailedWeatherController.hourlyWeatherList} and #{sessionInfoBean.hasRole('PREMIUM')}"
                            value="#{detailedWeatherController.hourlyWeatherList}" var="hourlyWeather" scrollable="true">
                     <p:tab title="#{hourlyWeather.getFormattedTime()}">
                         <p:dataTable value="#{hourlyWeather}">
@@ -53,12 +53,48 @@
                     </p:tab>
                 </p:tabView>
 
+                <p:tabView rendered="#{not empty detailedWeatherController.hourlyWeatherList and !sessionInfoBean.hasRole('PREMIUM')}"
+                    value="#{detailedWeatherController.limitedHourlyWeatherList}"
+                    var="hourlyWeather"
+                    scrollable="true">
+                    <p:tab title="#{hourlyWeather.getFormattedTime()}">
+                        <p:dataTable value="#{hourlyWeather}">
+                            <p:column headerText="Temperature">
+                                <h:outputText value="#{hourlyWeather.temperature()} °C"/>
+                            </p:column>
+                            <p:column headerText="Pressure">
+                                <h:outputText value="#{hourlyWeather.pressure()} hPa"/>
+                            </p:column>
+                            <p:column headerText="Humidity">
+                                <h:outputText value="#{hourlyWeather.humidity()} %"/>
+                            </p:column>
+                            <p:column headerText="Feels like">
+                                <h:outputText value="#{hourlyWeather.feelsLikeTemperature()} °C"/>
+                            </p:column>
+                            <p:column headerText="Clouds">
+                                <h:outputText value="#{hourlyWeather.clouds()} %"/>
+                            </p:column>
+                            <p:column headerText="Visibility">
+                                <h:outputText value="#{hourlyWeather.visibility()} m"/>
+                            </p:column>
+                            <p:column headerText="Wind speed">
+                                <h:outputText value="#{hourlyWeather.windSpeed()} m/s"/>
+                            </p:column>
+                            <p:column headerText="Wind Direction">
+                                <h:outputText value="#{hourlyWeather.windDirection()} °"/>
+                            </p:column>
+                            <p:column headerText="Proability of Precipitation">
+                                <h:outputText value="#{hourlyWeather.probabilityOfPrecipitation()}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
                 <p:divider/>
 
 
                 <!-- Daily forecasts-->
 
-                <p:tabView rendered="#{not empty detailedWeatherController.dailyWeatherList}"
+                <p:tabView rendered="#{not empty detailedWeatherController.dailyWeatherList} and sessionInfoBean.hasRole('PREMIUM')}"
                            value="#{detailedWeatherController.dailyWeatherList}" var="dailyWeather" scrollable="true">
                     <p:tab title="#{dailyWeather.getFormattedDOW()}">
                         <p:dataTable value="#{dailyWeather}">
@@ -121,6 +157,134 @@
                         </p:dataTable>
                     </p:tab>
                 </p:tabView>
+                <p:tabView rendered="#{not empty detailedWeatherController.dailyWeatherList and !sessionInfoBean.hasRole('PREMIUM')}"
+                           value="#{detailedWeatherController.limitedDailyWeatherList}" var="dailyWeather" scrollable="true">
+                    <p:tab title="#{dailyWeather.getFormattedDOW()}">
+                        <p:dataTable value="#{dailyWeather}">
+                            <p:column headerText="Sunrise and Sunset">
+                                <h:outputText value="#{dailyWeather.sunrise()} °C"/>
+                                <br/>
+                                <h:outputText value="#{dailyWeather.sunset()} °C"/>
+                            </p:column>
+                            <p:column headerText="Moon phase">
+                                <h:outputText value="#{dailyWeather.moonPhase()}"/>
+                            </p:column>
+                            <p:column headerText="Temperature (Avg, Min, Max">
+                                <h:outputText value="#{dailyWeather.dailyTemperatureAggregation().dayTemperature()} °C"/>
+                                <br/>
+                                <h:outputText
+                                        value="#{dailyWeather.dailyTemperatureAggregation().minimumDailyTemperature()} °C"/>
+                                <br/>
+                                <h:outputText
+                                        value="#{dailyWeather.dailyTemperatureAggregation().maximumDailyTemperature()} °C"/>
+                            </p:column>
+                            <p:column headerText="Feels like">
+                                <h:outputText value="#{dailyWeather.feelsLikeTemperatureAggregation().dayTemperature()} m/s"/>
+                            </p:column>
+                            <p:column headerText="Pressure">
+                                <h:outputText value="#{dailyWeather.pressure()} hPa"/>
+                            </p:column>
+                            <p:column headerText="Humidity">
+                                <h:outputText value="#{dailyWeather.humidity()} %"/>
+                            </p:column>
+                            <p:column headerText="Dew point">
+                                <h:outputText value="#{dailyWeather.dewPoint()} °C"/>
+                            </p:column>
+                            <p:column headerText="Wind speed">
+                                <h:outputText value="#{dailyWeather.windSpeed()} m/s"/>
+                            </p:column>
+                            <p:column headerText="Wind gust">
+                                <h:outputText value="#{dailyWeather.windGust()} m/s"/>
+                            </p:column>
+                            <p:column headerText="Wind Direction">
+                                <h:outputText value="#{dailyWeather.windDirection()} °"/>
+                            </p:column>
+                            <p:column headerText="Clouds">
+                                <h:outputText value="#{dailyWeather.clouds()} %"/>
+                            </p:column>
+                            <p:column headerText="Proability of Precipitation">
+                                <h:outputText value="#{dailyWeather.probabilityOfPrecipitation()} %"/>
+                            </p:column>
+                            <p:column headerText="Rain">
+                                <h:outputText value="not raining" rendered="#{dailyWeather.rain() == null}"/>
+                                <h:outputText value="#{dailyWeather.rain()} mm/h" rendered="#{dailyWeather.rain() != null}"/>
+                            </p:column>
+                            <p:column headerText="Snow">
+                                <h:outputText value="not snowing" rendered="#{dailyWeather.snow() == null}"/>
+                                <h:outputText value="#{dailyWeather.snow()} mm/h" rendered="#{dailyWeather.snow() != null}"/>
+                            </p:column>
+                            <br/>
+                            <p:column headerText="Summary">
+                                <h:outputText value="#{dailyWeather.summary()}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+                <p:tabView rendered="#{not empty detailedWeatherController.dailyWeatherList and !sessionInfoBean.hasRole('PREMIUM')}"
+                           value="#{detailedWeatherController.limitedDailyWeatherList}" var="dailyWeather" scrollable="true">
+                    <p:tab title="#{dailyWeather.getFormattedDOW()}">
+                        <p:dataTable value="#{dailyWeather}">
+                            <p:column headerText="Sunrise and Sunset">
+                                <h:outputText value="#{dailyWeather.sunrise()} °C"/>
+                                <br/>
+                                <h:outputText value="#{dailyWeather.sunset()} °C"/>
+                            </p:column>
+                            <p:column headerText="Moon phase">
+                                <h:outputText value="#{dailyWeather.moonPhase()}"/>
+                            </p:column>
+                            <p:column headerText="Temperature (Avg, Min, Max">
+                                <h:outputText value="#{dailyWeather.dailyTemperatureAggregation().dayTemperature()} °C"/>
+                                <br/>
+                                <h:outputText
+                                        value="#{dailyWeather.dailyTemperatureAggregation().minimumDailyTemperature()} °C"/>
+                                <br/>
+                                <h:outputText
+                                        value="#{dailyWeather.dailyTemperatureAggregation().maximumDailyTemperature()} °C"/>
+                            </p:column>
+                            <p:column headerText="Feels like">
+                                <h:outputText value="#{dailyWeather.feelsLikeTemperatureAggregation().dayTemperature()} m/s"/>
+                            </p:column>
+                            <p:column headerText="Pressure">
+                                <h:outputText value="#{dailyWeather.pressure()} hPa"/>
+                            </p:column>
+                            <p:column headerText="Humidity">
+                                <h:outputText value="#{dailyWeather.humidity()} %"/>
+                            </p:column>
+                            <p:column headerText="Dew point">
+                                <h:outputText value="#{dailyWeather.dewPoint()} °C"/>
+                            </p:column>
+                            <p:column headerText="Wind speed">
+                                <h:outputText value="#{dailyWeather.windSpeed()} m/s"/>
+                            </p:column>
+                            <p:column headerText="Wind gust">
+                                <h:outputText value="#{dailyWeather.windGust()} m/s"/>
+                            </p:column>
+                            <p:column headerText="Wind Direction">
+                                <h:outputText value="#{dailyWeather.windDirection()} °"/>
+                            </p:column>
+                            <p:column headerText="Clouds">
+                                <h:outputText value="#{dailyWeather.clouds()} %"/>
+                            </p:column>
+                            <p:column headerText="Proability of Precipitation">
+                                <h:outputText value="#{dailyWeather.probabilityOfPrecipitation()} %"/>
+                            </p:column>
+                            <p:column headerText="Rain">
+                                <h:outputText value="not raining" rendered="#{dailyWeather.rain() == null}"/>
+                                <h:outputText value="#{dailyWeather.rain()} mm/h" rendered="#{dailyWeather.rain() != null}"/>
+                            </p:column>
+                            <p:column headerText="Snow">
+                                <h:outputText value="not snowing" rendered="#{dailyWeather.snow() == null}"/>
+                                <h:outputText value="#{dailyWeather.snow()} mm/h" rendered="#{dailyWeather.snow() != null}"/>
+                            </p:column>
+                            <br/>
+                            <p:column headerText="Summary">
+                                <h:outputText value="#{dailyWeather.summary()}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+
+
                 <h2>Select Date range for your holiday</h2>
                 <p:commandButton id="test" value="Choose Dates"/>
                 <p:overlayPanel for="test">
@@ -208,6 +372,7 @@
                 <div class="card">
                     <p:lineChart id="holidayChart" model="#{diagramBean.lineModel}" style="width: 100%; height: 500px;"/>
                 </div>
+
                 <p:messages id="messages" showDetail="true" closable="true">
                     <p:autoUpdate/>
                 </p:messages>

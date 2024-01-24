@@ -26,8 +26,7 @@ public class FavoriteService {
     private UserxService userxService;
     @Autowired
     private LocationService locationService;
-    private Userx currentUserx;
-    private Location currentLocation;
+
 
     /**
      * Moves a favorite location up or down in priority.
@@ -36,16 +35,13 @@ public class FavoriteService {
      * @param up       A boolean indicating whether to move up (true) or down (false).
      */
     public void moveFavoriteUpOrDown(Favorite favorite, boolean up) {
-        Userx userx = getCurrentUserx();
+        Userx userx = userxService.getCurrentUser();
+
         int oldPriority = favorite.getPriority();
         int newPriority = (up) ? oldPriority - 1 : oldPriority + 1;
         int currentMaxPriority = calculatePriority(userx);
 
-        if (oldPriority <= 1 && up) {
-            // favorite cannot be moved up
-            return;
-        } else if (oldPriority >= currentMaxPriority && !up) {
-            // favorite cannot be moved down
+        if ((oldPriority <= 1 && up) || (oldPriority >= currentMaxPriority && !up)) {
             return;
         }
 
@@ -60,10 +56,6 @@ public class FavoriteService {
             favoriteRepository.save(favorite);
 
             logger.info("after successful move, og. favorite priority: {} other: {} ", favorite.getPriority(), favoriteToMove.getPriority());
-        }
-        else {
-            logger.info("Error fetching favorites");
-            // TODO: Proper exception
         }
     }
 
@@ -100,7 +92,8 @@ public class FavoriteService {
     }
 
     public boolean isLocationAlreadyFavorite(String locationName) throws EmptyLocationException, ApiQueryException {
-        retrieveCurrentData(locationName);
+        Userx currentUserx = userxService.getCurrentUser();
+        Location currentLocation = locationService.retrieveLocation(locationName);
 
         List<Favorite> favorites = favoriteRepository.findByUser(currentUserx);
         if (!favorites.isEmpty()) {
@@ -117,10 +110,6 @@ public class FavoriteService {
      *
      * @param locationName The name of the location to retrieve data for.
      */
-    private void retrieveCurrentData(String locationName) throws EmptyLocationException, ApiQueryException {
-        currentUserx = userxService.getCurrentUser();
-        currentLocation = locationService.retrieveLocation(locationName);
-    }
 
 
     /**
@@ -128,8 +117,10 @@ public class FavoriteService {
      *
      * @param locationName The name of the location to be saved as a favorite.
      */
-    public void saveFavorite( String locationName) throws EmptyLocationException, ApiQueryException {
-        retrieveCurrentData(locationName);
+    public void saveFavorite(String locationName) throws EmptyLocationException, ApiQueryException {
+        Userx currentUserx = userxService.getCurrentUser();
+        Location currentLocation = locationService.retrieveLocation(locationName);
+
         if (currentLocation == null || currentUserx == null) {
             throw new EmptyLocationException("Location does not exist!");
         }
@@ -150,8 +141,7 @@ public class FavoriteService {
      *
      * @param favorite The favorite to be deleted.
      */
-    public void deleteFavorite(Favorite favorite)
-    {
+    public void deleteFavorite(Favorite favorite) {
         favoriteRepository.delete(favorite);
     }
 
@@ -173,7 +163,7 @@ public class FavoriteService {
      * @return The calculated priority count based on the number of favorites for the user.
      */
     private int calculatePriority(Userx userx) {
-        List<Favorite> favorites =  favoriteRepository.findByUser(userx);
+        List<Favorite> favorites = favoriteRepository.findByUser(userx);
         return favorites.size();
     }
 
@@ -191,23 +181,6 @@ public class FavoriteService {
 
     public void setDefaultSelectedFields() {
         addSelectedFields(List.of(WeatherDataField.TEMP, WeatherDataField.FEELS_LIKE, WeatherDataField.DESCRIPTION));
-    }
-
-
-    public Userx getCurrentUserx() {
-        return currentUserx;
-    }
-
-    public void setCurrentUserx(Userx currentUserx) {
-        this.currentUserx = currentUserx;
-    }
-
-    public Location getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public void setCurrentLocation(Location currentLocation) {
-        this.currentLocation = currentLocation;
     }
 
 }

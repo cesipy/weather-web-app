@@ -1,14 +1,9 @@
 package at.qe.skeleton.external.controllers;
 
-import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.location.Location;
 
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
-import at.qe.skeleton.external.services.WeatherService;
-import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
@@ -20,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+
 
 @Controller             // @Controller is a specification of @Component
 @Scope("view")
@@ -31,16 +26,11 @@ public class SearchWeatherController {
     private WeatherController weatherController;
     @Autowired
     private LocationService locationService;
-    private CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO;
-    private String currentWeather;
+    @Autowired
+    private MessageService messageService;
     private Location currentLocation;
-    private String currentLocationString;
-    private String locationToSearch;
 
-    private HourlyWeatherDTO hourlyWeatherDTO;
-    private HourlyWeatherDTO weatherInOneHour;
-    private List<HourlyWeatherDTO> hourlyWeatherList;
-    private List<DailyWeatherDTO> dailyWeatherList;
+    private String locationToSearch;
 
 
     /**
@@ -69,7 +59,7 @@ public class SearchWeatherController {
         try {
             if (locationToSearch == null || locationToSearch.trim().isEmpty()) {
                 String warnMessage = "Please enter a city.";
-                showInfoMessage(warnMessage);
+                messageService.showInfoMessage(warnMessage);
                 return false;
             }
 
@@ -86,11 +76,12 @@ public class SearchWeatherController {
             }
         } catch (ApiQueryException e) {
             logger.error("Error querying location API", e);
-            showWarnMessage();
+            String message = "An error occurred!";
+            messageService.showWarnMessage(message);
             return false;
         } catch (EmptyLocationException e) {
-            String message = "Cannot find city: %s".formatted(locationToSearch);
-            showInfoMessage(message);
+            String message = String.format("Location '%s' not found!", locationToSearch);
+            messageService.showInfoMessage(message);
             return false;
         }
     }
@@ -101,15 +92,14 @@ public class SearchWeatherController {
      */
     private void handleNoLocationFound() {
         String message = String.format("Cannot find city: %s", locationToSearch);
-        showInfoMessage(message);
+        messageService.showInfoMessage(message);
         logger.info("No location found for search: {}", locationToSearch);
     }
 
 
     private void redirectToDetailPage() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        String url = externalContext.getRequestContextPath() + "/secured/detail.xhtml?location=" + currentLocation.getName();
-        logger.info(url);
+        String url = externalContext.getRequestContextPath() + "/common/detail.xhtml?location=" + currentLocation.getName();
         try {
             externalContext.redirect(url);
         } catch (Exception e) {
@@ -117,43 +107,6 @@ public class SearchWeatherController {
         }
     }
 
-
-    /**
-     * Displays a warning message about a location not being found.
-     *
-     */
-    public void showWarnMessage() {
-        String message = "An error occurred!";
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
-    }
-
-    /**
-     * Displays an informational message about a location not being found.
-     *
-     * @param locationName The name of the location for which the message is generated.
-     */
-    public void showInfoMessage(String locationName) {
-        String message = String.format("Location '%s' not found!", locationName);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", message));
-    }
-
-    public CurrentAndForecastAnswerDTO getCurrentAndForecastAnswerDTO() {
-        return currentAndForecastAnswerDTO;
-    }
-
-    public void setCurrentAndForecastAnswerDTO(CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO) {
-        this.currentAndForecastAnswerDTO = currentAndForecastAnswerDTO;
-    }
-
-    public String getCurrentWeather() {
-        return currentWeather;
-    }
-
-    public void setCurrentWeather(String currentWeatherString) {
-        this.currentWeather = currentWeatherString;
-    }
 
     public Location getCurrentLocation() {
         return currentLocation;
@@ -163,53 +116,13 @@ public class SearchWeatherController {
         this.currentLocation = currentLocation;
     }
 
-    public String getCurrentLocationString() {
-        return (currentLocationString == null) ? "no location found" : currentLocationString;
-    }
-
-    public void setCurrentLocationString(String currentLocationString) {
-        this.currentLocationString = currentLocationString;
-    }
 
     public String getLocationToSearch() {
         return locationToSearch;
     }
 
-    @RequestMapping(value = "/secured/detail.xhtml", method = RequestMethod.GET)
+    @RequestMapping(value = "/common/detail.xhtml", method = RequestMethod.GET)
     public void setLocationToSearch(@RequestParam("location") String locationToSearch) {
         this.locationToSearch = locationToSearch;
-    }
-
-    public HourlyWeatherDTO getHourlyWeatherDTO() {
-        return hourlyWeatherDTO;
-    }
-
-    public void setHourlyWeatherDTO(HourlyWeatherDTO hourlyWeatherDTO) {
-        this.hourlyWeatherDTO = hourlyWeatherDTO;
-    }
-
-    public HourlyWeatherDTO getWeatherInOneHour() {
-        return weatherInOneHour;
-    }
-
-    public void setWeatherInOneHour(HourlyWeatherDTO weatherInOneHour) {
-        this.weatherInOneHour = weatherInOneHour;
-    }
-
-    public List<HourlyWeatherDTO> getHourlyWeatherList() {
-        logger.info("in detailed view: {}", hourlyWeatherList);
-        return hourlyWeatherList;
-    }
-
-    public void setHourlyWeatherList(List<HourlyWeatherDTO> hourlyWeatherList) {
-        this.hourlyWeatherList = hourlyWeatherList;
-    }
-
-    public List<DailyWeatherDTO> getDailyWeatherList() {
-        return dailyWeatherList;
-    }
-
-    public void setDailyWeatherList(List<DailyWeatherDTO> dailyWeatherList) {
-        this.dailyWeatherList = dailyWeatherList;
     }
 }

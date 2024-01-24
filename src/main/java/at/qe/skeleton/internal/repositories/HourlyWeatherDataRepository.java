@@ -1,7 +1,6 @@
 package at.qe.skeleton.internal.repositories;
 
-import at.qe.skeleton.external.domain.DailyAggregationData;
-import at.qe.skeleton.external.domain.DailyWeatherData;
+
 import at.qe.skeleton.external.domain.HourlyWeatherData;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
