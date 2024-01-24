@@ -50,6 +50,7 @@ public class HolidayController {
     private HolidayDTO pastAverage;
     private Date oneYearFromToday;
     private LineChartModel model;
+    private Date today;
     private Date start_date;
     private Date end_date;
     private Date end_date_max;
@@ -63,7 +64,7 @@ public class HolidayController {
         locationQuery = externalContext.getRequestParameterMap().get("location");
 
         model = new LineChartModel();
-
+        this.setToday(weatherService.getToday());
         this.setOneYearFromToday(weatherService.getOneYearFromToday());
         retrieveLocation(locationQuery);
     }
@@ -165,6 +166,14 @@ public class HolidayController {
 
     public void setEnd_date_max(Date end_date_max) {
         this.end_date_max = end_date_max;
+    }
+
+    public Date getToday() {
+        return today;
+    }
+
+    public void setToday(Date today) {
+        this.today = today;
     }
 
     public HolidayDTO getPastAverage() {
