@@ -17,7 +17,7 @@ public class DailyWeatherData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long weather_id;
+    private Long weatherId;
 
     private Instant timestamp;
     private Instant sunrise;
@@ -91,12 +91,12 @@ public class DailyWeatherData {
         this.location = location;
     }
 
-    public Long getWeather_id() {
-        return weather_id;
+    public Long getWeatherId() {
+        return weatherId;
     }
 
-    public void setWeather_id(Long weather_id) {
-        this.weather_id = weather_id;
+    public void setWeatherId(Long weatherId) {
+        this.weatherId = weatherId;
     }
 
     public Instant getTimestamp() {

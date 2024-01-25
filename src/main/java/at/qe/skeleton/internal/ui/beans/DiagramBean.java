@@ -42,10 +42,16 @@ public class DiagramBean implements Serializable {
         lineModel = new LineChartModel();
     }
 
-    public void updateLineModel(List<HolidayDTO> holidays, Date start_date, Date end_date){
+    public void updateLineModel(List<HolidayDTO> holidays, Date startDate, Date endDate){
         ChartData data = new ChartData();
 
-        LineChartDataSet dataSetMin, dataSetMax, dataSetMorn, dataSetAft, dataSetEve, dataSetNight;
+        LineChartDataSet dataSetMin;
+        LineChartDataSet dataSetMax;
+        LineChartDataSet dataSetMorn;
+        LineChartDataSet dataSetAft;
+        LineChartDataSet dataSetEve;
+        LineChartDataSet dataSetNight;
+
         dataSetMin = new LineChartDataSet();
         dataSetMax = new LineChartDataSet();
         dataSetMorn = new LineChartDataSet();
@@ -109,9 +115,9 @@ public class DiagramBean implements Serializable {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Calendar start = Calendar.getInstance();
-        start.setTime(start_date);
+        start.setTime(startDate);
         Calendar end = Calendar.getInstance();
-        end.setTime(end_date);
+        end.setTime(endDate);
 
         List<String> minLabelList = new ArrayList<>();
         while (!start.after(end)) {

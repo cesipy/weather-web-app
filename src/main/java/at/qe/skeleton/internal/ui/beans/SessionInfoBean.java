@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class SessionInfoBean implements Serializable {
 
     @Autowired
-    private UserxService userService;
+    private transient UserxService userService;
 
     /**
      * Attribute to cache the current user.

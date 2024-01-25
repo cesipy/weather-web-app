@@ -2,6 +2,7 @@ package at.qe.skeleton.tests;
 
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.holiday.HolidayDTO;
+import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,7 +71,7 @@ public class WeatherApiRequestServiceTest {
 
 
     @Test
-    public void testRetrieveDailyHolidayForecast_Success() {
+    public void testRetrieveDailyHolidayForecast_Success() throws ApiQueryException {
         // Arrange
         double latitude = 47.0;
         double longitude = 13.0;

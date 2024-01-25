@@ -33,7 +33,7 @@ public class DetailedWeatherController {
     private List<HourlyWeatherDTO> limitedHourlyWeatherList;
     private List<DailyWeatherDTO> limitedDailyWeatherList;
     private String locationQuery;
-    private final String ERROR_MESSAGE = "An error occurred!";
+    private static final String ERROR_MESSAGE = "An error occurred!";
     private static final Logger logger = LoggerFactory.getLogger(DetailedWeatherController.class);
 
 

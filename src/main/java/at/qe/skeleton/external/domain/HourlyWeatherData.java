@@ -15,7 +15,7 @@ public class HourlyWeatherData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long hourlyweather_id;
+    private Long hourlyweatherId;
     private Instant timestamp;
     private double temperature;
     private double feelsLikeTemperature;
@@ -54,6 +54,14 @@ public class HourlyWeatherData {
         this.snow = snow;
         this.additionTime = additionTime;
         this.location = location;
+    }
+
+    public Long getHourlyweatherId() {
+        return hourlyweatherId;
+    }
+
+    public void setHourlyweatherId(Long hourlyweatherId) {
+        this.hourlyweatherId = hourlyweatherId;
     }
 
     public Instant getAdditionTime() {

@@ -31,7 +31,7 @@ public class WebSecurityConfig {
     private static final String EMPLOYEE = UserxRole.EMPLOYEE.name();
     private static final String LOGIN = "/login.xhtml";
     private static final String ACCESSDENIED = "/error/access_denied.xhtml";
-
+private static final String LANDING = "/landing.xhtml";
     @Autowired
     DataSource dataSource;
 
@@ -44,6 +44,9 @@ public class WebSecurityConfig {
                     .cors(cors -> cors.disable())
                     .csrf(csrf -> csrf.disable())
                     .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin)) // needed for H2 console
+                    .exceptionHandling(exception -> exception
+                            .accessDeniedPage(ACCESSDENIED)
+                    )
                     .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/**.jsf")).permitAll()
@@ -57,7 +60,7 @@ public class WebSecurityConfig {
                             .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAnyAuthority("ADMIN")
                             .requestMatchers(new AntPathRequestMatcher("/manager/**")).hasAnyAuthority("MANAGER")
                             .requestMatchers(new AntPathRequestMatcher("/secured/**")).hasAnyAuthority(ADMIN, MANAGER, EMPLOYEE)
-                            .requestMatchers(new AntPathRequestMatcher("/landing.xhtml")).permitAll() // allows public access to landing.xhtml
+                            .requestMatchers(new AntPathRequestMatcher(LANDING)).permitAll() // allows public access to landing.xhtml
                             .requestMatchers(new AntPathRequestMatcher("/common/searching.xhtml")).permitAll() // allows public access to searching.xhtml
                             .requestMatchers(new AntPathRequestMatcher("/common/detail.xhtml/**")).permitAll() // allows public access to booking.xhtml
                             .anyRequest().authenticated()
@@ -68,7 +71,7 @@ public class WebSecurityConfig {
                             .loginPage(LOGIN)
                             .permitAll()
                             //.defaultSuccessUrl("/secured/welcome.xhtml")
-                            .defaultSuccessUrl("/landing.xhtml") // Set the default success URL to /landing.xhtml
+                            .defaultSuccessUrl(LANDING) // Set the default success URL to /landing.xhtml
                             .loginProcessingUrl("/login")
                             .successForwardUrl("/secured/welcome.xhtml")
                             .failureUrl("/login.xhtml?error")
@@ -83,7 +86,7 @@ public class WebSecurityConfig {
                     )
                     .sessionManagement(session -> session
                             //.invalidSessionUrl("/error/invalid_session.xhtml")
-                            .invalidSessionUrl("/landing.xhtml") // Set the invalid session URL to /landing.xhtml
+                            .invalidSessionUrl(LANDING) // Set the invalid session URL to /landing.xhtml
                     );
 
             return http.build();

@@ -16,7 +16,7 @@ import jakarta.persistence.*;
 public class DailyAggregationData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long daily_aggregation_id;
+    private Long dailyAggregationId;
     private double morningTemperature;
     private double dayTemperature;
     private double eveningTemperature;
@@ -36,12 +36,12 @@ public class DailyAggregationData {
         this.maximumDailyTemperature = maximumDailyTemperature;
     }
 
-    public Long getDaily_aggregation_id() {
-        return daily_aggregation_id;
+    public Long getDailyAggregationId() {
+        return dailyAggregationId;
     }
 
-    public void setDaily_aggregation_id(Long daily_aggregation_id) {
-        this.daily_aggregation_id = daily_aggregation_id;
+    public void setDailyAggregationId(Long dailyAggregationId) {
+        this.dailyAggregationId = dailyAggregationId;
     }
 
     public double getMorningTemperature() {

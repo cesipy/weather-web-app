@@ -33,6 +33,7 @@ public class WeatherApiRequestService {
     private static final String LONGITUDE_PARAMETER = "lon";
     private static final String LATITUDE_PARAMETER = "lat";
     private static final String DATE_PARAMETER = "date";
+    private static final String UNIT_PARAMETER = "units";
 
     private static final Logger logger = LoggerFactory.getLogger(WeatherApiRequestService.class);
 
@@ -54,6 +55,7 @@ public class WeatherApiRequestService {
                     .uri(UriComponentsBuilder.fromPath(CURRENT_AND_FORECAST_URI)
                             .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
                             .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
+                            .queryParam(UNIT_PARAMETER, "metric")
                             .build().toUriString())
                     .retrieve()
                     .toEntity(CurrentAndForecastAnswerDTO.class);
@@ -71,45 +73,53 @@ public class WeatherApiRequestService {
      * @return A string containing the name of the location
      */
     public String getLocationName(@Min(-90) @Max(90) double latitude,
-                                  @Min(-180) @Max(180) double longitude) {
+                                  @Min(-180) @Max(180) double longitude) throws ApiQueryException {
+        try{
+            ResponseEntity<String> responseEntity = this.restClient.get()
+                    .uri(UriComponentsBuilder.fromPath(REVERSE_GEOCODING_URI)
+                            .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
+                            .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
+                            .build().toUriString())
+                    .retrieve()
+                    .toEntity(String.class);
 
-        ResponseEntity<String> responseEntity = this.restClient.get()
-                .uri(UriComponentsBuilder.fromPath(REVERSE_GEOCODING_URI)
-                        .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
-                        .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
-                        .build().toUriString())
-                .retrieve()
-                .toEntity(String.class);
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            JsonNode root = mapper.readTree(responseEntity.getBody());
-            JsonNode firstElement = root.get(0); // Get the first element of the array
-            if (firstElement != null) {
-                return firstElement.get("name").asText();
-            } else {
-                logger.error("No elements in the JSON array");
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                JsonNode root = mapper.readTree(responseEntity.getBody());
+                JsonNode firstElement = root.get(0); // Get the first element of the array
+                if (firstElement != null) {
+                    return firstElement.get("name").asText();
+                } else {
+                    logger.error("No elements in the JSON array");
+                    return null;
+                }
+            } catch (IOException e) {
+                logger.error("Error parsing JSON response", e);
                 return null;
             }
-        } catch (IOException e) {
-            logger.error("Error parsing JSON response", e);
-            return null;
+        }catch (Exception e) {
+            throw new ApiQueryException("Failed to retrieve weather data from API!");
         }
+
 
     }
     public HolidayDTO retrieveDailyHolidayForecast(@Min(-90) @Max(90) double latitude,
                                                    @Min(-180) @Max(180) double longitude,
-                                                   String date){
-        ResponseEntity<HolidayDTO> responseEntity = this.restClient.get()
-                .uri(UriComponentsBuilder.fromPath(DAILY_AGGREGATION_URI)
-                        .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
-                        .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
-                        .queryParam(DATE_PARAMETER, date)
-                        .build().toUriString())
-                .retrieve()
-                .toEntity(HolidayDTO.class);
+                                                   String date) throws ApiQueryException{
+        try {
+            ResponseEntity<HolidayDTO> responseEntity = this.restClient.get()
+                    .uri(UriComponentsBuilder.fromPath(DAILY_AGGREGATION_URI)
+                            .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
+                            .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
+                            .queryParam(DATE_PARAMETER, date)
+                            .build().toUriString())
+                    .retrieve()
+                    .toEntity(HolidayDTO.class);
 
-        return responseEntity.getBody();
+            return responseEntity.getBody();
+        }catch (Exception e) {
+            throw new ApiQueryException("Failed to retrieve weather data from API!");
+        }
 
     }
 

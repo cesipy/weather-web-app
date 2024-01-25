@@ -230,7 +230,7 @@
                         <p:outputLabel styleClass="ui-grid ui-grid-responsive">
                             <div class="ui-grid-row">
                                 <div class="ui-grid-col-6">
-                                    <p:calendar id="start" value="#{holidayController.start_date}" navigator="true"
+                                    <p:calendar id="start" value="#{holidayController.startDate}" navigator="true"
                                                 pattern="dd/MM/yyyy" mode="inline" mindate="#{holidayController.today}"
                                                 maxdate="#{holidayController.oneYearFromToday}">
                                         <p:ajax event="dateSelect" listener="#{holidayController.onStartDateSelect}"
@@ -238,9 +238,9 @@
                                     </p:calendar>
                                 </div>
                                 <div class="ui-grid-col-6">
-                                    <p:calendar id="end" value="#{holidayController.end_date}" navigator="true"
-                                                pattern="dd/MM/yyyy" mode="inline" mindate="#{holidayController.start_date}"
-                                                maxdate="#{holidayController.end_date_max}"/>
+                                    <p:calendar id="end" value="#{holidayController.endDate}" navigator="true"
+                                                pattern="dd/MM/yyyy" mode="inline" mindate="#{holidayController.startDate}"
+                                                maxdate="#{holidayController.endDateMax}"/>
                                 </div>
                             </div>
                         </p:outputLabel>

@@ -11,8 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -121,7 +120,7 @@ public class SearchWeatherController {
         return locationToSearch;
     }
 
-    @RequestMapping(value = "/common/detail.xhtml", method = RequestMethod.GET)
+    @GetMapping(value = "/common/detail.xhtml")
     public void setLocationToSearch(@RequestParam("location") String locationToSearch) {
         this.locationToSearch = locationToSearch;
     }

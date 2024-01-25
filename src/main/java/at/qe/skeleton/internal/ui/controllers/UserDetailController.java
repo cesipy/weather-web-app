@@ -8,6 +8,8 @@ import at.qe.skeleton.internal.services.UserxService;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -39,6 +41,10 @@ public class UserDetailController implements Serializable {
     private UserxDetailsService userxDetailsService;
     public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private String tempPassword;
+    private Random random = SecureRandom.getInstanceStrong();
+
+    public UserDetailController() throws NoSuchAlgorithmException {
+    }
 
     public String getNewUsername() {
         return newUsername;
@@ -151,7 +157,6 @@ public class UserDetailController implements Serializable {
    public String generatePassword() {
         int passwordLength = 8;
         StringBuilder password = new StringBuilder();
-        Random random = new Random();
         for (int i = 0; i < passwordLength; i++) {
             int digit = random.nextInt(10);
             password.append(digit);

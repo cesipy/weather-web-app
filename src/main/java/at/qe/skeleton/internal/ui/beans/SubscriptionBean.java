@@ -22,9 +22,9 @@ import java.io.Serializable;
 public class SubscriptionBean implements Serializable {
 
     @Autowired
-    private UserxService userxService;
+    private transient UserxService userxService;
     @Autowired
-    private UserReloadService userReloadService;
+    private transient UserReloadService userReloadService;
     @Autowired
     private CashUpBean cashUpBean;
 

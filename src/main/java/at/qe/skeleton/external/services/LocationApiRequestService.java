@@ -5,8 +5,6 @@ import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.model.location.LocationDTO;
 import at.qe.skeleton.external.repositories.LocationRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
@@ -61,7 +59,7 @@ public class LocationApiRequestService {
                     .toEntity(new ParameterizedTypeReference<List<LocationDTO>>() {
                     });
 
-            if (responseEntity.getBody().isEmpty()) {
+            if (responseEntity.getBody().isEmpty() || responseEntity.getBody() == null) {
                 throw new EmptyLocationException("No location is found");
             }
             return responseEntity.getBody();

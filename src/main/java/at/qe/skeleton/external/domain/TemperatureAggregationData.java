@@ -15,7 +15,7 @@ import jakarta.persistence.*;
 public class TemperatureAggregationData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long temp_aggregation_id;
+    private Long tempAggregationId;
     private double morningTemperature;
     private double dayTemperature;
     private double eveningTemperature;
@@ -32,12 +32,12 @@ public class TemperatureAggregationData {
         this.nightTemperature = nightTemperature;
     }
 
-    public Long getTemp_aggregation_id() {
-        return temp_aggregation_id;
+    public Long getTempAggregationId() {
+        return tempAggregationId;
     }
 
-    public void setTemp_aggregation_id(Long temp_aggregation_id) {
-        this.temp_aggregation_id = temp_aggregation_id;
+    public void setTempAggregationId(Long tempAggregationId) {
+        this.tempAggregationId = tempAggregationId;
     }
 
     public double getMorningTemperature() {

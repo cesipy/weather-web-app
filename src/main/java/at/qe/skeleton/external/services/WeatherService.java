@@ -4,7 +4,6 @@ import at.qe.skeleton.external.controllers.CurrentlyHourlyDailyWeather;
 import at.qe.skeleton.external.domain.DailyWeatherData;
 import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.CurrentWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyTemperatureAggregationDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
@@ -25,7 +24,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -56,7 +54,6 @@ public class WeatherService {
     @Autowired
     private CurrentWeatherDataRepository currentWeatherDataRepository;
 
-    private Location location;
     private HourlyWeatherDTO currentWeather;
     private HourlyWeatherDTO weatherInOneHour;
     private List<HourlyWeatherDTO> hourlyWeatherList;
@@ -227,21 +224,21 @@ public class WeatherService {
         return cal.getTime();
     }
 
-    public Date getMaximumEndDate(SelectEvent event, int days){
-        Date startDate = (Date) event.getObject();
+    public Date getMaximumEndDate(SelectEvent<Date> event, int days){
+        Date startDate = event.getObject();
         Calendar c = Calendar.getInstance();
         c.setTime(startDate);
         c.add(Calendar.DATE, days);
         return c.getTime();
     }
 
-    public List<String> getChosenDates(Date start_date, Date end_date){
+    public List<String> getChosenDates(Date startDate, Date endDate){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Calendar start = Calendar.getInstance();
-        start.setTime(start_date);
+        start.setTime(startDate);
         Calendar end = Calendar.getInstance();
-        end.setTime(end_date);
+        end.setTime(endDate);
 
         List<String> chosenDates = new ArrayList<>();
         while (!start.after(end)) {
@@ -261,20 +258,19 @@ public class WeatherService {
             }
         }catch (Exception e) {
             logger.error("error in request in WeatherApi when retrieving Holiday Data", e);
-            throw new RuntimeException(e);
         }
         return holidays;
     }
 
-    public HolidayDTO getPastAverageDTO(Date start_date, Date end_date, Location location){
+    public HolidayDTO getPastAverageDTO(Date startDate, Date endDate, Location location) throws ApiQueryException {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        long diffInMillies = Math.abs(end_date.getTime() - start_date.getTime());
+        long diffInMillies = Math.abs(endDate.getTime() - startDate.getTime());
 
         long middlePoint = diffInMillies / 2;
 
-        Date middleDate = new Date(start_date.getTime() + middlePoint);
+        Date middleDate = new Date(startDate.getTime() + middlePoint);
 
         List<String> pastFiveYears = new ArrayList<>();
 
@@ -347,9 +343,6 @@ public class WeatherService {
                 null
         );
         return pastAvg;
-    }
-    public void setLocation(Location location) {
-        this.location = location;
     }
 
     public HourlyWeatherDTO getCurrentWeather() {

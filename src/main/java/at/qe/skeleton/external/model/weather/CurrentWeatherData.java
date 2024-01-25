@@ -2,8 +2,6 @@ package at.qe.skeleton.external.model.weather;
 
 import at.qe.skeleton.external.model.location.Location;
 import jakarta.persistence.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.ZoneId;

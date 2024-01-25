@@ -84,7 +84,7 @@ public class LocationService {
 
             locationRepository.saveAll(locationEntityList);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new JsonLoadingException("Failed to load data from JSON file: " + path, e);
         }
     }
 

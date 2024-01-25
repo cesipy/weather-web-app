@@ -30,7 +30,6 @@ import java.util.Set;
 @Scope("application")
 public class UserxService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserxService.class);
     @Autowired
     private UserxRepository userRepository;
 
