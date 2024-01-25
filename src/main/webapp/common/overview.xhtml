@@ -26,7 +26,12 @@
                         Overview
 
                         <div style="margin-top: 10px; text-align: right;">
-                            <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                            <p:commandButton id="toggler"
+                                             type="button"
+                                             value="Columns"
+                                             icon="pi pi-align-justify"
+                                             rendered="#{sessionInfoBean.hasRole('PREMIUM')}"
+                                />
                             <p:columnToggler datasource="weathers" trigger="toggler">
                                 <!-- notifies the 'onToggle' method in controller to save the configured columns -->
                                 <p:ajax  event="toggle" listener="#{favoriteOverviewController.onToggle}"/>
