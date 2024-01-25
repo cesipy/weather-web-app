@@ -50,8 +50,6 @@ public class SubscriptionBean implements Serializable {
 
         Userx user = userxService.loadUser(authentication.getName());
         return user.getCreditCard() != null;
-
-        return false;
     }
 
     protected SecurityContext getSecurityContext() {
