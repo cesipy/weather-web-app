@@ -11,7 +11,6 @@
     <ui:define name="content">
 
         <div id="landing_page">
-            <p:commandButton type="button" icon="pi pi-search" styleClass="rounded-button ui-button-success" />
             <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 
                 <p:outputLabel value="Welcome to Our Website!"
@@ -22,7 +21,26 @@
                                style="font-size: 16px; text-align: center;"/>
                 <i class="pi pi-cloud" style="font-size: 4rem"></i>
             </p:panelGrid>
+            <br/>
+            <br/>
+            <br/>
+        </div>
+
+        <div id="landing_page_weather">
+            <p:dataTable var="weatherData" value="#{landingPageController.landingPageWeather}"
+                         size="small">
+                <p:column headerText="Location">
+                    <h:outputText value="#{weatherData.location.name}" />
+                </p:column>
+                <p:column headerText="Temperature">
+                    <h:outputText value="#{weatherData.temperature}" />
+                </p:column>
+                <p:column headerText="Feels like">
+                    <h:outputText value="#{weatherData.feelsLikeTemperature}" />
+                </p:column>
+            </p:dataTable>
+
+
         </div>
     </ui:define>
-
 </ui:composition>
