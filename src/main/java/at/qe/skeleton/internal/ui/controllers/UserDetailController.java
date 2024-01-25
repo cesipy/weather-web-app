@@ -1,5 +1,6 @@
 package at.qe.skeleton.internal.ui.controllers;
 
+import at.qe.skeleton.external.services.WeatherService;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.services.EmailService;
@@ -13,6 +14,8 @@ import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
@@ -34,16 +37,18 @@ import org.springframework.stereotype.Component;
 public class UserDetailController implements Serializable {
 
     @Autowired
-    private UserxService userService;
+    private transient UserxService userService;
     @Autowired
-    private EmailService emailService;
+    private transient EmailService emailService;
     @Autowired
-    private UserxDetailsService userxDetailsService;
-    public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private transient UserxDetailsService userxDetailsService;
+    public transient BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private String tempPassword;
     private Random random = SecureRandom.getInstanceStrong();
+    private static final Logger logger = LoggerFactory.getLogger(UserDetailController.class);
 
     public UserDetailController() throws NoSuchAlgorithmException {
+        //Empty Constructor needed for the SecureRandom to work.
     }
 
     public String getNewUsername() {
@@ -169,8 +174,7 @@ public class UserDetailController implements Serializable {
             userService.passwordService(user.getUsername(), doEncodePassword(user.getPassword()));
             redirectToLogin();
         }else{
-            //real Exception Handling is missing
-            System.out.println("Wrong Password");
+            logger.warn("Wrong password");
         }
    }
 

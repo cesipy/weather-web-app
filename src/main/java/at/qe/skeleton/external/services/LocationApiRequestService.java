@@ -59,7 +59,7 @@ public class LocationApiRequestService {
                     .toEntity(new ParameterizedTypeReference<List<LocationDTO>>() {
                     });
 
-            if (responseEntity.getBody().isEmpty() || responseEntity.getBody() == null) {
+            if (responseEntity.getBody() == null || responseEntity.getBody().isEmpty()) {
                 throw new EmptyLocationException("No location is found");
             }
             return responseEntity.getBody();

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class UserListController implements Serializable {
 
     @Autowired
-    private UserxService userService;
+    private transient UserxService userService;
 
     /**
      * Returns a list of all users.
@@ -39,8 +39,7 @@ public class UserListController implements Serializable {
     }
 
     public List<String> getAllRoles() {
-        List<String> allRoles = Arrays.asList("ADMIN", "MANAGER", "EMPLOYEE", "PREMIUM");
-        return allRoles;
+        return Arrays.asList("ADMIN", "MANAGER", "EMPLOYEE", "PREMIUM");
     }
 
 

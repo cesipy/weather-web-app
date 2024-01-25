@@ -27,7 +27,7 @@ public class LocationServiceTest {
         String query = "Innsbruck";
         List<Location> locations = locationService.autocomplete(query);
         Location firstLocation = locations.get(0);
-        assertEquals(firstLocation.getName(), "Innsbruck");
+        assertEquals("Innsbruck", firstLocation.getName());
     }
 
     @Test
@@ -36,7 +36,7 @@ public class LocationServiceTest {
         String query = "Hall";  // for simply "Hall" "Hall in Tirol" is expected.
         List<Location> locations = locationService.autocomplete(query);
         Location firstLocation = locations.get(0);
-        assertEquals(firstLocation.getName(), "Hall in Tirol");
+        assertEquals("Hall in Tirol", firstLocation.getName());
     }
 
 

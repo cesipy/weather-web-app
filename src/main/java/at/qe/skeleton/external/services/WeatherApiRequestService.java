@@ -83,22 +83,9 @@ public class WeatherApiRequestService {
                     .retrieve()
                     .toEntity(String.class);
 
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                JsonNode root = mapper.readTree(responseEntity.getBody());
-                JsonNode firstElement = root.get(0); // Get the first element of the array
-                if (firstElement != null) {
-                    return firstElement.get("name").asText();
-                } else {
-                    logger.error("No elements in the JSON array");
-                    return null;
-                }
-            } catch (IOException e) {
-                logger.error("Error parsing JSON response", e);
-                return null;
-            }
+            return parseLocationName(responseEntity.getBody());
         }catch (Exception e) {
-            throw new ApiQueryException("Failed to retrieve weather data from API!");
+            throw new ApiQueryException("Failed to retrieve location data from API!");
         }
 
 
@@ -118,11 +105,26 @@ public class WeatherApiRequestService {
 
             return responseEntity.getBody();
         }catch (Exception e) {
-            throw new ApiQueryException("Failed to retrieve weather data from API!");
+            throw new ApiQueryException("Failed to retrieve holiday weather data from API!");
         }
 
     }
 
+    private String parseLocationName(String responseBody) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode root = mapper.readTree(responseBody);
+            JsonNode firstElement = root.get(0); // Get the first element of the array
+            if (firstElement != null) {
+                return firstElement.get("name").asText();
+            } else {
+                logger.error("No elements in the JSON array");
+                return null;
+            }
+        } catch (IOException e) {
+            logger.error("Error parsing JSON response", e);
+            return null;
+        }
 
-
+}
 }

@@ -26,11 +26,7 @@ public class SubscriptionBean implements Serializable {
     @Autowired
     private transient UserReloadService userReloadService;
     @Autowired
-    private CashUpBean cashUpBean;
-
-    //@Autowired
-    //private SessionInfoBean sessionInfoBean;
-    //kann nicht einfach da oben hin schreiben
+    private transient CashUpBean cashUpBean;
 
     private String buttonText;
 
@@ -52,10 +48,9 @@ public class SubscriptionBean implements Serializable {
     public boolean hasCreditCard() {
         Authentication authentication = getSecurityContext().getAuthentication();
 
-        if (authentication != null) {
-            Userx user = userxService.loadUser(authentication.getName());
-            return user.getCreditCard() != null;
-        }
+        Userx user = userxService.loadUser(authentication.getName());
+        return user.getCreditCard() != null;
+
         return false;
     }
 
@@ -86,9 +81,6 @@ public class SubscriptionBean implements Serializable {
                 updateButtonText();
             }
         } catch (ValidationException e) {
-            // Loggen?
-            //e.printStackTrace();
-
             FacesContext.getCurrentInstance().addMessage(
                     null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please provide payment information", e.getMessage())

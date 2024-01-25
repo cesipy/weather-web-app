@@ -8,9 +8,6 @@ import at.qe.skeleton.internal.repositories.UserxRepository;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;

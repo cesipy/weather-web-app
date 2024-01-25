@@ -79,9 +79,9 @@ public class LocationApiRequestServiceTest {
 
         assertFalse(result.isEmpty());
         assertEquals(result.get(0).name(), cityName);
-        assertEquals(result.get(0).latitude(), 47.0);
-        assertEquals(result.get(0).longitude(), 13.0);
-        assertEquals(result.get(0).country(), "Austria");
+        assertEquals(47.0, result.get(0).latitude());
+        assertEquals(13.0, result.get(0).longitude());
+        assertEquals("Austria", result.get(0).country());
     }
 
 

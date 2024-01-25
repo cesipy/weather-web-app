@@ -44,7 +44,6 @@ public class HolidayController {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         locationQuery = externalContext.getRequestParameterMap().get("location");
 
-        LineChartModel model = new LineChartModel();
         this.setToday(weatherService.getToday());
         this.setOneYearFromToday(weatherService.getOneYearFromToday());
         retrieveLocation();

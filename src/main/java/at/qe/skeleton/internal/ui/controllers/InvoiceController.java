@@ -19,7 +19,7 @@ import java.io.Serializable;
 public class InvoiceController implements Serializable {
 
     @Autowired
-    private InvoiceService invoiceService;
+    private transient InvoiceService invoiceService;
 
     /**
      * Attribute to cache the Invoice

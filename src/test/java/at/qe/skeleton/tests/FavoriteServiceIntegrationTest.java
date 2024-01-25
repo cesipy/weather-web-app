@@ -139,12 +139,12 @@ public class FavoriteServiceIntegrationTest {
         List <Favorite> favorites = favoriteService.getSortedFavoritesList(userx);
 
         assertEquals(favorites.get(0).getLocation().getName(), query1);
-        assertEquals(favorites.get(0).getPriority(), 1);
+        assertEquals(1, favorites.get(0).getPriority());
         assertEquals(favorites.get(1).getLocation().getName(), query2);
-        assertEquals(favorites.get(1).getPriority(), 2);
+        assertEquals(2, favorites.get(1).getPriority());
         assertEquals(favorites.get(2).getLocation().getName(), query3);
-        assertEquals(favorites.get(2).getPriority(), 3);
-        assertEquals(favorites.size(), 3);
+        assertEquals(3, favorites.get(2).getPriority());
+        assertEquals(3, favorites.size());
     }
 
 

@@ -318,7 +318,7 @@ public class WeatherService {
         sumPrecipitation = sumPrecipitation / pastFiveYears.size();
         sumHumidity = sumHumidity / pastFiveYears.size();
 
-        HolidayDTO pastAvg = new HolidayDTO(
+        return new HolidayDTO(
                 location.getLatitude(),
                 location.getLongitude(),
                 null,
@@ -342,7 +342,6 @@ public class WeatherService {
                 ),
                 null
         );
-        return pastAvg;
     }
 
     public HourlyWeatherDTO getCurrentWeather() {

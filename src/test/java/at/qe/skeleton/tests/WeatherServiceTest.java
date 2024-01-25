@@ -94,8 +94,8 @@ public class WeatherServiceTest {
 
 
         // as there is no information about location saved in DTOS, it is only possible to test for length
-        assertEquals(hourlyWeatherDTOS.size(), 1);
-        assertEquals(dailyWeatherDTOS.size(), 1);
+        assertEquals(1, hourlyWeatherDTOS.size());
+        assertEquals(1, dailyWeatherDTOS.size());
     }
 
 
@@ -151,8 +151,8 @@ public class WeatherServiceTest {
 
 
         // as there is no information about location saved in DTOS, it is only possible to test for length
-        assertEquals(hourlyWeatherDTOS.size(), 1);
-        assertEquals(dailyWeatherDTOS.size(), 1);
+        assertEquals(1, hourlyWeatherDTOS.size());
+        assertEquals(1, dailyWeatherDTOS.size());
     }
 
     @Test

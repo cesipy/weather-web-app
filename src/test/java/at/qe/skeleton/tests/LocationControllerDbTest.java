@@ -65,7 +65,7 @@ public class LocationControllerDbTest {
         List<Location> resultLocations = locationControllerDb.autocomplete(query);
 
 
-        assertEquals(resultLocations, Collections.emptyList());
+        assertEquals(Collections.emptyList(), resultLocations);
 
     }
 
