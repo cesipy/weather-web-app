@@ -1,6 +1,5 @@
 package at.qe.skeleton.internal.ui.beans;
 
-
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.services.UserReloadService;
@@ -18,6 +17,14 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
+/**
+ * Managed Bean for handling user subscription.
+ * This bean is responsible for managing user subscriptions, toggling between
+ * premium and non-premium status, checking credit card information, and updating
+ * the user's subscription status.
+ *
+ * @see Component
+ */
 @Component
 public class SubscriptionBean implements Serializable {
 
@@ -28,41 +35,57 @@ public class SubscriptionBean implements Serializable {
     @Autowired
     private CashUpBean cashUpBean;
 
-    //@Autowired
-    //private SessionInfoBean sessionInfoBean;
-    //kann nicht einfach da oben hin schreiben
-
     private String buttonText;
 
+    /**
+     * Initializes the bean by updating the button text.
+     */
     @PostConstruct
     public void init() {
         updateButtonText();
-
     }
 
+    /**
+     * Gets the button text.
+     *
+     * @return The button text.
+     */
     public String getButtonText() {
         return buttonText;
     }
 
+    /**
+     * Checks if the user has the PREMIUM role.
+     *
+     * @return True if the user has the PREMIUM role, false otherwise.
+     */
     public boolean isPremium() {
         SessionInfoBean sessionInfoBean = new SessionInfoBean();
         return sessionInfoBean.hasRole("PREMIUM");
     }
 
+    /**
+     * Checks if the user has a credit card.
+     *
+     * @return True if the user has a credit card, false otherwise.
+     */
     public boolean hasCreditCard() {
         Authentication authentication = getSecurityContext().getAuthentication();
 
         if (authentication != null) {
             Userx user = userxService.loadUser(authentication.getName());
+            System.out.println("username:" + user.getUsername());
+            System.out.println("credit card von user" + user.getCreditCard());
             return user.getCreditCard() != null;
         }
+
+        System.out.println("authentication = 0");
         return false;
     }
 
-    protected SecurityContext getSecurityContext() {
-        return SecurityContextHolder.getContext();
-    }
-
+    /**
+     * Toggles the user's subscription between premium and non-premium status.
+     */
     public void toggleSubscription() {
         Authentication authentication = getSecurityContext().getAuthentication();
         Userx user = userxService.loadUser(authentication.getName());
@@ -86,9 +109,6 @@ public class SubscriptionBean implements Serializable {
                 updateButtonText();
             }
         } catch (ValidationException e) {
-            // Loggen?
-            //e.printStackTrace();
-
             FacesContext.getCurrentInstance().addMessage(
                     null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please provide payment information", e.getMessage())
@@ -96,8 +116,19 @@ public class SubscriptionBean implements Serializable {
         }
     }
 
+    /**
+     * Gets the security context.
+     *
+     * @return The security context.
+     */
+    protected SecurityContext getSecurityContext() {
+        return SecurityContextHolder.getContext();
+    }
 
+    /**
+     * Updates the button text based on the user's subscription status.
+     */
     private void updateButtonText() {
-        buttonText = isPremium() ? "Unsubscribe" : "Subscribe" ;
+        buttonText = isPremium() ? "Unsubscribe" : "Subscribe";
     }
 }

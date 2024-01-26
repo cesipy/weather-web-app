@@ -104,6 +104,12 @@ public class UserxService {
         return userRepository.findFirstByUsername(auth.getName());
     }
 
+    /**
+     * Retrieves a user by their username.
+     *
+     * @param username The username of the user to retrieve.
+     * @return The Userx entity with the specified username, or null if not found.
+     */
     public  Userx getUserByUsername(String username){return userRepository.findFirstByUsername(username);}
 
     /**
@@ -201,6 +207,15 @@ public class UserxService {
 
     }
 
+    /**
+     * Service method for updating a user's password.
+     * This method retrieves a user by their username, sets the provided password as the new password,
+     * and saves the updated user to the database.
+     *
+     * @param username The username of the user for whom to update the password.
+     * @param password The new password to set for the user.
+     * @return The updated Userx entity with the new password.
+     */
     public Userx passwordService(String username, String password){
         Userx user = userRepository.findFirstByUsername(username);
         user.setPassword(password);

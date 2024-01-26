@@ -6,12 +6,6 @@ import at.qe.skeleton.internal.services.EmailService;
 import at.qe.skeleton.internal.services.UserxDetailsService;
 import at.qe.skeleton.internal.services.UserxService;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
@@ -21,11 +15,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
 /**
  * Controller for the user detail view.
+ * This class is responsible for managing user-related operations in the user detail view.
  *
- * This class is part of the skeleton project provided for students of the
- * course "Software Architecture" offered by Innsbruck University.
+ * @see Component
+ * @see Scope
  */
 @Component
 @Scope("view")
@@ -40,54 +41,31 @@ public class UserDetailController implements Serializable {
     public BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private String tempPassword;
 
-    public String getNewUsername() {
-        return newUsername;
-    }
-
-    public void setNewUsername(String newUsername) {
-        this.newUsername = newUsername;
-    }
-
-    public String getNewRole() {
-        return newRole;
-    }
-
-    public void setNewRole(String newRole) {
-        this.newRole = newRole;
-    }
-
     private String newUsername;
     private String newRole;
 
     /**
-     * Attribute to cache the currently displayed user
+     * Attribute to cache the currently displayed user.
      */
     private Userx user = new Userx();
 
     /**
-     * Sets the currently displayed user and reloads it form db. This user is
+     * Sets the currently displayed user and reloads it from the database. This user is
      * targeted by any further calls of
      * {@link #doReloadUser()}, {@link #doSaveUser()} and
      * {@link #doDeleteUser()}.
      *
-     * @param user
+     * @param user The Userx entity to set as the currently displayed user.
      */
     public void setUser(Userx user) {
         this.user = user;
         doReloadUser();
     }
-    public String getTempPassword() {
-        return tempPassword;
-    }
-
-    public void setTempPassword(String tempPassword) {
-        this.tempPassword = tempPassword;
-    }
 
     /**
      * Returns the currently displayed user.
      *
-     * @return
+     * @return The currently displayed Userx entity.
      */
     public Userx getUser() {
         return user;
@@ -103,13 +81,16 @@ public class UserDetailController implements Serializable {
     /**
      * Action to save the currently displayed user.
      */
-    public void doSaveUser() {user = this.userService.saveUser(user);}
+    public void doSaveUser() {
+        user = this.userService.saveUser(user);
+    }
 
     /**
-     * Action to register the currently displayed user
+     * Action to register the currently displayed user.
+     *
+     * @return The saved Userx entity.
      */
-
-    public Userx doRegister(){
+    public Userx doRegister() {
         try {
             this.userService.saveUser(user);
 
@@ -125,30 +106,33 @@ public class UserDetailController implements Serializable {
 
             redirectToLogin();
             return saved;
-        } catch(Exception e){
+        } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", e.getMessage()));
             return null;
         }
     }
 
-
     /**
      * Action to delete the currently displayed user.
      */
-
-    public void resetOldPassword(){
-        if(user.getUsername()!=null){
+    public void resetOldPassword() {
+        if (user.getUsername() != null) {
             tempPassword = generatePassword();
             Userx user2 = userService.passwordService(user.getUsername(), doEncodePassword(tempPassword));
 
             String sendTo = user2.getEmail();
             String subject = "Reset password";
-            String body ="Redirect to this Page and Enter the new Passwort to reset the old one: http://localhost:8080/resetPassword.xhtml\n Your Temporary Passwort is: "+tempPassword;
+            String body = "Redirect to this Page and Enter the new Passwort to reset the old one: http://localhost:8080/resetPassword.xhtml\n Your Temporary Passwort is: " + tempPassword;
             emailService.sendEmail(sendTo, subject, body);
         }
     }
 
-   public String generatePassword() {
+    /**
+     * Generates a random password of length 8.
+     *
+     * @return The generated random password.
+     */
+    public String generatePassword() {
         int passwordLength = 8;
         StringBuilder password = new StringBuilder();
         Random random = new Random();
@@ -157,19 +141,25 @@ public class UserDetailController implements Serializable {
             password.append(digit);
         }
         return password.toString();
-   }
+    }
 
-   public void saveResetPasswort(){
-        if(passwordEncoder.matches(tempPassword, userxDetailsService.loadUserByUsername(user.getUsername()).getPassword())){
+    /**
+     * Saves the reset password for the user.
+     */
+    public void saveResetPassword() {
+        if (passwordEncoder.matches(tempPassword, userxDetailsService.loadUserByUsername(user.getUsername()).getPassword())) {
             userService.passwordService(user.getUsername(), doEncodePassword(user.getPassword()));
             redirectToLogin();
-        }else{
-            //real Exception Handling is missing
+        } else {
+            // Real Exception Handling is missing
             System.out.println("Wrong Password");
         }
-   }
+    }
 
-    public void redirectToLogin(){
+    /**
+     * Redirects to the login page.
+     */
+    public void redirectToLogin() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         ExternalContext externalContext = facesContext.getExternalContext();
         try {
@@ -179,7 +169,15 @@ public class UserDetailController implements Serializable {
         }
     }
 
-    public String doEncodePassword(String password){return passwordEncoder.encode(password);}
+    /**
+     * Encodes the provided password using BCrypt.
+     *
+     * @param password The password to encode.
+     * @return The encoded password.
+     */
+    public String doEncodePassword(String password) {
+        return passwordEncoder.encode(password);
+    }
 
     /**
      * Action to delete the currently displayed user.
@@ -189,11 +187,17 @@ public class UserDetailController implements Serializable {
         user = null;
     }
 
-    public void doAddUserRole(){
+    /**
+     * Action to add a user role to the user.
+     */
+    public void doAddUserRole() {
         userService.addUserRole(newUsername, UserxRole.valueOf(newRole));
     }
 
-    public void doRemoveUserRole(){
+    /**
+     * Action to remove a user role from the user.
+     */
+    public void doRemoveUserRole() {
         userService.removeUserRole(newUsername, UserxRole.valueOf(newRole));
     }
 }
