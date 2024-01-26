@@ -62,18 +62,27 @@ public record HourlyWeatherDTO(
     private static final long serialVersionUID = 1;
 
     public String getFormattedDOW() {
+        if (timestamp == null)  {
+            return "N/A";
+        }
         // convert timestamp to ZonedDateTime to get weekday information
         var zonedDateTime = timestamp.atZone(ZoneId.systemDefault());
 
         // get and format weekday
         return zonedDateTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
+
     }
 
     public String getFormattedTime() {
+        if (timestamp == null)  {
+            return "N/A";
+        }
         // convert timestamp to ZonedDateTime for formatting
         var zonedDateTime = timestamp.atZone(ZoneId.systemDefault());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         return formatter.format(zonedDateTime);
+
+
     }
 }

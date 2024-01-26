@@ -22,25 +22,30 @@
                 <i class="pi pi-cloud" style="font-size: 4rem"></i>
             </p:panelGrid>
             <br/>
-            <br/>
-            <br/>
         </div>
 
         <div id="landing_page_weather">
-            <p:dataTable var="weatherData" value="#{landingPageController.landingPageWeather}"
-                         size="small">
-                <p:column headerText="Location">
-                    <h:outputText value="#{weatherData.location.name}" />
-                </p:column>
-                <p:column headerText="Temperature">
-                    <h:outputText value="#{weatherData.temperature}" />
-                </p:column>
-                <p:column headerText="Feels like">
-                    <h:outputText value="#{weatherData.feelsLikeTemperature}" />
-                </p:column>
-            </p:dataTable>
+            <p:panel style="width: 65%; margin-left: 0; border: 1px solid #fff;">
+                <p:dataTable var="weatherData" value="#{landingPageController.landingPageWeather}"
+                             size="small"
+                             style="font-size: 15px; text-align: left;">
 
+                    <f:facet name="header">
+                        Trending Weather
+                    </f:facet>
 
+                    <p:column>
+                        <h:outputText value="#{weatherData.location.name}" />
+                    </p:column>
+                    <p:column headerText="Tmp °C">
+                        <h:outputText value="#{weatherData.temperature}" />
+                    </p:column>
+                    <p:column headerText="Feels like °C">
+                        <h:outputText value="#{weatherData.feelsLikeTemperature}" />
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
         </div>
+
     </ui:define>
 </ui:composition>

@@ -57,10 +57,19 @@ public class LandingPageController {
     private void constructDefaultFavorites() {
         try {
             Favorite innsbruckFavorite = new Favorite();
+            Favorite viennaFavorite = new Favorite();
+            Favorite salzburgFavorite = new Favorite();
+
             Location innsbruckLocation = locationService.retrieveLocation("Innsbruck");
+            Location viennaLocation = locationService.retrieveLocation("Vienna");
+            Location salzburgLocation = locationService.retrieveLocation("Salzburg");
             innsbruckFavorite.setLocation(innsbruckLocation);
+            viennaFavorite.setLocation(viennaLocation);
+            salzburgFavorite.setLocation(salzburgLocation);
 
             defaultFavorites.add(innsbruckFavorite);
+            defaultFavorites.add(viennaFavorite);
+            defaultFavorites.add(salzburgFavorite);
         }
         catch (Exception e) {
             logger.error("An error occurred while default locations were processed.");
