@@ -68,9 +68,9 @@ public class WebSecurityConfig {
                             .loginPage(LOGIN)
                             .permitAll()
                             //.defaultSuccessUrl("/secured/welcome.xhtml")
-                            .defaultSuccessUrl("/landing.xhtml") // Set the default success URL to /landing.xhtml
+                            .defaultSuccessUrl("/landing.xhtml") // default success URL to /landing.xhtml
                             .loginProcessingUrl("/login")
-                            .successForwardUrl("/secured/welcome.xhtml")
+                            .successForwardUrl("/landing.xhtml")
                             .failureUrl("/login.xhtml?error")
                     )
 

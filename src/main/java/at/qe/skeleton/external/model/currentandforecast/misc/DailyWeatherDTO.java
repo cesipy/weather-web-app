@@ -69,6 +69,9 @@ public record DailyWeatherDTO(
     private static final long serialVersionUID = 1;
 
     public String getFormattedDOW() {
+        if (timestamp == null)  {
+            return "N/A";
+        }
         // convert timestamp to ZonedDateTime to get weekday information
         var zonedDateTime = timestamp.atZone(ZoneId.systemDefault());
 
@@ -77,6 +80,9 @@ public record DailyWeatherDTO(
     }
 
     public String getFormattedTime() {
+        if (timestamp == null)  {
+            return "N/A";
+        }
         // convert timestamp to ZonedDateTime for formatting
         var zonedDateTime = timestamp.atZone(ZoneId.systemDefault());
 

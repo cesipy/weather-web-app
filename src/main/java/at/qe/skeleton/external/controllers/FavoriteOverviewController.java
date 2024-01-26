@@ -53,6 +53,8 @@ public class FavoriteOverviewController {
         selectedFieldList = new ArrayList<>();
         currentWeatherDataList = new ArrayList<>();
 
+
+
         // needed to refresh favorites
         retrieveFavorites();
     }

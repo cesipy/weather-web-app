@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
 
 
 /**
@@ -94,8 +96,13 @@ public class LocationService {
      */
     public void init() {
         logger.info("Starting population of database");
+        Instant start = Instant.now();
         loadDataFromJson(filePath);
-        logger.info("Populated database");
+        Instant end = Instant.now();
+        Duration duration = Duration.between(start, end);
+
+
+        logger.info("Populated database in {}s", duration.toSeconds());
     }
 
     public String getFilePath() {
