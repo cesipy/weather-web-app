@@ -5,10 +5,11 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/xml/ns/javaee"
                 template="/WEB-INF/templates/main.xhtml">
 
     <ui:define name="content">
-        <h:form>
+        <h:form >
             <p:panel header="Add Favorite Locations" >
                 <p:autoComplete value="#{favoriteController.locationName}"
                                 completeMethod="#{favoriteController.autocomplete}"
@@ -16,8 +17,8 @@
                                 minQueryLength="3" />
                 <p:commandButton value ="Save"
                                  action = "#{favoriteController.saveFavorite}"
-                                 update="messages"
-                />
+                                 update="messages favoriteSearchPanel"/>
+
                 <p:messages id="messages"
                             showDetail="true"
                             showSummary="true"
@@ -27,10 +28,9 @@
 
             </p:panel>
             <p:panel header="Favorite Locations" id="favoriteSearchPanel">
-                <div>
-                    <br/>
                     <p:dataTable var="favorite" value="#{favoriteController.favorites}"
-                                 rendered="#{not empty favoriteController.favorites}">
+                                 rendered="#{not empty favoriteController.favorites}"
+                                 styleClass="ui-datatable-striped">
 
                         <p:column headerText="#">
                             <h:outputText value="#{favorite.priority}" />
@@ -40,18 +40,21 @@
                             <h:outputText value="#{favorite.location}" />
                         </p:column>
 
-                        <p:column headerText="Actions">
-                            <p:commandButton value="Delete" action="#{favoriteController.deleteFavorite(favorite)}"/>
+
+                        <p:column>
+                            <p:commandButton icon="pi pi-arrow-up"
+                                             action="#{favoriteController.moveFavoriteUp(favorite)}"
+                            />
                         </p:column>
 
-                        <p:column headerText="Update">
-                            <p:commandButton value="move up"
-                                             action="#{favoriteController.moveFavoriteUp(favorite)}"/>
-                        </p:column>
-
-                        <p:column headerText="Update">
-                            <p:commandButton value="move down"
+                        <p:column>
+                            <p:commandButton icon="pi pi-arrow-down"
                                              action="#{favoriteController.moveFavoriteDown(favorite)}" />
+                        </p:column>
+
+                        <p:column headerText="Actions">
+                            <p:commandButton icon="pi pi-trash" action="#{favoriteController.deleteFavorite(favorite)}"
+                                             styleClass="p-button-danger"/>
                         </p:column>
 
 
@@ -60,7 +63,7 @@
                     <h:panelGroup rendered="#{empty favoriteController.favorites}">
                         <h:outputText value="No favorites found."/>
                     </h:panelGroup>
-                </div>
+
             </p:panel>
 
 
@@ -68,6 +71,7 @@
                              title="Refresh"
                              action="#{favoriteController.retrieveFavorites}"
                              update="favoriteSearchPanel"
+                             styleClass="p-button-info"
                              style="margin-top: 10px; margin-left: 10px" />
         </h:form>
     </ui:define>
