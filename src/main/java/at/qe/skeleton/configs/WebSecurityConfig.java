@@ -31,7 +31,7 @@ public class WebSecurityConfig {
     private static final String EMPLOYEE = UserxRole.EMPLOYEE.name();
     private static final String LOGIN = "/login.xhtml";
     private static final String ACCESSDENIED = "/error/access_denied.xhtml";
-private static final String LANDING = "/landing.xhtml";
+    private static final String LANDING = "/landing.xhtml";
     @Autowired
     DataSource dataSource;
 
@@ -43,10 +43,10 @@ private static final String LANDING = "/landing.xhtml";
             http
                     .cors(cors -> cors.disable())
                     .csrf(csrf -> csrf.disable())
-                    .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin)) // needed for H2 console
                     .exceptionHandling(exception -> exception
                             .accessDeniedPage(ACCESSDENIED)
                     )
+                    .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin)) // needed for H2 console
                     .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/**.jsf")).permitAll()
@@ -73,7 +73,7 @@ private static final String LANDING = "/landing.xhtml";
                             //.defaultSuccessUrl("/secured/welcome.xhtml")
                             .defaultSuccessUrl(LANDING) // Set the default success URL to /landing.xhtml
                             .loginProcessingUrl("/login")
-                            .successForwardUrl("/secured/welcome.xhtml")
+                            .successForwardUrl(LANDING)
                             .failureUrl("/login.xhtml?error")
                     )
 

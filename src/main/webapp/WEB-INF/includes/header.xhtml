@@ -9,10 +9,18 @@
         <ui:composition>
             <h:form>
                 <p:menubar>
-                    <p:menuitem value="Home" url="/common/overview.xhtml"
+                    <p:menuitem type="button" icon="pi pi-home" styleClass="rounded-button ui-button-info" url="/landing.xhtml" />
+
+                    <!--<p:menuitem value="Home" ur="/landing.xhtml" rendered="#{!sessionInfoBean.loggedIn}" /> -->
+                    <p:menuitem value="Overview" url="/secured/overview.xhtml"
                                 rendered="#{sessionInfoBean.hasRole('EMPLOYEE')}"/>
 
-                    <p:menuitem value="Search" url="/common/searching.xhtml" />
+                    <p:menuitem type="button"
+                                url="/common/searching.xhtml"
+                                icon="pi pi-search"
+                                styleClass="rounded-button ui-button-success" />
+
+
                     <p:submenu label="Manager Submenu" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
                         <p:menuitem value="Cash up!" url="/manager/cashUp.xhtml"/>
                         <p:menuitem value="Premium users" url="/manager/premiumUserView.xhtml"/>
@@ -31,20 +39,18 @@
                         <p:menuitem value="Location Searching Demo" url="/secured/demos/location_searching_demo.xhtml"/>
                         <p:menuitem value="Autocomplete Demo" url="/secured/demos/location_autocomplete_demo.xhtml"/>
                     </p:submenu>
-                    <p:submenu label="Weather" rendered="#{sessionInfoBean.loggedIn}" >
-                        <p:menuitem value="Weather Searching" url="/common/searching.xhtml"/>
-                        <p:menuitem value="Manage Favorites" url="/common/favorites.xhtml"/>
+
+
+                    <p:submenu type="button" icon="pi pi-user"
+                               styleClass="rounded-button ui-button-info"
+                               rendered="#{sessionInfoBean.loggedIn}" >
+                        <p:menuitem value="Manage Favorites" url="/secured/favorites.xhtml"/>
+                        <p:menuitem value="Payment Information" url="/premium/paymentInfo.xhtml"/>
+                        <p:menuitem value="Manage Subscription" url="/premium/subscribe.xhtml"/>
+                        <p:menuitem value="Logout" url="/logout" rendered="#{sessionInfoBean.loggedIn}"/>
                     </p:submenu>
 
-
-                    <p:submenu label="Premium Submenu" rendered="#{sessionInfoBean.loggedIn}" >
-                        <p:menuitem value="(un)subscribe" url="/premium/abonnieren.xhtml" />
-                        <p:menuitem value="payment information" url="/premium/paymentInfo.xhtml"/>
-                    </p:submenu>
-
-                    
                     <p:menuitem value="Login" url="/login.xhtml" rendered="#{!sessionInfoBean.loggedIn}"/>
-                    <p:menuitem value="Logout" url="/logout" rendered="#{sessionInfoBean.loggedIn}"/>                    
                     
                 </p:menubar>
             </h:form>

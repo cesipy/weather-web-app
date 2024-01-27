@@ -15,31 +15,50 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for loading user details during authentication.
+ * This service implements the UserDetailsService interface and is responsible
+ * for loading user details from the database for authentication purposes.
+ *
+ * @see Service
+ * @see UserDetailsService
+ */
 @Service
 public class UserxDetailsService implements UserDetailsService {
 
     @Autowired
     private UserxRepository userxRepository;
 
+    /**
+     * Loads user details by the specified username.
+     *
+     * @param username The username of the user to load.
+     * @return The UserDetails object for the specified user.
+     * @throws UsernameNotFoundException If the user is not found.
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Benutzer aus der Datenbank laden
+        // Load user from the database
         Userx user = userxRepository.findFirstByUsername(username);
 
         if (user == null) {
-            throw new UsernameNotFoundException("Benutzer nicht gefunden: " + username);
+            throw new UsernameNotFoundException("User not found: " + username);
         }
 
-        // Rückgabe von UserDetails-Objekt
+        // Return UserDetails object
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(), user.getPassword(), getAuthorities(user.getRoles()));
     }
 
-    // Hilfsmethode, um Benutzerrollen in SimpleGrantedAuthority-Objekte umzuwandeln
+    /**
+     * Converts user roles to a collection of SimpleGrantedAuthority objects.
+     *
+     * @param roles The set of roles assigned to the user.
+     * @return A collection of SimpleGrantedAuthority objects representing the user roles.
+     */
     private Collection<? extends GrantedAuthority> getAuthorities(Set<UserxRole> roles) {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }
 }
-
