@@ -148,7 +148,7 @@ public class FavoriteOverviewController {
      */
     private void redirectToDetailPage(Location location) {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        String url = externalContext.getRequestContextPath() + "/secured/detail.xhtml?location=" + location.getName();
+        String url = externalContext.getRequestContextPath() + "/common/detail.xhtml?location=" + location.getName();
 
         try {
             externalContext.redirect(url);
