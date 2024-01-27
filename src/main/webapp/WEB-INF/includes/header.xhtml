@@ -32,12 +32,10 @@
 
 
                     </p:submenu>
-                    <p:submenu label="Test Submenu" rendered="#{sessionInfoBean.loggedIn}">
+                    <p:submenu label="Test Submenu" rendered="#{sessionInfoBean.hasRole('ADMIN')}">
                         <p:menuitem value="Security Test" url="/secured/test.xhtml"/>
                         <p:menuitem value="Weather API Demo" url="/secured/demos/weather_api_demo.xhtml"/>
-                        <p:menuitem value="Location API Demo" url="/secured/demos/location_api_demo.xhtml"/>
                         <p:menuitem value="Location Searching Demo" url="/secured/demos/location_searching_demo.xhtml"/>
-                        <p:menuitem value="Autocomplete Demo" url="/secured/demos/location_autocomplete_demo.xhtml"/>
                     </p:submenu>
 
 
