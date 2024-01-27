@@ -230,6 +230,21 @@ public class CurrentWeatherData {
         this.icon = icon;
     }
 
+    public String getSnowString() {
+        if (snow == null) {
+            return "not snowing";
+        }
+        return snow.toString();
+    }
+
+    public String getRainString() {
+        if (rain == null) {
+            return "not raining";
+        }
+
+        return rain.toString();
+    }
+
     @Override
     public String toString() {
         return "CurrentWeatherData{" +

@@ -7,7 +7,7 @@ import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
-import at.qe.skeleton.external.services.WeatherService;
+import at.qe.skeleton.internal.services.AuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,7 +18,6 @@ import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +30,7 @@ public class WeatherControllerTest {
     private WeatherApiRequestService weatherApiRequestService;
 
     @Mock
-    private WeatherService weatherService;
+    private AuditLogService.WeatherService weatherService;
 
     private HourlyWeatherDTO hourlyWeatherDTO;
     private CurrentWeatherDTO currentWeatherDTO;

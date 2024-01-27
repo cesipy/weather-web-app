@@ -6,6 +6,7 @@ import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.repositories.CurrentWeatherDataRepository;
 import at.qe.skeleton.external.services.*;
 import at.qe.skeleton.external.model.Favorite;
+import at.qe.skeleton.internal.services.AuditLogService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
@@ -34,7 +35,7 @@ public class FavoriteOverviewController {
     @Autowired
     private CurrentWeatherDataRepository currentWeatherDataRepository;
     @Autowired
-    private WeatherService weatherService;
+    private AuditLogService.WeatherService weatherService;
     @Autowired
     private LocationService locationService;
     @Autowired

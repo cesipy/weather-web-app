@@ -1,6 +1,5 @@
 package at.qe.skeleton.internal.ui.controllers;
 
-import at.qe.skeleton.external.services.WeatherService;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.services.EmailService;

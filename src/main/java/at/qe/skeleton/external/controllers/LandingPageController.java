@@ -5,7 +5,7 @@ import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
-import at.qe.skeleton.external.services.WeatherService;
+import at.qe.skeleton.internal.services.AuditLogService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class LandingPageController {
     private final static Logger logger = LoggerFactory.getLogger(LandingPageController.class);
 
     @Autowired
-    private WeatherService weatherService;
+    private AuditLogService.WeatherService weatherService;
     @Autowired
     private LocationService locationService;
     @Autowired

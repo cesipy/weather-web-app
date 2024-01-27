@@ -4,7 +4,7 @@ import at.qe.skeleton.external.model.currentandforecast.misc.holiday.HolidayDTO;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
-import at.qe.skeleton.external.services.WeatherService;
+import at.qe.skeleton.internal.services.AuditLogService;
 import at.qe.skeleton.internal.ui.beans.DiagramBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -16,14 +16,14 @@ import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.primefaces.model.charts.line.LineChartModel;
+
 import java.util.*;
 
 @Controller
 @Scope("view")
 public class HolidayController {
     @Autowired
-    private WeatherService weatherService;
+    private AuditLogService.WeatherService weatherService;
     @Autowired
     private LocationService locationService;
     @Autowired
