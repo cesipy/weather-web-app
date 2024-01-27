@@ -133,7 +133,7 @@ public class SubscriptionBean implements Serializable {
     /**
      * Updates the button text based on the user's subscription status.
      */
-    private void updateButtonText() {
+    public void updateButtonText() {
         buttonText = isPremium() ? "Unsubscribe" : "Subscribe";
     }
 }
