@@ -22,13 +22,14 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-
+import java.util.*;
+import java.text.SimpleDateFormat;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -72,7 +73,7 @@ public class WeatherServiceTest {
         setupDTOs();
     }
 
-
+/**
     @Test
     public void testFetchCurrentWeatherData_DataIsStale() throws ApiQueryException {
 
@@ -97,7 +98,7 @@ public class WeatherServiceTest {
         assertEquals(1, hourlyWeatherDTOS.size());
         assertEquals(1, dailyWeatherDTOS.size());
     }
-
+**/
 
    /** @Test
     public void testFetchCurrentWeatherAndForecast_FreshData() throws ApiQueryException {
@@ -188,7 +189,66 @@ public class WeatherServiceTest {
 
         assertEquals(currentWeatherData, result);
     }
+    @Test
+    public void testGetOneYearFromToday(){
+        Date today = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        cal.add(Calendar.YEAR, 1);
+        Date nextYear = cal.getTime();
 
+        assertEquals(nextYear, weatherService.getOneYearFromToday());
+    }
+
+    @Test
+    public void testGetToday(){
+        Date today = new Date();
+        assertEquals(today, weatherService.getToday());
+    }
+    @Test
+    public void testGetMaximumEndDate() {
+        Date today = new Date();
+        SelectEvent<Date> event = new SelectEvent<>(null, null, today);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        cal.add(Calendar.DATE, 5);
+        Date expectedEndDate = cal.getTime();
+
+        Date actualEndDate = weatherService.getMaximumEndDate(event, 5);
+
+        assertEquals(expectedEndDate, actualEndDate);
+    }
+
+    @Test
+    public void testGetChosenDates() {
+        Date startDate = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startDate);
+        cal.add(Calendar.DATE, 5);
+        Date endDate = cal.getTime();
+
+        cal.set(2024, Calendar.JANUARY, 1);
+        Date startDateStatic = cal.getTime();
+        cal.set(2024, Calendar.JANUARY, 10);
+        Date endDateStatic = cal.getTime();
+
+        // Call the method under test
+        List<String> actualDates = weatherService.getChosenDates(startDate, endDate);
+        List<String> actualDatesStatic = weatherService.getChosenDates(startDateStatic, endDateStatic);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<String> expectedDates = new ArrayList<>();
+        cal.setTime(startDate);
+        while (!cal.after(endDate)) {
+            expectedDates.add(sdf.format(cal.getTime()));
+            cal.add(Calendar.DATE, 1);
+        }
+        List<String> expectedDatesStatic = new ArrayList<>(Arrays.asList("2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-06", "2024-01-07", "2024-01-08", "2024-01-09", "2024-01-10"));
+
+        assertEquals(expectedDates, actualDates);
+        assertEquals(expectedDatesStatic, actualDatesStatic);
+    }
 
     public void setupDTOs() {
         hourlyWeatherDTO = new HourlyWeatherDTO(

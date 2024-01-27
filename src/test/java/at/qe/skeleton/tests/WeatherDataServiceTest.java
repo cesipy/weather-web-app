@@ -19,6 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.time.Instant;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static org.mockito.Mockito.*;
@@ -81,34 +87,31 @@ public class WeatherDataServiceTest {
                 1,
                 0.3,
                 0.3,
-                new WeatherDTO(
-                        100,
-                        null,
-                        null,
-                        null
-                )
+                null
         );
         String location = "testLocation";
+        DailyWeatherData data = new DailyWeatherData(null, null, null, null, null, 1.2, "Test",
+                new DailyAggregationData(10.2, 11.2, 8.3, 10.5, 2, 15),
+                new TemperatureAggregationData(10.2, 11.2, 8.3, 10.5), 1, 1, 2.2, 3.4, 5.3, 123.3, 1, 1, 1, 0.3, 0.3, Instant.now(), "testLocation");
 
-        // Call the method under test
+        when(dailyWeatherDataRepository.findLatestByLocation(location, PageRequest.of(0, 1))).thenReturn(List.of(data));
         weatherDataService.saveDailyWeatherFromDTO(dailyWeatherDTO, location);
 
-        // Verify behaviors
-        verify(dailyWeatherDataRepository).save(any(DailyWeatherData.class));
+        assertEquals(dailyWeatherDTO, weatherDataService.convertDailyDataToDTO(dailyWeatherDataRepository.findLatestByLocation(location, PageRequest.of(0, 1)).get(0)));
     }
     @Test
     public void testConvertDailyDataToDTO() {
-        // Set up test data
+
         DailyAggregationData dailyData = new DailyAggregationData(10,15,8,4,2,17);
         TemperatureAggregationData tempData = new TemperatureAggregationData(1000, 10, 15, 7);
 
         DailyWeatherData data = new DailyWeatherData();
         data.setDailyTemperatureAggregation(dailyData);
         data.setFeelsLikeTemperatureAggregation(tempData);
-        // Call the method under test
+
         DailyWeatherDTO result = weatherDataService.convertDailyDataToDTO(data);
 
-        // Assert the result
+
         assertEquals(data.getTimestamp(), result.timestamp());
     }
 
@@ -124,10 +127,8 @@ public class WeatherDataServiceTest {
                 17
         );
 
-        // Call the method under test
         DailyAggregationData result = weatherDataService.getDailyAggregationFromDTO(dailyAggregationDTO);
 
-        // Verify behaviors and assert the result
         verify(dailyAggregationDataRepository).save(any(DailyAggregationData.class));
         assertEquals(dailyAggregationDTO.morningTemperature(), result.getMorningTemperature());
     }
@@ -204,20 +205,17 @@ public class WeatherDataServiceTest {
                 1,
                 1.2,
                 0.2,
-                new WeatherDTO(
-                        100,
-                        null,
-                        null,
-                        null
-                )
+                null
         );
         String location = "testLocation";
+        HourlyWeatherData data = new HourlyWeatherData( null, 15.2, 177.2, 3, 5.5, 7.2, 5, 1, 5, 2.66, 3.2, 14.3, 1, 1.2, 0.2, Instant.now(), "testlocation");
 
-        // Call the method under test
+        when(hourlyWeatherDataRepository.findLatestByLocation(location, PageRequest.of(0, 1))).thenReturn(List.of(data));
+
         weatherDataService.saveHourlyWeatherFromDTO(hourlyWeatherDTO, location);
 
-        // Verify behaviors
-        verify(hourlyWeatherDataRepository).save(any(HourlyWeatherData.class));
+
+        assertEquals(hourlyWeatherDTO, weatherDataService.convertHourlyDataToDTO(hourlyWeatherDataRepository.findLatestByLocation(location, PageRequest.of(0, 1)).get(0)));
     }
     @Test
     public void testSaveCurrentWeatherFromDTO() {

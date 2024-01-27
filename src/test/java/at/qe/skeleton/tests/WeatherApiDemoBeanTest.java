@@ -34,30 +34,24 @@ public class WeatherApiDemoBeanTest {
 
     @Test
     public void testInit() {
-        // Set up test data
         List<Location> locations = new ArrayList<>();
         Location location = new Location();
         locations.add(location);
 
-        // Mock behaviors
         when(locationService.getAllLocations()).thenReturn(locations);
 
-        // Call the method under test
         weatherApiDemoBean.init();
 
-        // Verify behaviors
-        verify(locationService).getAllLocations();
+        assertEquals(locations, weatherApiDemoBean.getLocations());
     }
 
     @Test
     public void testGetLocations() {
-        // Set up test data
         List<Location> locations = new ArrayList<>();
         Location location = new Location();
         locations.add(location);
         weatherApiDemoBean.setLocations(locations);
 
-        // Call the method under test and assert the result
         assertEquals(locations, weatherApiDemoBean.getLocations());
     }
 }
