@@ -35,11 +35,6 @@ public class FavoriteController {
     public void init() {
         locations = new ArrayList<>();
         favorites = new ArrayList<>();
-        // temporary for debugging
-        locationName = "Vienna";
-        saveFavorite();
-        locationName = "Absam";
-        saveFavorite();
     }
 
 
@@ -51,6 +46,10 @@ public class FavoriteController {
     public void moveFavoriteUp(Favorite favorite) {
         boolean up = true;
         favoriteService.moveFavoriteUpOrDown(favorite, up);
+
+        // update favorites
+        // necessary to immediately update favorites in manageFavorites
+        retrieveFavorites();
     }
 
 
@@ -62,6 +61,10 @@ public class FavoriteController {
     public void moveFavoriteDown(Favorite favorite) {
         boolean up = false;
         favoriteService.moveFavoriteUpOrDown(favorite, up);
+
+        // update favorites
+        // necessary to immediately update favorites in manageFavorites
+        retrieveFavorites();
     }
 
 
@@ -72,6 +75,10 @@ public class FavoriteController {
     public void saveFavorite() {
         try {
             validateAndSaveFavorite();
+
+            // update favorites
+            // necessary to immediately update favorites in manageFavorites
+            retrieveFavorites();
         }
         catch (EmptyLocationException e) {
             String warnMessage = "Cannot find city: %s".formatted(locationName);
@@ -99,19 +106,28 @@ public class FavoriteController {
      * @throws EmptyLocationException if the location name is null or empty after trimming.
      */
     public void validateAndSaveFavorite() throws EmptyLocationException, ApiQueryException {
-        if (locationName == null || locationName.trim().isEmpty()) {
-            String warnMessage = "Please enter a city.";
-            messageService.showWarnMessage(warnMessage);
-            return;
-        }
+        try {
+            if (locationName == null || locationName.trim().isEmpty()) {
+                String warnMessage = "Please enter a city.";
+                messageService.showWarnMessage(warnMessage);
+                return;
+            }
 
-        if (favoriteService.isLocationAlreadyFavorite(locationName)) {
-            String warnMessage = "Location already in favorites: %s".formatted(locationName);
-            messageService.showWarnMessage(warnMessage);
-        } else {
-            favoriteService.saveFavorite(locationName);
-            // clear locationName after save
-            locationName = "";
+            if (favoriteService.isLocationAlreadyFavorite(locationName)) {
+                String warnMessage = "Location already in favorites: %s".formatted(locationName);
+                messageService.showWarnMessage(warnMessage);
+            } else {
+                favoriteService.saveFavorite(locationName);
+                // clear locationName after save
+                locationName = "";
+            }
+            return;
+        } catch (EmptyLocationException | ApiQueryException e) {
+            logger.info("exception in validateAndSaveFavorite! {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Error saving favorite", e);
+            throw new EmptyLocationException("Error saving favorite");
         }
     }
 

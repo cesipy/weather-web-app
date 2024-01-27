@@ -72,6 +72,7 @@ public class LandingPageController {
             defaultFavorites.add(salzburgFavorite);
         }
         catch (Exception e) {
+            messageService.showWarnMessage("An error occurred while default locations were processed.");
             logger.error("An error occurred while default locations were processed.");
         }
     }

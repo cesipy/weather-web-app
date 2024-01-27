@@ -15,6 +15,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -59,7 +60,9 @@ public class LocationApiRequestService {
                     .toEntity(new ParameterizedTypeReference<List<LocationDTO>>() {
                     });
 
-            if (responseEntity.getBody() == null || responseEntity.getBody().isEmpty()) {
+
+            if (Objects.requireNonNull(responseEntity.getBody()).isEmpty()) {
+
                 throw new EmptyLocationException("No location is found");
             }
             return responseEntity.getBody();
