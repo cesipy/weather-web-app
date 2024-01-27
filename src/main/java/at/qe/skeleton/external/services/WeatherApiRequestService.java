@@ -63,40 +63,7 @@ public class WeatherApiRequestService {
         }
     }
 
-    /**
-     * Makes an API call to get a Location name for the corresponding latitude and longitude
-     * <br><br>
-     * @param latitude of the location
-     * @param longitude of the location
-     * @return A string containing the name of the location
-     */
-    public String getLocationName(@Min(-90) @Max(90) double latitude,
-                                  @Min(-180) @Max(180) double longitude) {
 
-        ResponseEntity<String> responseEntity = this.restClient.get()
-                .uri(UriComponentsBuilder.fromPath(REVERSE_GEOCODING_URI)
-                        .queryParam(LATITUDE_PARAMETER, String.valueOf(latitude))
-                        .queryParam(LONGITUDE_PARAMETER, String.valueOf(longitude))
-                        .build().toUriString())
-                .retrieve()
-                .toEntity(String.class);
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            JsonNode root = mapper.readTree(responseEntity.getBody());
-            JsonNode firstElement = root.get(0); // Get the first element of the array
-            if (firstElement != null) {
-                return firstElement.get("name").asText();
-            } else {
-                logger.error("No elements in the JSON array");
-                return null;
-            }
-        } catch (IOException e) {
-            logger.error("Error parsing JSON response", e);
-            return null;
-        }
-
-    }
     public HolidayDTO retrieveDailyHolidayForecast(@Min(-90) @Max(90) double latitude,
                                                    @Min(-180) @Max(180) double longitude,
                                                    String date){
@@ -112,7 +79,5 @@ public class WeatherApiRequestService {
         return responseEntity.getBody();
 
     }
-
-
 
 }

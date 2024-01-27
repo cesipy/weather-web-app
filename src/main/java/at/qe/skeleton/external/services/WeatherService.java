@@ -126,7 +126,7 @@ public class WeatherService {
             }
 
             this.setDailyWeatherList(currentAndForecastAnswerDTO.dailyWeather());
-            for(int n = 0; n < 8; n++){
+            for(int n = 0; n < getDailyWeatherList().size(); n++){
                 weatherDataService.saveDailyWeatherFromDTO(getDailyWeatherList().get(n), location.getName());
             }
             return new CurrentlyHourlyDailyWeather(currentAndForecastAnswerDTO.hourlyWeather(), currentAndForecastAnswerDTO.dailyWeather());

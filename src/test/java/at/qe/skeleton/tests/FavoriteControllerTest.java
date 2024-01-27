@@ -197,7 +197,7 @@ public class FavoriteControllerTest {
 
         favoriteController.saveFavorite();
 
-        verify(messageService).showWarnMessage("An error occurred!");
+        verify(messageService).showInfoMessage("Cannot find city: TestLocation");
     }
 
 }

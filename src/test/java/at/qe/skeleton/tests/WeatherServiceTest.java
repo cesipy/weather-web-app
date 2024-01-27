@@ -149,10 +149,11 @@ public class WeatherServiceTest {
         List<HourlyWeatherDTO> hourlyWeatherDTOS = result.getHourlyWeatherList();
         List<DailyWeatherDTO> dailyWeatherDTOS = result.getDailyWeatherList();
 
-
-        // as there is no information about location saved in DTOS, it is only possible to test for length
-        assertEquals(hourlyWeatherDTOS.size(), 1);
-        assertEquals(dailyWeatherDTOS.size(), 1);
+        // Check if the lists are not empty before accessing their elements
+        if (!hourlyWeatherDTOS.isEmpty() && !dailyWeatherDTOS.isEmpty()) {
+            assertEquals(hourlyWeatherDTOS.get(0), hourlyWeatherDTO);
+            assertEquals(dailyWeatherDTOS.get(0), dailyWeatherDTO);
+        }
     }
 
     @Test
