@@ -202,7 +202,7 @@ public class WeatherServiceTest {
     }
     @Test
     public void testGetToday(){
-        Date today = new Date();
+        Date today = Calendar.getInstance().getTime();
         assertEquals(today, weatherService.getToday());
     }
     @Test
