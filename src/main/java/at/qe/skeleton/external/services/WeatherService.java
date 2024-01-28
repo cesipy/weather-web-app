@@ -359,12 +359,12 @@ public class WeatherService {
             sumPrecipitation += holiday.precipitationDTO().total();
             sumHumidity += holiday.humidityDTO().afternoon();
         }
-        sumMinTemp = Math.round(sumMinTemp / pastFiveYears.size() * 100.0 / 100.0);
-        sumMaxTemp = Math.round(sumMaxTemp / pastFiveYears.size() * 100.0 / 100.0);
-        sumMorningTemp = Math.round(sumMorningTemp / pastFiveYears.size() * 100.0 / 100.0);
-        sumAfternoonTemp = Math.round(sumAfternoonTemp / pastFiveYears.size() * 100.0 / 100.0);
-        sumEveningTemp = Math.round(sumEveningTemp / pastFiveYears.size() * 100.0 / 100.0);
-        sumNightTemp = Math.round(sumNightTemp / pastFiveYears.size() * 100.0 / 100.0);
+        sumMinTemp = Math.round(sumMinTemp / pastFiveYears.size() * 100.0) / 100.0;
+        sumMaxTemp = Math.round(sumMaxTemp / pastFiveYears.size() * 100.0) / 100.0;
+        sumMorningTemp = Math.round(sumMorningTemp / pastFiveYears.size() * 100.0) / 100.0;
+        sumAfternoonTemp = Math.round(sumAfternoonTemp / pastFiveYears.size() * 100.0) / 100.0;
+        sumEveningTemp = Math.round(sumEveningTemp / pastFiveYears.size() * 100.0) / 100.0;
+        sumNightTemp = Math.round(sumNightTemp / pastFiveYears.size() * 100.0) / 100.0;
         sumPrecipitation = sumPrecipitation / pastFiveYears.size();
         sumHumidity = sumHumidity / pastFiveYears.size();
 

@@ -22,10 +22,10 @@ import java.io.Serializable;
 public class CreditCardController implements Serializable {
 
     @Autowired
-    private UserxService userxService;
+    private transient UserxService userxService;
 
     @Autowired
-    private CreditCardService creditCardService;
+    private transient CreditCardService creditCardService;
 
     /**
      * Attribute to cache the CreditCard.

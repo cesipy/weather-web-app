@@ -44,6 +44,7 @@ public class UserDetailController implements Serializable {
     private final transient BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private String tempPassword;
     private static final Logger logger = LoggerFactory.getLogger(UserDetailController.class);
+    private Random random = SecureRandom.getInstanceStrong();
 
     public UserDetailController() throws NoSuchAlgorithmException {
         //Empty Constructor needed for the SecureRandom to work.
@@ -159,7 +160,6 @@ public class UserDetailController implements Serializable {
     public String generatePassword() {
         int passwordLength = 8;
         StringBuilder password = new StringBuilder();
-        Random random = new Random();
         for (int i = 0; i < passwordLength; i++) {
             int digit = random.nextInt(10);
             password.append(digit);

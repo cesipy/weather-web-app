@@ -7,7 +7,6 @@ import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.external.services.WeatherService;
-import at.qe.skeleton.internal.services.AuditLogService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
