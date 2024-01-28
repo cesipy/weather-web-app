@@ -1,7 +1,7 @@
 package at.qe.skeleton.tests;
 
 import at.qe.skeleton.external.controllers.DetailedWeatherController;
-import at.qe.skeleton.external.controllers.MessageService;
+import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.internal.services.AuditLogService;
 import jakarta.faces.context.ExternalContext;

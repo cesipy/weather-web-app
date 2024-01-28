@@ -5,6 +5,7 @@ import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
+import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.internal.services.AuditLogService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.context.ExternalContext;

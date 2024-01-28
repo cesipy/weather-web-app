@@ -4,6 +4,7 @@ import at.qe.skeleton.external.model.location.Location;
 
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
+import at.qe.skeleton.external.services.MessageService;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import org.slf4j.Logger;
@@ -75,7 +76,7 @@ public class SearchWeatherController {
             }
         } catch (ApiQueryException e) {
             logger.error("Error querying location API", e);
-            String message = "An error occurred!";
+            String message = "An error occurred while processing the data!";
             messageService.showWarnMessage(message);
             return false;
         } catch (EmptyLocationException e) {

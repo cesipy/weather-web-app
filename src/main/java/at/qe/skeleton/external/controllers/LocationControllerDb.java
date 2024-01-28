@@ -97,8 +97,7 @@ public class LocationControllerDb {
     public Location getCurrentLocation() {
         return currentLocation;
     }
-
-    // only temporary
+    
     /**
      * Provides a string representation of the current location for temporary use.
      *

@@ -2,7 +2,7 @@ package at.qe.skeleton.tests;
 
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.controllers.FavoriteController;
-import at.qe.skeleton.external.controllers.MessageService;
+import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.repositories.FavoriteRepository;

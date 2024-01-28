@@ -5,6 +5,7 @@ import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
+import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.internal.services.AuditLogService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class LandingPageController {
             }
         }
         catch (ApiQueryException e) {
-            messageService.showWarnMessage("An error occurred.");
+            messageService.showWarnMessage("An error occurred while processing the weather data.");
         }
     }
 
@@ -70,6 +71,9 @@ public class LandingPageController {
             defaultFavorites.add(innsbruckFavorite);
             defaultFavorites.add(viennaFavorite);
             defaultFavorites.add(salzburgFavorite);
+        }
+        catch (ApiQueryException e) {
+            messageService.showWarnMessage("Location was not found!");
         }
         catch (Exception e) {
             messageService.showWarnMessage("An error occurred while default locations were processed.");
