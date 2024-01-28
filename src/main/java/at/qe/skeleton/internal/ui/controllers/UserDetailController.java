@@ -111,10 +111,8 @@ public class UserDetailController implements Serializable {
 
     /**
      * Action to register the currently displayed user.
-     *
-     * @return The saved Userx entity.
      */
-    public Userx doRegister() {
+    public void doRegister() {
         try {
             this.userService.saveUser(user);
 
@@ -126,13 +124,9 @@ public class UserDetailController implements Serializable {
             user.setCreateUser(user);
 
             this.userService.saveUser(user);
-            Userx saved = this.userService.loadUser(user.getUsername());
-
             redirectToLogin();
-            return saved;
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", e.getMessage()));
-            return null;
         }
     }
 
