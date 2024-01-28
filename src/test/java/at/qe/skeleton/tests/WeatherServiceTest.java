@@ -5,9 +5,10 @@ import at.qe.skeleton.external.domain.DailyWeatherData;
 import at.qe.skeleton.external.domain.HourlyWeatherData;
 import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswerDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.CurrentWeatherDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.DailyTemperatureAggregationDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.holiday.HolidayDTO;
+import at.qe.skeleton.external.model.currentandforecast.misc.holiday.*;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.repositories.CurrentWeatherDataRepository;
@@ -17,7 +18,6 @@ import at.qe.skeleton.external.services.WeatherDataService;
 import at.qe.skeleton.external.repositories.DailyWeatherDataRepository;
 import at.qe.skeleton.external.repositories.HourlyWeatherDataRepository;
 import at.qe.skeleton.external.services.WeatherService;
-import at.qe.skeleton.internal.services.AuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -59,6 +59,8 @@ public class WeatherServiceTest {
     private HourlyWeatherDTO hourlyWeatherDTO;
     private DailyWeatherDTO dailyWeatherDTO;
     private CurrentWeatherDTO currentWeatherDTO;
+    private HolidayDTO holidayDTO;
+    private HolidayDTO holidayDTOAverage;
     private CurrentAndForecastAnswerDTO currentAndForecastAnswerDTO;
 
     @BeforeEach
@@ -277,11 +279,67 @@ public class WeatherServiceTest {
 
     }
 
+    @Test
+    public void testGetPastAverageDTO() throws ApiQueryException {
+        Location location = new Location();
+        location.setLatitude(48.2082);
+        location.setLongitude(16.3719);
+        location.setName("Vienna");
+
+        Date startDate = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startDate);
+        cal.add(Calendar.DATE, 5);
+        Date endDate = cal.getTime();
+        when(weatherApiRequestService.retrieveDailyHolidayForecast(anyDouble(), anyDouble(), anyString())).thenReturn(holidayDTO);
+
+        HolidayDTO holidayDTO = weatherService.getPastAverageDTO(startDate, endDate, location);
+        assertEquals(10, holidayDTO.temperatureDTO().morningTemperature());
+    }
+    @Test
+    public void testConvertToAverageDTO(){
+        Date startDate = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startDate);
+        cal.add(Calendar.DATE, 5);
+        Date endDate = cal.getTime();
+
+        long diffInMillies = Math.abs(endDate.getTime() - startDate.getTime());
+
+        long middlePoint = diffInMillies / 2;
+
+        Date middleDate = new Date(startDate.getTime() + middlePoint);
+
+        Location location = new Location();
+        location.setLatitude(48.2082);
+        location.setLongitude(16.3719);
+        location.setName("Vienna");
+        List<HolidayDTO> holidays = new ArrayList<>(Arrays.asList(holidayDTO, holidayDTOAverage));
+
+        HolidayDTO holiday = weatherService.convertToAverageDTO(holidays, location, middleDate);
+        assertEquals(12.5, holiday.temperatureDTO().morningTemperature());
+        assertEquals(15, holiday.temperatureDTO().eveningTemperature());
+        assertEquals(7.5, holiday.temperatureDTO().minimumDailyTemperature());
+    }
+
     public void setupDTOs() {
         hourlyWeatherDTO = new HourlyWeatherDTO(
                 Instant.now(),
                 30, 30, 10, 10, 10, 10, 10, 10,
                 10, 10, 10, 0, null, null, null
+        );
+        Date date = Calendar.getInstance().getTime();
+        holidayDTO = new HolidayDTO(
+                30, 30, null, date, null, new CloudDTO(10), new HumidityDTO(1), new PrecipitationDTO(2),
+                new PressureDTO(1), new DailyTemperatureAggregationDTO(
+                  10, 10, 10, 10, 10, 10
+                ), new WindDTO(new MaxDTO(1, 10))
+        );
+        holidayDTOAverage = new HolidayDTO(
+                30, 30, null, date, null, new CloudDTO(10), new HumidityDTO(1), new PrecipitationDTO(2),
+                new PressureDTO(1), new DailyTemperatureAggregationDTO(
+                15, 15, 20, 30, 5, 10
+        ), new WindDTO(new MaxDTO(1, 10))
         );
 
         dailyWeatherDTO = new DailyWeatherDTO(
