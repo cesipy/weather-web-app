@@ -90,6 +90,16 @@ public class WeatherApiRequestService {
 
 
     }
+
+    /**
+     * Makes an API call to get the weather data for a specific lat/lon and date
+     *
+     * @param latitude of the location
+     * @param longitude of the location
+     * @param date the weather data is wanted for
+     * @return weather data for the specified location and date
+     * @throws ApiQueryException
+     */
     public HolidayDTO retrieveDailyHolidayForecast(@Min(-90) @Max(90) double latitude,
                                                    @Min(-180) @Max(180) double longitude,
                                                    String date) throws ApiQueryException{
