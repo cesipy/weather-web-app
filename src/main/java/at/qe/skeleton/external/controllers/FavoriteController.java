@@ -4,6 +4,7 @@ import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.FavoriteService;
+import at.qe.skeleton.external.services.MessageService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,12 +84,12 @@ public class FavoriteController {
         catch (EmptyLocationException e) {
             String warnMessage = "Cannot find city: %s".formatted(locationName);
             messageService.showInfoMessage(warnMessage);
-            logger.info("Error saving favorite, location is not known", e);
+            logger.error("Error saving favorite, location is not known", e);
         }
         catch (ApiQueryException e) {
             String warnMessage = "Error occurred while fetching weather data";
             messageService.showWarnMessage(warnMessage);
-            logger.info("Error occurred while saving favorite, API didn't work", e);
+            logger.error("Error occurred while saving favorite, API didn't work", e);
         }
 
         catch (Exception e) {
@@ -121,9 +122,7 @@ public class FavoriteController {
                 // clear locationName after save
                 locationName = "";
             }
-            return;
         } catch (EmptyLocationException | ApiQueryException e) {
-            logger.info("exception in validateAndSaveFavorite! {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             logger.error("Error saving favorite", e);
@@ -163,7 +162,6 @@ public class FavoriteController {
     public void deleteFavorite(Favorite favorite) {
 
         favoriteService.deleteFavorite(favorite);
-        logger.info("Successfully deleted favorite: {}" , favorite.getLocation().getName());
 
         // update favorite list
         retrieveFavorites();
@@ -182,7 +180,7 @@ public class FavoriteController {
 
             return favoriteService.autocomplete(query);
         } catch (EmptyLocationException e) {
-            logger.info("exception in autocomplete!");
+            logger.error("An error occurred in autocomplete!");
         }
         return Collections.emptyList();
     }

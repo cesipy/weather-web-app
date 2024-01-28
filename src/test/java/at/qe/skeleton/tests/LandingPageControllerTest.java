@@ -7,7 +7,7 @@ import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
-import at.qe.skeleton.external.controllers.MessageService;
+import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.external.services.WeatherService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

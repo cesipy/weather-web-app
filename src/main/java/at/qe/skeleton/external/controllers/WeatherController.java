@@ -5,6 +5,7 @@ import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.services.WeatherService;
+import at.qe.skeleton.internal.services.AuditLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.text.StringEscapeUtils;

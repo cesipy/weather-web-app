@@ -13,8 +13,8 @@ import at.qe.skeleton.external.model.currentandforecast.misc.holiday.Precipitati
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.repositories.CurrentWeatherDataRepository;
-import at.qe.skeleton.internal.repositories.DailyWeatherDataRepository;
-import at.qe.skeleton.internal.repositories.HourlyWeatherDataRepository;
+import at.qe.skeleton.external.repositories.DailyWeatherDataRepository;
+import at.qe.skeleton.external.repositories.HourlyWeatherDataRepository;
 import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +24,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.text.SimpleDateFormat;
 
 /**
  * Service class for processing weather information.
@@ -98,7 +98,6 @@ public class WeatherService {
 
         if (isWeatherDataStale(latestData, latestDataHourly)) {
             logger.info("taking weather data for {} from database", location.getName());
-            // this.setLocation(location);         // temp
 
             ArrayList<HourlyWeatherDTO> latestHourlyWeather = new ArrayList<>();
             for(int n = latestDataHourly.size() - 1; n >= 0 ; n--){
@@ -152,7 +151,7 @@ public class WeatherService {
      * @return {@code true} if the weather data is considered stale, {@code false} otherwise.
      */
     private boolean isWeatherDataStale(List<DailyWeatherData> dailyWeatherDataList,
-                                        List<HourlyWeatherData> hourlyWeatherDataList) {
+                                       List<HourlyWeatherData> hourlyWeatherDataList) {
         Instant oneHourAgo = Instant.now().minus(1, ChronoUnit.HOURS);
 
         if (!dailyWeatherDataList.isEmpty()
@@ -184,7 +183,7 @@ public class WeatherService {
 
         // is data outdated or no data is saved?
         if (currentWeatherDataList.isEmpty() || !isCurrentWeatherDataStale(currentWeatherDataList.get(0))) {
-            logger.info("fetching weather data from api: {}", location.getName());
+
             CurrentAndForecastAnswerDTO weather = weatherApiRequestService
                     .retrieveCurrentAndForecastWeather(location.getLatitude(), location.getLongitude());
 
@@ -193,7 +192,7 @@ public class WeatherService {
             return currentWeatherDataRepository
                     .findByLocationOrderByAdditionTimeDesc(location).get(0);
         } else {
-            logger.info("Taking weather data from database for location {}", location);
+
             return currentWeatherDataList.get(0);
         }
     }
@@ -242,8 +241,8 @@ public class WeatherService {
 
         List<String> chosenDates = new ArrayList<>();
         while (!start.after(end)) {
-        chosenDates.add(sdf.format(start.getTime()));
-        start.add(Calendar.DATE, 1);
+            chosenDates.add(sdf.format(start.getTime()));
+            start.add(Calendar.DATE, 1);
         }
 
         return chosenDates;

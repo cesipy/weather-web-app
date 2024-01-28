@@ -1,13 +1,7 @@
 package at.qe.skeleton.tests;
 
-import at.qe.skeleton.external.controllers.CurrentlyHourlyDailyWeather;
 import at.qe.skeleton.external.controllers.DetailedWeatherController;
-import at.qe.skeleton.external.controllers.EmptyLocationException;
-import at.qe.skeleton.external.controllers.MessageService;
-import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
-import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
-import at.qe.skeleton.external.model.location.Location;
-import at.qe.skeleton.external.services.ApiQueryException;
+import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.external.services.WeatherService;
 import jakarta.faces.context.ExternalContext;
@@ -19,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
