@@ -35,6 +35,7 @@ public class DetailedWeatherController {
     private List<DailyWeatherDTO> limitedDailyWeatherList;
     private String locationQuery;
     private static final String ERROR_MESSAGE = "An error occurred!";
+    private static final String NO_LOCATION_FOUND = "There was no location found corresponding to your search!";
     private static final Logger logger = LoggerFactory.getLogger(DetailedWeatherController.class);
 
 
@@ -52,7 +53,7 @@ public class DetailedWeatherController {
             if (locationQuery != null) {
                 retrieveWeatherData(locationQuery);
             } else {
-                messageService.showWarnMessage(ERROR_MESSAGE);
+                messageService.showWarnMessage(NO_LOCATION_FOUND);
                 logger.info("init did not work");
             }
         }
@@ -84,7 +85,7 @@ public class DetailedWeatherController {
 
         } catch (EmptyLocationException | ApiQueryException e) {
 
-            messageService.showWarnMessage(ERROR_MESSAGE);
+            messageService.showWarnMessage(NO_LOCATION_FOUND);
             logger.error("An error occurred in detailed controller: {}", e.getMessage(), e);
         }
     }

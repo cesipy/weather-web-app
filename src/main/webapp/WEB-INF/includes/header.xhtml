@@ -30,13 +30,6 @@
 
 
                     </p:submenu>
-                    <p:submenu label="Test Submenu" rendered="#{sessionInfoBean.hasRole('ADMIN')}">
-                        <p:menuitem value="Security Test" url="/secured/test.xhtml"/>
-                        <p:menuitem value="Weather API Demo" url="/secured/demos/weather_api_demo.xhtml"/>
-                        <p:menuitem value="Location Searching Demo" url="/secured/demos/location_searching_demo.xhtml"/>
-                    </p:submenu>
-
-
                     <p:submenu type="button" icon="pi pi-user"
                                styleClass="rounded-button ui-button-info"
                                rendered="#{sessionInfoBean.loggedIn}" >
