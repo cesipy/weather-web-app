@@ -8,7 +8,7 @@ import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.external.services.MessageService;
-import at.qe.skeleton.internal.services.AuditLogService;
+import at.qe.skeleton.external.services.WeatherService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ public class LandingPageControllerTest {
     private LandingPageController landingPageController;
 
     @Mock
-    private AuditLogService.WeatherService weatherService;
+    private WeatherService weatherService;
 
     @Mock
     private LocationService locationService;

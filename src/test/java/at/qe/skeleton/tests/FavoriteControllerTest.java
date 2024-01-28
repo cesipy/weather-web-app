@@ -68,7 +68,7 @@ public class FavoriteControllerTest {
 
         favoriteController.saveFavorite();
 
-        verify(favoriteService, times(1)).saveFavorite(eq("TestLocation"));
+        verify(favoriteService, times(1)).saveFavorite("TestLocation");
 
         assert(favoriteController.getLocationName().isEmpty());
     }
@@ -95,7 +95,7 @@ public class FavoriteControllerTest {
         verify(favoriteService).getSortedFavoritesForUser();
 
         List<Location> locations = favoriteController.getLocations();
-        assertEquals(favoriteController.getFavorites().size(), 2);
+        assertEquals(2, favoriteController.getFavorites().size());
         assertEquals(List.of(mockLocation1, mockLocation2), locations);
     }
 

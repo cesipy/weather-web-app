@@ -8,7 +8,6 @@ import at.qe.skeleton.external.model.weather.CurrentWeatherData;
 import at.qe.skeleton.external.repositories.CurrentWeatherDataRepository;
 import at.qe.skeleton.external.services.*;
 import at.qe.skeleton.internal.model.Userx;
-import at.qe.skeleton.internal.services.AuditLogService;
 import at.qe.skeleton.internal.services.UserxService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +41,7 @@ public class FavoriteOverviewControllerTest {
     @Mock
     private CurrentWeatherDataRepository currentWeatherDataRepository;
     @Mock
-    private AuditLogService.WeatherService weatherService;
+    private WeatherService weatherService;
     @Mock
     private LocationService locationService;
     @Mock

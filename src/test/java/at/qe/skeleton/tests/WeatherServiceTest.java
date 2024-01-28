@@ -15,6 +15,7 @@ import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.services.WeatherDataService;
 import at.qe.skeleton.external.repositories.DailyWeatherDataRepository;
 import at.qe.skeleton.external.repositories.HourlyWeatherDataRepository;
+import at.qe.skeleton.external.services.WeatherService;
 import at.qe.skeleton.internal.services.AuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ public class WeatherServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(WeatherServiceTest.class);
     @InjectMocks
-    private AuditLogService.WeatherService weatherService;
+    private WeatherService weatherService;
     @Mock
     private DailyWeatherDataRepository dailyWeatherDataRepository;
 

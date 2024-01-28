@@ -7,7 +7,8 @@ import at.qe.skeleton.external.model.currentandforecast.misc.DailyWeatherDTO;
 import at.qe.skeleton.external.model.currentandforecast.misc.HourlyWeatherDTO;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
-import at.qe.skeleton.internal.services.AuditLogService;
+import at.qe.skeleton.external.services.WeatherService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -30,7 +31,7 @@ public class WeatherControllerTest {
     private WeatherApiRequestService weatherApiRequestService;
 
     @Mock
-    private AuditLogService.WeatherService weatherService;
+    private WeatherService weatherService;
 
     private HourlyWeatherDTO hourlyWeatherDTO;
     private CurrentWeatherDTO currentWeatherDTO;

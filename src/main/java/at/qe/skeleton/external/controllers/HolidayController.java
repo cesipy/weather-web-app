@@ -4,7 +4,7 @@ import at.qe.skeleton.external.model.currentandforecast.misc.holiday.HolidayDTO;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
-import at.qe.skeleton.internal.services.AuditLogService;
+import at.qe.skeleton.external.services.WeatherService;
 import at.qe.skeleton.internal.ui.beans.DiagramBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -23,7 +23,7 @@ import java.util.*;
 @Scope("view")
 public class HolidayController {
     @Autowired
-    private AuditLogService.WeatherService weatherService;
+    private WeatherService weatherService;
     @Autowired
     private LocationService locationService;
     @Autowired

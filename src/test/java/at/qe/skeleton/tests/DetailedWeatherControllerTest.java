@@ -3,7 +3,7 @@ package at.qe.skeleton.tests;
 import at.qe.skeleton.external.controllers.DetailedWeatherController;
 import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.external.services.LocationService;
-import at.qe.skeleton.internal.services.AuditLogService;
+import at.qe.skeleton.external.services.WeatherService;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import org.junit.jupiter.api.AfterEach;
@@ -24,7 +24,7 @@ public class DetailedWeatherControllerTest {
     private DetailedWeatherController detailedWeatherController;
 
     @Mock
-    private AuditLogService.WeatherService weatherService;
+    private WeatherService weatherService;
 
     @Mock
     private LocationService locationService;

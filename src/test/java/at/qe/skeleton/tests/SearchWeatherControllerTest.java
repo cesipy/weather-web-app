@@ -92,7 +92,7 @@ public class SearchWeatherControllerTest {
                 .thenThrow(new ApiQueryException("Test API query exception"));
 
         assertFalse(searchWeatherController.isLocationValid());
-        verify(messageService).showWarnMessage("An error occurred!");
+        verify(messageService).showWarnMessage("An error occurred while processing the data!");
     }
 
     @Test

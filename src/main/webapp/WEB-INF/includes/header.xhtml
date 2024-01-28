@@ -10,8 +10,6 @@
             <h:form>
                 <p:menubar>
                     <p:menuitem type="button" icon="pi pi-home" styleClass="rounded-button ui-button-info" url="/landing.xhtml" />
-
-                    <!--<p:menuitem value="Home" ur="/landing.xhtml" rendered="#{!sessionInfoBean.loggedIn}" /> -->
                     <p:menuitem value="Overview" url="/secured/overview.xhtml"
                                 rendered="#{sessionInfoBean.hasRole('EMPLOYEE')}"/>
 

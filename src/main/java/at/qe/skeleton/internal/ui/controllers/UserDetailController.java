@@ -41,9 +41,8 @@ public class UserDetailController implements Serializable {
     private transient EmailService emailService;
     @Autowired
     private transient UserxDetailsService userxDetailsService;
-    public transient BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final transient BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private String tempPassword;
-    private Random random = SecureRandom.getInstanceStrong();
     private static final Logger logger = LoggerFactory.getLogger(UserDetailController.class);
 
     public UserDetailController() throws NoSuchAlgorithmException {

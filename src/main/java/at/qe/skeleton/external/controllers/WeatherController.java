@@ -4,6 +4,7 @@ import at.qe.skeleton.external.model.currentandforecast.CurrentAndForecastAnswer
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
+import at.qe.skeleton.external.services.WeatherService;
 import at.qe.skeleton.internal.services.AuditLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -33,7 +34,7 @@ public class WeatherController {
     private WeatherApiRequestService weatherApiRequestService;
 
     @Autowired
-    private AuditLogService.WeatherService weatherService;
+    private WeatherService weatherService;
 
     private Location location;
 
