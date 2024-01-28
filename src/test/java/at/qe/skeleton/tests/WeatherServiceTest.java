@@ -205,7 +205,7 @@ public class WeatherServiceTest {
     @Test
     public void testGetToday(){
         Date today = Calendar.getInstance().getTime();
-        assertEquals(today, weatherService.getToday());
+        assertTrue(today.getTime() == weatherService.getToday().getTime());
     }
     @Test
     public void testGetMaximumEndDate() {
