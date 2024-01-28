@@ -134,6 +134,27 @@ public class UserDetailController implements Serializable {
         }
     }
 
+    public void doRegisterAdmin() {
+        try {
+            this.userService.saveUser(user);
+
+            Set<UserxRole> roles = new HashSet<>();
+            roles.add(UserxRole.EMPLOYEE);
+            user.setRoles(roles);
+            user.setPassword(doEncodePassword(user.getPassword()));
+            user.setEnabled(true);
+            user.setCreateUser(user);
+            user.setSelectedFields(
+                    new ArrayList<>(List.of(WeatherDataField.TEMP, WeatherDataField.FEELS_LIKE, WeatherDataField.DESCRIPTION))
+            );
+
+            this.userService.saveUser(user);
+            redirectToUsers();
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", e.getMessage()));
+        }
+    }
+
     /**
      * Action to delete the currently displayed user.
      */
@@ -184,6 +205,15 @@ public class UserDetailController implements Serializable {
         ExternalContext externalContext = facesContext.getExternalContext();
         try {
             externalContext.redirect(externalContext.getRequestContextPath() + "/login.xhtml");
+        } catch (ValidationException | IOException ve) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ve.getMessage(), null));
+        }
+    }
+    public void redirectToUsers() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        try {
+            externalContext.redirect(externalContext.getRequestContextPath() + "/admin/users.xhtml");
         } catch (ValidationException | IOException ve) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ve.getMessage(), null));
         }
