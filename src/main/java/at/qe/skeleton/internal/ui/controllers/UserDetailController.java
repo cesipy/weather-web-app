@@ -1,5 +1,6 @@
 package at.qe.skeleton.internal.ui.controllers;
 
+import at.qe.skeleton.external.model.WeatherDataField;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.services.EmailService;
@@ -10,9 +11,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,6 +122,9 @@ public class UserDetailController implements Serializable {
             user.setPassword(doEncodePassword(user.getPassword()));
             user.setEnabled(true);
             user.setCreateUser(user);
+            user.setSelectedFields(
+                    new ArrayList<>(List.of(WeatherDataField.TEMP, WeatherDataField.FEELS_LIKE, WeatherDataField.DESCRIPTION))
+            );
 
             this.userService.saveUser(user);
             redirectToLogin();
