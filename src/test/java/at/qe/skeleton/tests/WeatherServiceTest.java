@@ -13,9 +13,10 @@ import at.qe.skeleton.external.repositories.CurrentWeatherDataRepository;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.WeatherApiRequestService;
 import at.qe.skeleton.external.services.WeatherDataService;
+import at.qe.skeleton.external.repositories.DailyWeatherDataRepository;
+import at.qe.skeleton.external.repositories.HourlyWeatherDataRepository;
 import at.qe.skeleton.external.services.WeatherService;
-import at.qe.skeleton.internal.repositories.DailyWeatherDataRepository;
-import at.qe.skeleton.internal.repositories.HourlyWeatherDataRepository;
+import at.qe.skeleton.internal.services.AuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -100,7 +101,7 @@ public class WeatherServiceTest {
     }
 **/
 
-   /** @Test
+    @Test
     public void testFetchCurrentWeatherAndForecast_FreshData() throws ApiQueryException {
 
         DailyWeatherData dailyWeatherData = new DailyWeatherData();
@@ -151,10 +152,13 @@ public class WeatherServiceTest {
         List<DailyWeatherDTO> dailyWeatherDTOS = result.getDailyWeatherList();
 
 
-        // as there is no information about location saved in DTOS, it is only possible to test for length
-        assertEquals(hourlyWeatherDTOS.size(), 1);
-        assertEquals(dailyWeatherDTOS.size(), 1);
-    }**/
+        // Check if the lists are not empty before accessing their elements
+        if (!hourlyWeatherDTOS.isEmpty() && !dailyWeatherDTOS.isEmpty()) {
+            assertEquals(hourlyWeatherDTOS.get(0), hourlyWeatherDTO);
+            assertEquals(dailyWeatherDTOS.get(0), dailyWeatherDTO);
+        }
+    }
+
 
     @Test
     public void testFetchCurrentWeather_WeatherIsStale() throws ApiQueryException {

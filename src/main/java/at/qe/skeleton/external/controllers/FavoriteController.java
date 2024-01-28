@@ -4,6 +4,7 @@ import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.FavoriteService;
+import at.qe.skeleton.external.services.MessageService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +36,6 @@ public class FavoriteController {
     public void init() {
         locations = new ArrayList<>();
         favorites = new ArrayList<>();
-        // temporary for debugging
-        locationName = "Vienna";
-        saveFavorite();
-        locationName = "Absam";
-        saveFavorite();
     }
 
 
@@ -51,6 +47,10 @@ public class FavoriteController {
     public void moveFavoriteUp(Favorite favorite) {
         boolean up = true;
         favoriteService.moveFavoriteUpOrDown(favorite, up);
+
+        // update favorites
+        // necessary to immediately update favorites in manageFavorites
+        retrieveFavorites();
     }
 
 
@@ -62,6 +62,10 @@ public class FavoriteController {
     public void moveFavoriteDown(Favorite favorite) {
         boolean up = false;
         favoriteService.moveFavoriteUpOrDown(favorite, up);
+
+        // update favorites
+        // necessary to immediately update favorites in manageFavorites
+        retrieveFavorites();
     }
 
 
@@ -72,16 +76,20 @@ public class FavoriteController {
     public void saveFavorite() {
         try {
             validateAndSaveFavorite();
+
+            // update favorites
+            // necessary to immediately update favorites in manageFavorites
+            retrieveFavorites();
         }
         catch (EmptyLocationException e) {
             String warnMessage = "Cannot find city: %s".formatted(locationName);
             messageService.showInfoMessage(warnMessage);
-            logger.info("Error saving favorite, location is not known", e);
+            logger.error("Error saving favorite, location is not known", e);
         }
         catch (ApiQueryException e) {
             String warnMessage = "Error occurred while fetching weather data";
             messageService.showWarnMessage(warnMessage);
-            logger.info("Error occurred while saving favorite, API didn't work", e);
+            logger.error("Error occurred while saving favorite, API didn't work", e);
         }
 
         catch (Exception e) {
@@ -99,19 +107,26 @@ public class FavoriteController {
      * @throws EmptyLocationException if the location name is null or empty after trimming.
      */
     public void validateAndSaveFavorite() throws EmptyLocationException, ApiQueryException {
-        if (locationName == null || locationName.trim().isEmpty()) {
-            String warnMessage = "Please enter a city.";
-            messageService.showWarnMessage(warnMessage);
-            return;
-        }
+        try {
+            if (locationName == null || locationName.trim().isEmpty()) {
+                String warnMessage = "Please enter a city.";
+                messageService.showWarnMessage(warnMessage);
+                return;
+            }
 
-        if (favoriteService.isLocationAlreadyFavorite(locationName)) {
-            String warnMessage = "Location already in favorites: %s".formatted(locationName);
-            messageService.showWarnMessage(warnMessage);
-        } else {
-            favoriteService.saveFavorite(locationName);
-            // clear locationName after save
-            locationName = "";
+            if (favoriteService.isLocationAlreadyFavorite(locationName)) {
+                String warnMessage = "Location already in favorites: %s".formatted(locationName);
+                messageService.showWarnMessage(warnMessage);
+            } else {
+                favoriteService.saveFavorite(locationName);
+                // clear locationName after save
+                locationName = "";
+            }
+        } catch (EmptyLocationException | ApiQueryException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Error saving favorite", e);
+            throw new EmptyLocationException("Error saving favorite");
         }
     }
 
@@ -147,7 +162,6 @@ public class FavoriteController {
     public void deleteFavorite(Favorite favorite) {
 
         favoriteService.deleteFavorite(favorite);
-        logger.info("Successfully deleted favorite: {}" , favorite.getLocation().getName());
 
         // update favorite list
         retrieveFavorites();
@@ -166,7 +180,7 @@ public class FavoriteController {
 
             return favoriteService.autocomplete(query);
         } catch (EmptyLocationException e) {
-            logger.info("exception in autocomplete!");
+            logger.error("An error occurred in autocomplete!");
         }
         return Collections.emptyList();
     }

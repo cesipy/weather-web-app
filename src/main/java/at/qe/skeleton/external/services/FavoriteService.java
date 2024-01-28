@@ -54,8 +54,6 @@ public class FavoriteService {
 
             favorite.setPriority(newPriority);
             favoriteRepository.save(favorite);
-
-            logger.info("after successful move, og. favorite priority: {} other: {} ", favorite.getPriority(), favoriteToMove.getPriority());
         }
     }
 
@@ -132,7 +130,7 @@ public class FavoriteService {
         favorite.setPriority(priority);
         favoriteRepository.save(favorite);
 
-        logger.info("successfully saved favorite {}  for  {}", favorite, currentUserx);
+        logger.info("Successfully saved favorite {}  for  {}", favorite.getLocation(), currentUserx.getUsername());
     }
 
 

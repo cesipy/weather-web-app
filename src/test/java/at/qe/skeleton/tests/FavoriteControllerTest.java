@@ -2,7 +2,7 @@ package at.qe.skeleton.tests;
 
 import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.controllers.FavoriteController;
-import at.qe.skeleton.external.controllers.MessageService;
+import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.external.model.Favorite;
 import at.qe.skeleton.external.model.location.Location;
 import at.qe.skeleton.external.repositories.FavoriteRepository;
@@ -68,7 +68,7 @@ public class FavoriteControllerTest {
 
         favoriteController.saveFavorite();
 
-        verify(favoriteService, times(1)).saveFavorite(eq("TestLocation"));
+        verify(favoriteService, times(1)).saveFavorite("TestLocation");
 
         assert(favoriteController.getLocationName().isEmpty());
     }
@@ -95,7 +95,7 @@ public class FavoriteControllerTest {
         verify(favoriteService).getSortedFavoritesForUser();
 
         List<Location> locations = favoriteController.getLocations();
-        assertEquals(favoriteController.getFavorites().size(), 2);
+        assertEquals(2, favoriteController.getFavorites().size());
         assertEquals(List.of(mockLocation1, mockLocation2), locations);
     }
 
@@ -197,7 +197,7 @@ public class FavoriteControllerTest {
 
         favoriteController.saveFavorite();
 
-        verify(messageService).showWarnMessage("An error occurred!");
+        verify(messageService).showInfoMessage("Cannot find city: TestLocation");
     }
 
 }

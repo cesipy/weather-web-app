@@ -76,12 +76,8 @@ public class SubscriptionBean implements Serializable {
 
         if (authentication != null) {
             Userx user = userxService.loadUser(authentication.getName());
-            System.out.println("username:" + user.getUsername());
-            System.out.println("credit card von user" + user.getCreditCard());
             return user.getCreditCard() != null;
         }
-
-        System.out.println("authentication = 0");
         return false;
     }
 
@@ -111,9 +107,6 @@ public class SubscriptionBean implements Serializable {
                 updateButtonText();
             }
         } catch (ValidationException e) {
-            // Loggen?
-            //e.printStackTrace();
-
             FacesContext.getCurrentInstance().addMessage(
                     null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please provide payment information", e.getMessage())
@@ -133,7 +126,7 @@ public class SubscriptionBean implements Serializable {
     /**
      * Updates the button text based on the user's subscription status.
      */
-    private void updateButtonText() {
+    public void updateButtonText() {
         buttonText = isPremium() ? "Unsubscribe" : "Subscribe";
     }
 }

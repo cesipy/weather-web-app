@@ -80,11 +80,11 @@
                     <h:outputText value="#{weather.uvi}"/>
                 </p:column>
 
-                <p:column headerText="Visibility(km)" visible="#{favoriteOverviewController.isInList('VISIBILITY')}">
+                <p:column headerText="Visibility(m)" visible="#{favoriteOverviewController.isInList('VISIBILITY')}">
                     <h:outputText value="#{weather.visibility}"/>
                 </p:column>
 
-                <p:column headerText="Wind Speed(km/h)" visible="#{favoriteOverviewController.isInList('WIND_SPEED')}">
+                <p:column headerText="Wind Speed(m/s)" visible="#{favoriteOverviewController.isInList('WIND_SPEED')}">
                     <h:outputText value="#{weather.windSpeed}"/>
                 </p:column>
 
@@ -93,11 +93,11 @@
                 </p:column>
 
                 <p:column headerText="Rain" visible="#{favoriteOverviewController.isInList('RAIN')}">
-                    <h:outputText value="#{weather.rain}"/>
+                    <h:outputText value="#{weather.getRainString()}"/>
                 </p:column>
 
                 <p:column headerText="Snow" visible="#{favoriteOverviewController.isInList('SNOW')}">
-                    <h:outputText value="#{weather.snow}"/>
+                    <h:outputText value="#{weather.getSnowString()}"/>
                 </p:column>
 
                 <p:column headerText="Icon" visible="#{favoriteOverviewController.isInList('ICON')}">

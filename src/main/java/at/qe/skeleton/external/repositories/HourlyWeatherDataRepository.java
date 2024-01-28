@@ -1,7 +1,8 @@
-package at.qe.skeleton.internal.repositories;
+package at.qe.skeleton.external.repositories;
 
 
 import at.qe.skeleton.external.domain.HourlyWeatherData;
+import at.qe.skeleton.internal.repositories.AbstractRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Pageable;

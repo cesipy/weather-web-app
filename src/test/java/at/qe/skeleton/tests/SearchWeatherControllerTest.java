@@ -4,7 +4,7 @@ import at.qe.skeleton.external.controllers.EmptyLocationException;
 import at.qe.skeleton.external.controllers.SearchWeatherController;
 import at.qe.skeleton.external.controllers.WeatherController;
 import at.qe.skeleton.external.model.location.Location;
-import at.qe.skeleton.external.controllers.MessageService;
+import at.qe.skeleton.external.services.MessageService;
 import at.qe.skeleton.external.services.ApiQueryException;
 import at.qe.skeleton.external.services.LocationService;
 import at.qe.skeleton.internal.model.Userx;
@@ -92,7 +92,7 @@ public class SearchWeatherControllerTest {
                 .thenThrow(new ApiQueryException("Test API query exception"));
 
         assertFalse(searchWeatherController.isLocationValid());
-        verify(messageService).showWarnMessage("An error occurred!");
+        verify(messageService).showWarnMessage("An error occurred while processing the data!");
     }
 
     @Test

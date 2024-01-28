@@ -16,7 +16,7 @@ import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.primefaces.model.charts.line.LineChartModel;
+
 import java.util.*;
 
 @Controller

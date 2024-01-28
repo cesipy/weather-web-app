@@ -1,6 +1,5 @@
 package at.qe.skeleton.internal.ui.controllers;
 
-import at.qe.skeleton.external.services.WeatherService;
 import at.qe.skeleton.internal.model.Userx;
 import at.qe.skeleton.internal.model.UserxRole;
 import at.qe.skeleton.internal.services.EmailService;
@@ -42,9 +41,8 @@ public class UserDetailController implements Serializable {
     private transient EmailService emailService;
     @Autowired
     private transient UserxDetailsService userxDetailsService;
-    public transient BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final transient BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private String tempPassword;
-    private Random random = SecureRandom.getInstanceStrong();
     private static final Logger logger = LoggerFactory.getLogger(UserDetailController.class);
 
     public UserDetailController() throws NoSuchAlgorithmException {
