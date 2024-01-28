@@ -70,7 +70,7 @@ public class UserxService {
      */
     public Userx saveUser(Userx user) {
         if (user.isNew()) {
-            user.setSelectedFields(List.of(WeatherDataField.TEMP, WeatherDataField.FEELS_LIKE, WeatherDataField.DESCRIPTION));
+            //user.setSelectedFields(List.of(WeatherDataField.TEMP, WeatherDataField.FEELS_LIKE, WeatherDataField.DESCRIPTION));
             user.setCreateUser(getAuthenticatedUser());
         } else {
             user.setUpdateUser(getAuthenticatedUser());

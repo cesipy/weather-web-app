@@ -177,7 +177,7 @@ public class Userx implements Persistable<String>, Serializable, Comparable<User
     /**
      * Sets the invoice associated with the user.
      *
-     * @param invoice The invoice associated with the user.
+     * @param invoices The invoice associated with the user.
      */
     public void setInvoice(Invoice invoices) {this.invoice = invoices;}
 
