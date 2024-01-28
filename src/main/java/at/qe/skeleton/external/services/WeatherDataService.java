@@ -221,6 +221,13 @@ public class WeatherDataService {
         hourlyWeatherDataRepository.save(hourlyWeatherData);
     }
 
+    /**
+     * Converts a CurrentWeatherDTO to a CurrentWeatherData entity and saves it into the database.
+     *
+     * @param currentWeatherDTO currentWeather record, holding the current weather data retrieved from the api
+     * @param location name of the location corresponding to the current weather data
+     */
+
     public void saveCurrentWeatherFromDTO(CurrentWeatherDTO currentWeatherDTO, Location location) {
         CurrentWeatherData currentWeatherData = new CurrentWeatherData();
         currentWeatherData.setTimestamp(currentWeatherDTO.timestamp());
@@ -251,6 +258,12 @@ public class WeatherDataService {
         currentWeatherDataRepository.save(currentWeatherData);
     }
 
+    /**
+     * Converts a CurrentWeatherData entity to a CurrentWeatherDTO record.
+     *
+     * @param currentWeatherData CurrentWeatherData entity, holding the current weather data retrieved from the database.
+     * @return CurrentWeatherDTO for the purpose of displaying the weather data on the website.
+     */
     public CurrentWeatherDTO convertCurrentDataToDTO(CurrentWeatherData currentWeatherData) {
         WeatherDTO weatherDTO = new WeatherDTO(1,           // temp value of 1 for id
                 currentWeatherData.getMain(),
