@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="content">
+        <h:form  id="register_form" action="#{request.contextPath}/login" method="post" style="text-align: center; margin-top: 10%;">
+            <div style="width: 400px; margin: auto; padding: 20px; background-color: #f0f0f0; border-radius: 5px;">
+
+                <h:outputText value="Please fill out to register the new user!" style="font-size: 18px; font-weight: bold; margin-bottom: 20px; display: block;" />
+
+                <h:panelGrid columns="3">
+                    <p:outputLabel for="username" value="Username:"/>
+                    <p:inputText id="username" value="#{userDetailController.user.username}" required="true" />
+                    <p:message for="username" style="color: red" />
+
+                    <p:outputLabel for="firstName" value="First Name"/>
+                    <p:inputText id="firstName" value="#{userDetailController.user.firstName}" required="true" />
+                    <p:message for="firstName" style="color: red" />
+
+                    <p:outputLabel for="lastName" value="Last Name:"/>
+                    <p:inputText id="lastName" value="#{userDetailController.user.lastName}" required="true" />
+                    <p:message for="lastName" style="color: red" />
+
+                    <p:outputLabel for="email" value="Email-Adress:"/>
+                    <p:inputText id="email" value="#{userDetailController.user.email}" required="true" />
+                    <p:message for="email" style="color: red" />
+
+                    <p:outputLabel for="phone" value="Phone-Nr.:"/>
+                    <p:inputText id="phone" value="#{userDetailController.user.phone}"/>
+                    <p:message for="phone" style="color: red" />
+
+                    <p:outputLabel for="password" value="Password:"/>
+                    <p:password id="password" value="#{userDetailController.user.password}" required="true" feedback="true"/>
+                    <p:message for="password" style="color: red" />
+
+                    <p:commandButton value="Register" action="#{userDetailController.doRegisterAdmin}" update="@form"  />
+
+                    <h:messages id="messages" globalOnly="true" showDetail="true" />
+
+                </h:panelGrid>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

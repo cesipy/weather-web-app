@@ -8,6 +8,9 @@
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name ="content">
         <h:form id="userForm">
+            <button type="button" onclick="window.location.href='#{request.contextPath}/registerAdmin.xhtml'" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                <span class="ui-button-text">Register new User</span>
+            </button>
             <p:dataTable id="usersTable" var="user" value="#{userListController.users}">
                 <p:column headerText="Username">
                     <h:outputText value="#{user.username}"/>
