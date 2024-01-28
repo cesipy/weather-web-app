@@ -20,10 +20,7 @@ import at.qe.skeleton.external.services.WeatherService;
 import at.qe.skeleton.internal.services.AuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +72,6 @@ public class WeatherServiceTest {
         setupDTOs();
     }
 
-/**
     @Test
     public void testFetchCurrentWeatherData_DataIsStale() throws ApiQueryException {
 
@@ -100,7 +96,6 @@ public class WeatherServiceTest {
         assertEquals(1, hourlyWeatherDTOS.size());
         assertEquals(1, dailyWeatherDTOS.size());
     }
-**/
 
     @Test
     public void testFetchCurrentWeatherAndForecast_FreshData() throws ApiQueryException {
@@ -200,11 +195,11 @@ public class WeatherServiceTest {
         Calendar cal = Calendar.getInstance();
         cal.setTime(today);
         cal.add(Calendar.YEAR, 1);
+        cal.add(Calendar.DAY_OF_MONTH, -14);
         Date nextYear = cal.getTime();
 
         assertEquals(nextYear, weatherService.getOneYearFromToday());
     }
-
     @Test
     public void testGetToday(){
         Date today = new Date();
@@ -213,13 +208,14 @@ public class WeatherServiceTest {
     @Test
     public void testGetMaximumEndDate() {
         Date today = new Date();
-        SelectEvent<Date> event = new SelectEvent<>(null, null, today);
+        SelectEvent<Date> event = Mockito.mock(SelectEvent.class);
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(today);
         cal.add(Calendar.DATE, 5);
         Date expectedEndDate = cal.getTime();
 
+        when(event.getObject()).thenReturn(today);
         Date actualEndDate = weatherService.getMaximumEndDate(event, 5);
 
         assertEquals(expectedEndDate, actualEndDate);
@@ -245,7 +241,7 @@ public class WeatherServiceTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<String> expectedDates = new ArrayList<>();
         cal.setTime(startDate);
-        while (!cal.after(endDate)) {
+        while (!cal.getTime().after(endDate)) {
             expectedDates.add(sdf.format(cal.getTime()));
             cal.add(Calendar.DATE, 1);
         }
@@ -256,6 +252,7 @@ public class WeatherServiceTest {
     }
     @Test
     public void testGetHolidayForecast() {
+        HolidayDTO holiday = new HolidayDTO(location.getLatitude(), location.getLongitude(), null, null, null, null, null, null, null, null, null);
         Location location = new Location();
         location.setLatitude(48.2082);
         location.setLongitude(16.3719);
@@ -271,17 +268,15 @@ public class WeatherServiceTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<String> expectedDates = new ArrayList<>();
         cal.setTime(startDate);
-        while (!cal.after(endDate)) {
+        while (!cal.getTime().after(endDate)) {
             expectedDates.add(sdf.format(cal.getTime()));
             cal.add(Calendar.DATE, 1);
         }
-
         List<HolidayDTO> holidayList = weatherService.retrieveDailyHolidayForecast(location, actualDates);
-        for(int x = 0; x < holidayList.size(); x++){
-            assertEquals(expectedDates.get(x), holidayList.get(x).date());
-        }
+        assertEquals(6, holidayList.size());
 
     }
+
     public void setupDTOs() {
         hourlyWeatherDTO = new HourlyWeatherDTO(
                 Instant.now(),

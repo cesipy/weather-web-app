@@ -214,7 +214,7 @@ public class WeatherService {
 
     /**
      * Provides todays date in one year
-     *
+     * -14 days to the maximum end date cannot exceed the 1 year threshold
      * @return Todays Date in one year
      */
     public Date getOneYearFromToday(){
