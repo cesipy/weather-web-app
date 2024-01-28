@@ -39,6 +39,9 @@ public class HolidayController {
     private String locationQuery;
     private static final Logger logger = LoggerFactory.getLogger(HolidayController.class);
 
+    /**
+     *  Initializes the holiday view by retrieving todays date, todays date in one year and the location.
+     */
     @PostConstruct
     public void init() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
@@ -49,10 +52,20 @@ public class HolidayController {
         retrieveLocation();
     }
 
+    /**
+     * Refreshes the maximum end Date for the date selection based on the start date picked
+     * @param event start date picked in the Date picker
+     */
     public void onStartDateSelect(SelectEvent<Date> event) {
         this.setEndDateMax(weatherService.getMaximumEndDate(event, 14));
     }
 
+    /**
+     * Sets the holiday forecast based on the date selection
+     * Updates the diagram to visualize the evolution of the temperatures
+     * Sets the average of the last 5 years based on the dates selected
+     * @throws ApiQueryException
+     */
     public void getHolidayForecast() throws ApiQueryException {
         if (this.getStartDate() != null && this.getEndDate() != null) {
 
@@ -74,11 +87,19 @@ public class HolidayController {
 
     }
 
+    /**
+     * sets the average of the past 5 years based on the dates selected
+     * @throws ApiQueryException
+     */
     public void getPastAverageForDateRange() throws ApiQueryException {
         HolidayDTO pastAvgDTO = weatherService.getPastAverageDTO(getStartDate(), getEndDate(), getCurrentLocation());
 
         this.setPastAverage(pastAvgDTO);
     }
+
+    /**
+     * retrieves the location based on the location initially retrieved
+     */
     public void retrieveLocation(){
         try {
             currentLocation = locationService.retrieveLocation(locationQuery);
@@ -88,16 +109,25 @@ public class HolidayController {
         }
     }
 
+    /**
+     * Displays a warning message if there was a problem in the retrieval of the location
+     */
     public void displayLocationWarningMessage() {
         String message = "An error occurred in the retrieval of the Location!";
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
     }
+    /**
+     * Displays a warning message if there was a problem in the retrieval of the dates
+     */
     public void displayDateWarningMessage() {
         String message = "You left at least one Date unchosen!";
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", message));
     }
+    /**
+     * Sets the date one year from today
+     */
         public Date getOneYearFromToday() {
         return oneYearFromToday;
     }

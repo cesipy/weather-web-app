@@ -29,7 +29,9 @@ public class DiagramBean implements Serializable {
     private LineChartModel lineModel;
 
 
-
+    /**
+     * Intialized by creating an empty diagram
+     */
     @PostConstruct
     public void init() {
         createLineModel();
@@ -37,11 +39,19 @@ public class DiagramBean implements Serializable {
     }
 
 
-
+    /**
+     * initializes the lineModel
+     */
     public void createLineModel() {
         lineModel = new LineChartModel();
     }
 
+    /**
+     * Updates the diagram with the weather data which should be displayed
+     * @param holidays list of weather data for each data in the holiday range
+     * @param startDate of the holiday range
+     * @param endDate of the holiday range
+     */
     public void updateLineModel(List<HolidayDTO> holidays, Date startDate, Date endDate){
         ChartData data = new ChartData();
 

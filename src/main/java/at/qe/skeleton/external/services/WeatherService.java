@@ -98,6 +98,7 @@ public class WeatherService {
 
         if (isWeatherDataStale(latestData, latestDataHourly)) {
             logger.info("taking weather data for {} from database", location.getName());
+            // this.setLocation(location);         // temp
 
             ArrayList<HourlyWeatherDTO> latestHourlyWeather = new ArrayList<>();
             for(int n = latestDataHourly.size() - 1; n >= 0 ; n--){
@@ -211,6 +212,11 @@ public class WeatherService {
         return additionTime.isAfter(tenMinutesAgo);
     }
 
+    /**
+     * Provides todays date in one year
+     * -14 days to the maximum end date cannot exceed the 1 year threshold
+     * @return Todays Date in one year
+     */
     public Date getOneYearFromToday(){
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, 1);
@@ -218,11 +224,24 @@ public class WeatherService {
         return cal.getTime();
     }
 
+    /**
+     * Provides todays date
+     *
+     * @return todays date
+     */
     public Date getToday(){
         Calendar cal = Calendar.getInstance();
         return cal.getTime();
     }
 
+    /**
+     * Provides the maximum end date for the Date picker.
+     * So the user can only pick up to days date from the start date
+     *
+     * @param event startDate picked from the Date picker
+     * @param days number of days the range should allow
+     * @return last date possible to pick
+     */
     public Date getMaximumEndDate(SelectEvent<Date> event, int days){
         Date startDate = event.getObject();
         Calendar c = Calendar.getInstance();
@@ -230,6 +249,14 @@ public class WeatherService {
         c.add(Calendar.DATE, days);
         return c.getTime();
     }
+
+    /**
+     * Provides all dates in the chosen Date range
+     *
+     * @param startDate start date for the date range
+     * @param endDate end date for the date range
+     * @return a List including the start and end dates and all dates inbetween
+     */
 
     public List<String> getChosenDates(Date startDate, Date endDate){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -248,6 +275,14 @@ public class WeatherService {
         return chosenDates;
 
     }
+
+    /**
+     * Provides the daily forecast for each Date in the holiday date range
+     *
+     * @param location location for which the forecast should be returned
+     * @param chosenDates a list of all dates in the holiday date range
+     * @return a list of daily forecasts for the holiday range
+     */
     public List<HolidayDTO> retrieveDailyHolidayForecast(Location location, List<String> chosenDates){
         List<HolidayDTO> holidays = new ArrayList<>();
         try{
@@ -261,6 +296,15 @@ public class WeatherService {
         return holidays;
     }
 
+    /**
+     * Provides the 5 year average for the middle date in the holiday range
+     *
+     * @param startDate start date for the holiday forecast
+     * @param endDate end date for the holiday forecast
+     * @param location location for which the average should be returned
+     * @return an average of the last 5 years for the middle date in the holiday range
+     * @throws ApiQueryException
+     */
     public HolidayDTO getPastAverageDTO(Date startDate, Date endDate, Location location) throws ApiQueryException {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -288,6 +332,13 @@ public class WeatherService {
         return convertToAverageDTO(pastAverage, location, middleDate);
     }
 
+    /**
+     *
+     * @param pastFiveYears list of the weather data for the past five years
+     * @param location location for which the forecast should be returned
+     * @param middleDate middleDate in the initial date range
+     * @return an average of the last 5 years for the middle date in the holiday range
+     */
     public HolidayDTO convertToAverageDTO(List<HolidayDTO> pastFiveYears, Location location, Date middleDate){
         double sumMinTemp = 0.0;
         double sumMaxTemp = 0.0;
