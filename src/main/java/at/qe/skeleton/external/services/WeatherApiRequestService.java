@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +26,11 @@ import org.slf4j.LoggerFactory;
 public class WeatherApiRequestService {
 
     private static final String CURRENT_AND_FORECAST_URI = "/data/3.0/onecall";
-    private static final String REVERSE_GEOCODING_URI = "/geo/1.0/reverse";
     private static final String DAILY_AGGREGATION_URI = "/data/3.0/onecall/day_summary";
     private static final String LONGITUDE_PARAMETER = "lon";
     private static final String LATITUDE_PARAMETER = "lat";
     private static final String DATE_PARAMETER = "date";
     private static final String UNIT_PARAMETER = "units";
-
-    private static final Logger logger = LoggerFactory.getLogger(WeatherApiRequestService.class);
 
     @Autowired
     private RestClient restClient;
